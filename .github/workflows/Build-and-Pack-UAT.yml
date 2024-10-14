@@ -60,6 +60,7 @@ jobs:
         enableDirectInvoke: ${{ vars.eServiceOnline_enableDirectInvoke }}       
         timeInterval: ${{ vars.eServiceOnline_timeInterval }}       
         printOutFilePath: ${{ vars.eServiceOnline_printOutFilePath }}
+        AppServiceAddress: ${{ vars.eServiceOnline_AppServiceAddress }}
         SendCrewNotification: ${{ vars.eServiceOnline_SendCrewNotification }}
         CustomLogging.WriteTo.0.Args.configure.0.Args.rootPath: ${{ vars.eServiceOnline_CustomLoggingWriteTorootPath }}
         Notifications.SendNotificationURL: ${{ secrets.eServiceOnline_NotificationsSendNotificationURL }}
