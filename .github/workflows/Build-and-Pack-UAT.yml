@@ -42,6 +42,11 @@ jobs:
 
 #--set variables
 
+    - name: print
+      run:  |
+        echo "${{ secrets.eServiceOnline_ConnectionStrings_DefaultConnString }}" ;
+        
+
     - name: Update eServiceOnline Variables
       uses: microsoft/variable-substitution@v1
       with:
@@ -50,7 +55,7 @@ jobs:
         applicationContext: ${{ vars.eServiceOnline_applicationContext }}
         EServiceApiAddress: ${{ vars.eServiceOnline_EEServiceApiAddress }}
         cachePath: ${{ vars.eServiceOnline_ConnectionStrings_ConfigDatabase }}       
-        connectionStrings.add.connectionString: ${{ secrets.eServiceOnline_ConnectionStrings_DefaultConnString }}       
+        connectionStrings.add: ${{ secrets.eServiceOnline_ConnectionStrings_DefaultConnString }}       
         SchedulerConfig.PLCDataTransmissionFrequency: ${{ vars.eServiceOnline_SchedulerConfig_PLCDataTransmissionFrequency }}       
         SchedulerConfig.PLCDataMaxCountPerMessage: ${{ vars.eServiceOnline_SchedulerConfig_PLCDataMaxCountPerMessage }}       
         MessageQueue.ServerId: ${{ vars.eServiceOnline_MessageQueue_ServerId }}
