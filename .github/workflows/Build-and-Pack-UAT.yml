@@ -50,7 +50,7 @@ jobs:
         applicationContext: ${{ vars.eServiceOnline_applicationContext }}
         EServiceApiAddress: ${{ vars.eServiceOnline_EEServiceApiAddress }}
         cachePath: ${{ vars.eServiceOnline_ConnectionStrings_ConfigDatabase }}       
-        ConnectionStrings__DefaultConnection: ${{ vars.eServiceOnline_ConnectionStrings_DefaultConnString }}       
+        ConnectionStrings__SanjelData: ${{ vars.eServiceOnline_ConnectionStrings_DefaultConnString }}       
         SchedulerConfig.PLCDataTransmissionFrequency: ${{ vars.eServiceOnline_SchedulerConfig_PLCDataTransmissionFrequency }}       
         SchedulerConfig.PLCDataMaxCountPerMessage: ${{ vars.eServiceOnline_SchedulerConfig_PLCDataMaxCountPerMessage }}       
         MessageQueue.ServerId: ${{ vars.eServiceOnline_MessageQueue_ServerId }}
