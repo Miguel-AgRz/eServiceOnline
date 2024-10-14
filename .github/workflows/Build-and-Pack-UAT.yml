@@ -40,12 +40,30 @@ jobs:
       with:
         clean: true
 
-#--set variables
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v2    
 
-    - name: print
-      run:  |
-        echo "${{ secrets.eServiceOnline_ConnectionStrings_DefaultConnString }}" ;
+    - name: Add Sanjel GitHub NuGet source
+      run: |
+        dotnet nuget add source --username USERNAME --password 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 --store-password-in-clear-text --name SanjelGitHub "https://nuget.pkg.github.com/Sanjel-Energy-Services/index.json"
         
+        if ($LASTEXITCODE -ne 0) {
+          dotnet nuget update source SanjelGitHub --source "https://nuget.pkg.github.com/Sanjel-Energy-Services/index.json" --username USERNAME --password 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 --store-password-in-clear-text
+
+          Write-Warning "Issue adding GitHub NuGet source. Exit code: $LASTEXITCODE`n$($error[0])"
+        }
+      continue-on-error: true
+
+    - name: Set BUILD_CONFIG based on branch
+      run: |
+        if ('${{ github.ref }}' -like 'refs/heads/develop' -or '${{ github.ref }}' -like 'refs/heads/test') {
+          $env:BUILD_CONFIG = 'Debug'
+        } else {
+          $env:BUILD_CONFIG = 'Release'
+        }
+        Write-Output "BUILD_CONFIG set to: $env:BUILD_CONFIG"      
+
+#--set variables
 
     - name: Update eServiceOnline Variables
       uses: microsoft/variable-substitution@v1
@@ -67,28 +85,83 @@ jobs:
         Notifications.Environment: ${{ vars.eServiceOnline_NotificationsEnvironment }}
         Notifications.SecretKey: ${{ secrets.eServiceOnline_NotificationsSecretKey }}
 
+
+    - name: Update eServiceOnline.WebAPI Variables
+      uses: microsoft/variable-substitution@v1
+      with:
+        files: 'source/eServiceOnlineAPI/app.config, source/eServiceOnlineAPI/appsettings.json'
+      env:
+        SanjelData: ${{ secrets.eServiceOnlineWebAPI_ConnectionStrings_SanjelData }}
+        DataWarehouse: ${{ secrets.eServiceOnlineWebAPI_ConnectionStrings_DataWarehouse}}
+        ConnectionStrings.SanjelData: ${{ secrets.eServiceOnlineWebAPI_ConnectionStrings_SanjelData }}
+        applicationContext: ${{ vars.eServiceOnlineWebAPI_applicationContext }}
+        EServiceApiAddress: ${{ vars.eServiceOnlineWebAPI_EServiceApiAddress }}
+        cachePath: ${{ vars.eServiceOnlineWebAPI_cachePath }}
+        enableDirectInvoke: ${{ vars.eServiceOnlineWebAPI_enableDirectInvoke }}
+        timeInterval: ${{ vars.eServiceOnlineWebAPI_timeInterval }}
+        defaultMailto: ${{ vars.eServiceOnlineWebAPI_defaultMailto }}
+        smtpServer: ${{ vars.eServiceOnlineWebAPI_smtpServer }}
+        EnableSsl: ${{ vars.eServiceOnlineWebAPI_EnableSsl }}
+        aspnet_MaxJsonDeserializerMembers: ${{ vars.eServiceOnlineWebAPI_aspnetMaxJsonDeserializerMembers }}
+
 #--end set variables
 
- 
-        
-    - name: Upload files
-      if: ${{ github.event_name == 'push' }}
-      uses: actions/upload-artifact@v4
-      with:
-        name: resultAPPconfigInstaller
-        path: .
-        retention-days: 1
-        compression-level: 1 
 
-    - name: Upload UAT Setup
+    - name: Restore packages
+      run:  |
+        msbuild -t:restore -p:RestorePackagesConfig=true -p:Configuration="$env:BUILD_CONFIG" -p:Platform="Any CPU" $env:SOLUTION 
+        
+    - name: Build Solution
+      run:  |
+        msbuild -t:Build -m -p:Configuration=$env:BUILD_CONFIG $env:SOLUTION -p:Platform="Any CPU" /clp:Verbosity=minimal     
+               
+    - name: Publish eServiceOnline
+      run:  |        
+        ls;
+        msbuild -t:Build -m "eServiceOnline/eServiceOnline.csproj" -p:Configuration="$env:BUILD_CONFIG" -p:Platform="AnyCPU" /p:DeployOnBuild=true /p:PublishProfile=FolderProfileWorkflow
+        
+    - name: Publish eServiceOnline.WebAPI
+      run:  |        
+        ls;
+        msbuild -t:Build -m "eServiceOnlineAPI/eServiceOnline.WebAPI.csproj" -p:Configuration="$env:BUILD_CONFIG" -p:Platform="AnyCPU" /p:DeployOnBuild=true /p:PublishProfile=FolderProfileWorkflow
+                
+
+    - name: Clean Test Results
+      run: |
+        $testResultsDir = "${{ env.RUNNER_TEMP }}\TestResults"
+        #if (Test-Path -Path $testResultsDir) {
+        #  Remove-Item -Path $testResultsDir -Recurse -Force
+        #}
+        #New-Item -ItemType Directory -Force -Path $testResultsDir
+
+    - name: Run Unit Tests
+      id: run-tests
+      run: |
+        $testResultsDir = "${{ env.RUNNER_TEMP }}\TestResults"
+        #New-Item -ItemType Directory -Force -Path $testResultsDir
+        #dotnet test ${{ env.SOLUTION }} --logger trx --collect "Code coverage" --no-build --configuration $env:BUILD_CONFIG --results-directory $testResultsDir
+        #if ($LASTEXITCODE -ne 0) {
+        #    exit 1
+        #}
+        
+    - name: Upload eServiceOnline UAT 
       if: ${{ github.event_name == 'push' }}
       uses: actions/upload-artifact@v4
       with:
-        name: eServiceExpress UAT Setup
-        path: Source/Deploy/Output/*uat*.exe
+        name: eServiceOnline UAT Publish
+        path: Source/Deploy/PublisheServiceOnline
         retention-days: 30
         compression-level: 0        
         
+    - name: Upload eServiceOnline.WebAPI UAT 
+      if: ${{ github.event_name == 'push' }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: eServiceOnline.WebAPI UAT Publish
+        path: Source/Deploy/PublisheServiceOnline.WebAPI
+        retention-days: 30
+        compression-level: 0             
+
     #- name: Publish Test Results
     #  uses: dorny/test-reporter@v1.6.0
     #  if: ${{ always() }}
