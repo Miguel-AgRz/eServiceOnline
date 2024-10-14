@@ -52,20 +52,19 @@ jobs:
       with:
         files: 'source/eServiceOnline/app.config, source/eServiceOnline/appsettings.json'
       env:
+        connectionString: ${{ secrets.eServiceOnline_ConnectionStrings_SanjelData }}
+        ConnectionStrings.SanjelData: ${{ secrets.eServiceOnline_ConnectionStrings_SanjelData }}
         applicationContext: ${{ vars.eServiceOnline_applicationContext }}
-        EServiceApiAddress: ${{ vars.eServiceOnline_EEServiceApiAddress }}
-        cachePath: ${{ vars.eServiceOnline_ConnectionStrings_ConfigDatabase }}       
-        connectionStrings_SanjelData: ${{ secrets.eServiceOnline_ConnectionStrings_DefaultConnString }}       
-        SchedulerConfig.PLCDataTransmissionFrequency: ${{ vars.eServiceOnline_SchedulerConfig_PLCDataTransmissionFrequency }}       
-        SchedulerConfig.PLCDataMaxCountPerMessage: ${{ vars.eServiceOnline_SchedulerConfig_PLCDataMaxCountPerMessage }}       
-        MessageQueue.ServerId: ${{ vars.eServiceOnline_MessageQueue_ServerId }}
-        MessageQueue.MqttTcpServer: ${{ vars.eServiceOnline_MessageQueue_MqttTcpServer }}
-        MessageQueue.MqttUser: ${{ vars.eServiceOnline_MessageQueue_MqttUser }}
-        MessageQueue.MqttPwd: ${{ secrets.eServiceOnline_MessageQueue_MqttPwd }}
-        MessageQueue.BridgeName: ${{ vars.eServiceOnline_MessageQueue_BridgeName }}
-        MessageQueue.TopicPrefix: ${{ vars.eServiceOnline_MessageQueue_TopicPrefix }}
-        MessageQueue.PublishMessagesTopicPrefix: ${{ vars.eServiceOnline_MessageQueue_PublishMessagesTopicPrefix }}
-        MessageQueue.Port: ${{ vars.eServiceOnline_MessageQueue_Port }}
+        EServiceApiAddress: ${{ vars.eServiceOnline_EServiceApiAddress }}
+        cachePath: ${{ vars.eServiceOnline_cachePath }}       
+        enableDirectInvoke: ${{ vars.eServiceOnline_enableDirectInvoke }}       
+        timeInterval: ${{ vars.eServiceOnline_timeInterval }}       
+        printOutFilePath: ${{ vars.eServiceOnline_printOutFilePath }}
+        SendCrewNotification: ${{ vars.eServiceOnline_SendCrewNotification }}
+        CustomLogging.WriteTo.0.Args.configure.0.Args.rootPath: ${{ vars.eServiceOnline_CustomLoggingWriteTorootPath }}
+        Notifications.SendNotificationURL: ${{ secrets.eServiceOnline_NotificationsSendNotificationURL }}
+        Notifications.Environment: ${{ vars.eServiceOnline_NotificationsEnvironment }}
+        Notifications.SecretKey: ${{ secrets.eServiceOnline_NotificationsSecretKey }}
 
 #--end set variables
 
