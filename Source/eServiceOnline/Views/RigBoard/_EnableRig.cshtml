@@ -1,0 +1,16 @@
+@using System.ComponentModel
+
+@using (Html.BeginForm("EnableRig", "RigBoard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div class="sj_dialog_body sj_lsd_ud">
+        <div class="det_list" style="text-align: center">
+            <label>You are changing Rig Status from @ViewBag.RigStatus to Active. Please Confirm.</label>
+            <input type="hidden" name="RigId" id="RigId" value="@ViewBag.RigId" />
+        </div>
+    </div>
+
+    <div class="sj_dialog_foot">
+        <input type="submit" class="yes" value="Yes" /> <input type="button" value="No" class="no" onclick="eServiceOnline.Site.prototype.CloseDialog()" />
+    </div>
+}
+

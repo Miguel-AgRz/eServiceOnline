@@ -1,0 +1,25 @@
+﻿@using eServiceOnline.Models.CrewBoard
+@model eServiceOnline.Models.CrewBoard.CrewModel
+
+@using (Html.BeginForm("AddWorker", "CrewBoard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(m => m.Id)
+    <div class="sj_dialog_body sj_lsd_ud">
+        <div class="det_list">
+            <label class="det_label">Worker</label>
+            <div class="det_text">@Html.DropDownListFor(m => m.WorkerId, ViewData["employeeItems"] as List<SelectListItem>, "None", new { @class = "sj_select" })</div>
+        </div>
+        <div class="det_list">
+            <label class="det_label">Position</label>
+            <div class="det_text">@Html.DropDownListFor(m => m.CrewPositionId, ViewData["crewPositionItems"] as List<SelectListItem>, new { @class = "sj_select" })</div>
+        </div>
+    </div>
+    <input type="hidden" id="type" value="worker"/>
+    <div class="sj_dialog_foot">
+        <input type="submit" id="submitButton" value="Save" onclick="return verifyWorkerSchedule()" />
+    </div>
+}
+
+    <div>
+        @Html.Partial("./_PromotMessage")
+    </div>

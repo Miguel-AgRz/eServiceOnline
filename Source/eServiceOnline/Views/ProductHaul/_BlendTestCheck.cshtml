@@ -1,0 +1,24 @@
+@model eServiceOnline.Models.ProductHaul.ProductLoadInfoModel
+@{
+    var IsStatic = false;
+    if (ViewData["isStatic"] != null) { IsStatic = (bool)ViewData["isStatic"]; }
+    var label = Html.Label("", "Blend Test", new { @class = "det_label" });
+}
+@if (IsStatic)
+{
+<div class="det_list">
+    @label
+    <div class="det_text" id="is_blend_test">
+        @Html.CheckBoxFor(m => m.IsBlendTest, new {disabled="disabled"})
+    </div>
+</div>
+}
+else
+{
+<div class="det_list" id="is_blend_test">
+    @label
+    <div class="det_text">
+        @Html.CheckBoxFor(m => m.IsBlendTest, new { onclick = "window.blendTest.getBlendTest()" })
+    </div>
+</div>
+}

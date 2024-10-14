@@ -1,0 +1,241 @@
+@using eServiceOnline.Models.RigBoard
+@model eServiceOnline.Models.RigBoard.RigBinModel
+@*<div class="sj_dialog_head">*@
+@*    <span>Add a Bin</span>*@
+@*    <a class="sj_dialog_close" onclick="siteInstance.CloseDialog('dialog_addnewbin')">+</a>*@
+@*</div>*@
+@using (Html.BeginForm("AssignABin", "RigBoard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(m => m.BinId)
+    @Html.HiddenFor(m => m.RigJobId)
+    <div class="sj_dialog_body sj_lsd_ud">
+        <div class="det_list">
+            <label class="det_label">Type</label>
+            <div class="det_text">
+                @Html.DropDownListFor(m => m.BinTypeId, ViewData["binTypeList"] as List<SelectListItem>, "None", new { onchange = "getBinsByType(this)", @class = "sj_select" })
+                <span id="binTypeDescriptiontip" style="color: firebrick;"></span>
+            </div>
+        </div>
+        <div class="det_list">
+            <label class="det_label">Bin Number</label>
+            <div class="det_text" id="bin_select">
+                @Html.DropDownListFor(m => m.BinNumber, ViewData["binList"] as List<SelectListItem>, "None", new { @onchange = "setPod(this)", @class = "sj_select" })
+                <span id="binNumberDescriptiontip" style="color: firebrick;"></span>
+            </div>
+        </div>
+        <div class="det_list">
+            <label class="det_label">Pod Count</label>
+            <div class="det_text">
+                @Html.TextBoxFor(m => m.PodCount, new { @readonly = "true", @class = "sj_text" })
+                <span id="podCountDescriptiontip" style="color: firebrick;"></span>
+
+            </div>
+        </div>
+        <div class="det_list">
+            <label class="det_label">Volume</label>
+            <div class="det_text">
+                @Html.TextBoxFor(m => m.Volume, new { @readonly = "true", @class = "sj_text" })
+                <span id="volumeDescriptiontip" style="color: firebrick;"></span>
+            </div>
+        </div>
+        <div id="pods"></div>
+
+
+        @*<div class="det_list">
+                        <label class="det_label">Hauling Time(One Way)(HH:MM)</label>
+                        <div class="det_text">@Html.TextBoxFor(model => model.HaulingTime, new { @class = "sj_text" })
+                        </div>
+                    </div>
+            $1$        <div class="det_list">#1#
+            $1$            <label class="det_label">On Location Data/Time</label>#1#
+            $1$            <div class="det_text"><ej-date-time-picker id="OnLocationDataTime" width="282px" value='@DateTime.Now' time-display-format="H:mm" date-time-format="M/d/yyyy H:mm"></ej-date-time-picker></div>#1#
+            $1$            @Html.HiddenFor(model => model.OnLocation)#1#
+            $1$        </div>#1#
+                    <div class="det_list">
+                        <label class="det_label">Initial Tonnage</label>
+                        <div class="det_text">@Html.TextBoxFor(model => model.InitialVolume, new { @class = "sj_text" })</div>
+                    </div>
+                    <div class="det_list">
+                        <label class="det_label">Tonnage Pumped</label>
+                        <div class="det_text">@Html.TextBoxFor(model => model.VolumePumped, new { @class = "sj_text" })</div>
+                    </div>*@
+    </div>
+
+    <div class="sj_dialog_foot">
+        <input  id="sj_createProductHual" type="submit" value="Save" onclick="return scheduleValidations.validate()" />
+    </div>
+
+    
+}
+<ej-dialog id="verifyCrew" css-class="sj_confirmDialog" title="Confirm" width="400" show-on-init="false" enable-resize="false" close="dialogSchedule.closeDialog">
+    <e-content-template>
+        <div id="is_confirm_jump1">
+            <div style="margin-top: 20px;padding: 0 10px 0 10px" id="message"></div>
+            <div style="text-align: center; margin: auto; line-height: 100px;">
+                <div style="display: inline-block;width: 50px; line-height: 25px; text-align: center;">
+                    <input class="confirmDialog_button " type="button" value="Yes" onclick="dialogSchedule.closeDialog('Yes')" />
+                </div>
+                <div style="display: inline-block;width: 50px; line-height: 25px; text-align: center;">
+                    <input class="confirmDialog_button " type="button" value="No" onclick="dialogSchedule.closeDialog('No')" />
+                </div>
+            </div>
+
+        </div>
+    </e-content-template>
+</ej-dialog>
+<ej-script-manager></ej-script-manager>
+
+<script>
+    var scheduleValidations;
+    var itemUrl = '@Url.Action("GetBinInfoByBinTypeId", "RigBoard")';
+    function getBinsByType(obj) {
+        $("#BinTypeDescription").val($(obj).find("option:selected").text());
+        var binTypeId = $(obj).find("option:selected").val();
+        var rigJobId = $("#RigJobId").val();
+        $.ajax({
+            url: itemUrl,
+            method: "post",
+            data: { "binTypeId": binTypeId, "rigJobId": rigJobId },
+            success: function (data) {
+                console.log(data.length != 0);
+                $("#bin_select #BinNumber").empty();
+                if (data.length != 0)
+                {
+                    $.each(data, function (i,e) {
+                        $("#bin_select #BinNumber").append("<option value='" + e.Id + "'>" + e.Name + "</option>");
+                    });
+                    $("#binModel_volume").val(data[0].Volume);
+                    $("#binModel_PodCount").val(data[0].PodCount);
+
+                    $("#pods").empty().append(showPodForm(data[0].PodCount, data[0].Name));
+                } else {
+                    $("#bin_select #BinNumber").append("<option>None</option>");
+                    $("#binModel_volume").val("");
+                    $("#binModel_PodCount").val("");
+                    $("#pods").empty();
+                }
+            }
+        });
+
+    }
+
+
+    function showPodForm(podCount, binNumber) {
+        var podForm = "";
+        $("#PodCount").val(podCount);
+        for (var i = 0; i < podCount; i++) {
+            podForm += "<div id=\"pod" + i + "\">";
+            podForm += "<input class=\"sj_text\" type = \"hidden\" name=\"binInformationList[" + i + "].PodIndex\" id=\"binInformationList[" + i + "].PodIndex\" Value =\"" + (i + 1) + "\">";
+            podForm += "<label class=\"det_label\">Pod " + (i + 1) + "<br /></label>";
+            podForm += "<div class=\"det_list\">";
+            podForm += "<label class=\"det_label\">Name</label>";
+            podForm += "<div class=\"det_text\">";
+            if (podCount === 1) {
+                podForm += "<input class=\"sj_text\" type = \"text\" name=\"binInformationList[" + i + "].Name\" id=\"binInformationList[" + i + "].Name\" Value =\"" + binNumber + "\">";
+            }
+            else {
+                podForm += "<input class=\"sj_text\" type = \"text\" name=\"binInformationList[" + i + "].Name\" id=\"binInformationList[" + i + "].Name\" Value =\"" + binNumber + "-" + (i + 1) + "\">";
+                }
+            podForm += "</div></div>";
+            podForm += "<div class=\"det_list\">";
+            podForm += "<label class=\"det_label\">Volume</label>";
+            podForm += "<div class=\"det_text\">";
+            podForm += "<input class=\"sj_text\" type = \"text\" name=\"binInformationList[" + i + "].Volume\" id=\"binInformationList[" + i + "].Volume\" >";
+            podForm += "</div></div></div>";
+
+        }
+
+        return podForm;
+    }
+    function setPod(obj) {
+        var binNumber = $("#bin_select #BinNumber").find("option:selected").text();
+        var binId = $(obj).find("option:selected").val();
+        $("#BinId").val(binId);
+        var itemUrl = '@Url.Action("GetBinById", "BinBoard")';
+        var podCount = 1;
+        $.ajax({
+            url: itemUrl,
+            method: "post",
+            data: { "binId": binId },
+            success: function (data) {
+                console.log(data.length != 0);
+                if (data.length != 0)
+                {
+                    $("#volume").val(data.Volume);
+                    $("#PodCount").val(data.PodCount);
+                    podCount = data.PodCount;
+                    $("#pods").empty().append(showPodForm(data.PodCount, data.Name));
+                }
+            }
+        });
+
+    }
+
+    function getShift(obj) {
+        $("#WorkShiftTypeName").val($(obj).find("option:selected").text());
+    }
+
+    function submitJobDateDataTime() {
+
+        var binType = $("#BinTypeId").val();
+        var binNumber = $("#bin_select #BinNumber").val();
+
+        if (binType == "" || binType == null) {
+            $("#binTypeDescriptiontip").html("*required");
+            return false;
+        } else {
+            $("#binTypeDescriptiontip").html("");
+        }
+        if (binNumber == "" || binNumber == null || binNumber == "None") {
+            $("#binNumberDescriptiontip").html("*required");
+            return false;
+        } else {
+            $("#BinId").val(binNumber);
+            $("#binNumberDescriptiontip").html("");
+        }
+
+        return true;
+    }
+
+    function dataBinInformation() {
+        var model = {
+            binTypeId: $("#BinTypeId").find("option:selected").val(),
+            rigJobId: $("#RigJobId").val(),
+            binId: $("#BinNumber").find("option:selected").val()
+        }
+        return model;
+    }
+    function ValidationBinInformation() {
+        var url = "@Url.Action("VerifyBinInformation", "RigBoard")";
+        var model = dataBinInformation();
+        var result = false;
+        $.ajax({
+            url: url,
+            async: false,
+            method: "post",
+            data: model,
+            success: function (data) {
+                if (data == '') {
+                    result = true;
+                }
+                else {
+                    $("#message").html(data);
+                    dialogSchedule.openDialog();
+                    result= false;
+                }
+            }
+        });
+        return result;
+    }
+
+    $(function () {
+        var val1 = new ValidationsChain(true, submitJobDateDataTime);
+        
+        var val2 = new ValidationsChain(true, ValidationBinInformation, undefined, undefined, dataBinInformation);
+        dialogSchedule = new ManageDialog("verifyCrew", val2 || undefined);
+        val1.setNextFuncOrValidation(val2);
+        scheduleValidations = new ValidationsBuilder(val1);
+    })
+</script>
+
+

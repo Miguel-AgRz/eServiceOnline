@@ -1,0 +1,28 @@
+
+@using (Html.BeginForm("RemoveABin", "RigBoard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div class="sj_dialog_body sj_lsd_ud">
+        <div class="det_list" style="text-align: center">
+            <label>
+                Please confirm you are going to release following bins.
+                @{var list = (List<Sesi.SanjelData.Entities.BusinessEntities.WellSite.BinInformation>)this.ViewData["binInformationList"];}
+                <ol>
+                    @foreach (var item in list)
+                    {
+                    <li style="text-align:left;">
+                        @item.Name 
+                    </li>
+                    }
+                </ol>
+            </label>
+            <input type="hidden" name="binId" id="binId" value="@ViewData["binId"]" />
+            <input type="hidden" name="callSheetId" id="callSheetId" value="@ViewData["callSheetId"]" />
+            <input type="hidden" name="rigJobId" id="rigJobId" value="@ViewData["rigJobId"]" />
+        </div>
+    </div>
+
+    <div class="sj_dialog_foot">
+        <input type="submit" class="yes" value="Yes" /> <input type="button" value="No" class="no" onclick="eServiceOnline.Site.prototype.CloseDialog()"/>
+    </div>
+}
+

@@ -1,0 +1,156 @@
+@using Sesi.SanjelData.Entities.BusinessEntities.WellSite
+@model eServiceOnline.Models.ProductHaul.LoadBlendToBulkerViewModel
+@*Dec 08, 2023 Tongtao 175_PR_LoadToBulker:Pod List sorted by PodIndx *@
+@{
+    Layout = null;
+    Model.PodLoads = Model.PodLoads.OrderBy(p => p.PodIndex).ToList();
+}
+
+@*Nov 13, 2023 Tongtao P45_Q4_175: add a new page for"Load Blend to Bulker"*@
+@using (Html.BeginForm("LoadBlendToBulker", "ProductHaul", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+@Html.HiddenFor(m => m.ProductHaulId)
+@Html.HiddenFor(m => m.ShippingLoadSheetId)
+@Html.HiddenFor(m => m.SourceStorageId)
+@Html.HiddenFor(m => m.LoadAmount)
+    //Nov 17, 2023 Tongtao P45_Q4_175:Add Blend,Destination,CallSheetNumber,ClientName for "Load Blend to Bulker" page show
+    //Dec 07, 2023 Tongtao P45_Q4_175:Add PodLoads,Crew,CallSheetNumber,IsGoWithCrew for "Load Blend to Bulker" page show
+    //Dec 08, 2023 Tongtao 175_PR_LoadToBulker:Add IsThirdParty and change Crew to CrewDescription  for "Load Blend to Bulker" page show
+    //Jan 10, 2024 Tongtao:add show ExpectedOnLocationTime,pod info could edit,add pod validate
+<div class="sj_dialog_body sj_lsd_ud">
+    @if (!string.IsNullOrEmpty(Model.ProgramId))
+    {
+        <div class="det_list1">
+            <label class="det_label">Program Id</label>
+            <div class="det_text">@Model.ProgramId</div>
+        </div>
+    }
+    <div class="det_list1">
+        <label class="det_label">Call Sheet Number</label>
+        @if (Model.CallSheetNumber != "0")
+        {
+            <div class="det_text">@Model.CallSheetNumber</div>
+        }
+        else
+        {
+            <div class="det_text"></div>
+        }
+    </div>
+    <div class="det_list1">
+        <label class="det_label">Client Name</label>
+        <div class="det_text">@Model.ClientName</div>
+    </div>
+    <div class="det_list1">
+        <label class="det_label">Blend</label>
+        <div class="det_text">@Model.Blend</div>
+    </div>
+    <div class="det_list1">
+        <label class="det_label">Destination</label>
+        <div class="det_text">@Model.Destination</div>
+    </div>
+    <div class="det_list1" id="go_with_crew">
+        <label class="det_label"> Go With Crew </label>
+        <div class="det_text">
+            @Html.CheckBoxFor(m => m.IsGoWithCrew, new { disabled = "disabled" })
+        </div>
+    </div>
+    <div class="det_list1" id="isThirdParty">
+        <label class="det_label">Third Party</label>
+        <div class="det_text">
+            @Html.CheckBoxFor(m => m.IsThirdParty, new { disabled = "disabled" })
+        </div>
+    </div>
+    <div class="det_list1">
+        <label class="det_label">Offload Amount</label>
+        <div class="det_text">@Model.LoadAmount</div>
+    </div>
+
+    <div class="det_list1">
+        <label class="det_label">Crew</label>
+        <div class="det_text">@Model.CrewDescription</div>
+    </div>
+    <div class="det_list1" id="existing_expectedOlTime" style="position: relative;">
+        <label class="det_label">Expected On Location Time</label>
+        <div class="det_text">@Model.ExpectedOlTime</div>
+    </div>
+    <div class="det_list1">
+        @for (var i = 0; i < Model.PodLoads.Count; i++)
+        {
+            <div style="width:150px;display:inline-block">
+                <label class="det_label">Pod @(i+1)</label>
+                <div class="det_text">
+                    @if (Model.PodLoads[i].ShippingLoadSheet.Id != Model.ShippingLoadSheetId && Model.PodLoads[i].ShippingLoadSheet.Id > 0)
+                    {
+                        @Html.TextBoxFor(model => model.PodLoads[i].LoadAmount, new { @readOnly = true, @class = "sj_text pod_load_amount", @style = "color:red" })
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(model => model.PodLoads[i].LoadAmount, new { @class = "sj_text pod_load_amount" })
+                    }
+                </div>
+            </div>
+        }
+    </div>
+    <div class="det_list1" style="text-align: center">
+        <label>
+            <b>Are you sure to load up buker?</b>
+        </label>
+    </div>
+    <div class="sj_dialog_foot">
+        <input type="submit" id="sj_createProductHual" class="yes" value="Yes" onclick="return scheduleValidations.validate()" /> <input type="button" value="No" class="no" onclick="eServiceOnline.Site.prototype.CloseDialog()" />
+    </div>
+</div>
+}
+@Html.Partial("_Dialogs")
+<script>
+
+    var existingHaul, scheduleValidations, thirdParty;
+    $(function () {
+        ValidatePodLoadChain = new ValidationsChain(true, ValidatePodLoadInfo, undefined, undefined, GetPodLoadData);
+
+        scheduleValidations = new ValidationsBuilder(ValidatePodLoadChain);
+
+        (new InitSchedule(function () {
+
+            InitializeDialogs();
+
+        })).Initialize();
+
+    });
+
+    function ValidatePodLoadInfo() {
+        var loadAmountTotal = Number($('#LoadAmount').val());
+
+        var podLoadSum = 0;
+
+        var IsRight = true;
+
+        var message = "";
+
+        $('.pod_load_amount').each(function () {
+            if ($(this).prop("readOnly") != true) {
+                var podLoadAmount = Number($(this).val());
+                if (!isNaN(podLoadAmount)) {
+                    podLoadSum += podLoadAmount;
+                }
+            };
+        });
+
+        if (Number(podLoadSum) * 1000 != loadAmountTotal) {
+            message += ' All Pod LoadAmount Add Up Should Equal Offload Amount! < br /> ';
+            IsRight = false;
+        }
+
+        message += 'Do You Want To Continue?<br>Click "Yes" To Continue!'
+
+        if (IsRight == false) {
+            $("#podLoadMessage").html(message);
+
+            dialogPodLoad.openDialog();
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+</script>

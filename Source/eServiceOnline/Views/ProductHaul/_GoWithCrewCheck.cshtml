@@ -1,0 +1,23 @@
+@model eServiceOnline.Models.ProductHaul.ProductHaulInfoModel
+@{
+    var IsStatic = (bool)ViewData["isStatic"];
+    var label = Html.Label("", "Go With Crew", new { @class = "det_label" });
+}
+@if (IsStatic)
+{
+    <div class="det_list" id="existing_go_with_crew">
+        @label
+        <div class="det_text" id="existing_goWithCrew">
+            @Html.CheckBoxFor(m => m.IsGoWithCrew, new {disabled="disabled"})
+        </div>
+    </div>
+}
+else
+{
+    <div class="det_list" id="go_with_crew">
+        @label
+        <div class="det_text">
+            @Html.CheckBoxFor(m => m.IsGoWithCrew, new{ onclick = "getGoWithCrew()" })
+        </div>
+    </div>
+}

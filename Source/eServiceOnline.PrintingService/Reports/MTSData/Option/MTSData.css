@@ -1,0 +1,303 @@
+
+#paper {
+    width: 612px;
+    height: 792px;
+    margin: 36px 36px 36px 36px;
+}
+
+.logo {
+    width: 140px;
+    height: 35px;
+    margin-right: 20px;
+    text-align: right;
+    padding-left: 0px;
+}
+
+.pageHeader {
+    height: 45px;
+    margin-top: 45px;
+    padding: 0px 0px 0px 8px;
+}
+
+#horizontalLine {
+    padding: 5px 0px 5px 0px;
+}
+
+.vesionFooter {
+    text-align: left;
+    height: 45px;
+    font-size: 10px;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+}
+
+
+.pageFooter {
+    text-align: right;
+    font-size: 10px;
+    height: 45px;
+}
+
+.textHeader {
+    text-align: right;
+    font-size: 10px; 
+    padding-top: 10px; 
+    padding-right: 0px; 
+}
+
+.panel {
+    padding-top: 20px;
+    padding-bottom: 10px;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+.tdd {
+    border: 0.25px solid black; 
+    padding-top: 5px; 
+    padding-bottom: 5px; 
+    vertical-align: middle; 
+    text-align: center;
+}
+
+#itemPodIndex {
+    width: 5px;
+}
+
+#itemBaseTonnage, #itemTotalTonnage {
+    width: 15px;
+}
+
+#itemProductDes {
+    width: 20px;
+}
+
+
+
+.tddphl1 {
+    border: 0.25px solid black;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 1px;
+    padding-right: 1px;
+    vertical-align: middle;
+    text-align: right;
+    width: 66px;
+    height: 15px;
+    padding-right: 2px;
+}
+
+.tddphv1 {
+    border: 0.25px solid black;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 1px;
+    padding-right: 1px;
+    vertical-align: middle;
+    text-align: left;
+    width: 88px;
+    height: 15px;
+    padding-left: 2px;
+}
+
+.tddphl2 {
+    border: 0.25px solid black;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 1px;
+    padding-right: 1px;
+    vertical-align: middle;
+    text-align: right;
+    width: 62px;
+    height: 15px;
+    padding-right: 2px;
+}
+
+.tddphv2 {
+    border: 0.25px solid black;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 1px;
+    padding-right: 1px;
+    vertical-align: middle;
+    text-align: left;
+    width: 115px;
+    height: 15px;
+    padding-left: 2px;
+}
+
+.tddphl3 {
+    border: 0.25px solid black;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 1px;
+    padding-right: 1px;
+    vertical-align: middle;
+    text-align: right;
+    width: 80px;
+    height: 15px;
+    padding-right: 2px;
+}
+
+.tddphv3 {
+    border: 0.25px solid black;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 1px;
+    padding-right: 1px;
+    vertical-align: middle;
+    text-align: left;
+    width: 130px;
+    height: 15px;
+    padding-left: 2px;
+}
+
+
+.tdd-width {
+    border: 0.25px solid black;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 1px;
+    padding-right: 1px;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.tdd-width-podNum {
+    width: 50px;
+}
+
+.tdd-width-podTonnage {
+    width: 60px;
+}
+
+.tdd-width-podDesc {
+    width: 300px;
+}
+
+.tdd-width-blendId {
+    width: 55px;
+}
+
+
+.tdd-width-other {
+    width: 55px;
+}
+
+.tdd-width-other1 {
+    width: 50px;
+}
+
+.tdd-width-other2 {
+    width: 45px;
+}
+
+
+.tdd-width-unloadBin {
+    width: 55px;
+}
+
+
+
+.tdd-width-unloadTonnage {
+    width: 60px;
+}
+
+
+
+/*.tdd-width-20 {
+    width: 20px;
+}
+
+.tdd-width-30 {
+    width: 30px;
+}
+
+.tdd-width-40 {
+    width: 40px;
+}
+*/
+
+.title {
+    background-color: transparent;
+    border: none;
+    padding-top: 18px;
+    padding-bottom: 8px;
+    font-size: 13px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.rowHeader {
+    font-size: 9px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.rowDataOdd {
+    background-color: #F8F8F8;
+}
+
+.title1-textbox {
+    padding-top: 5px;
+    padding-bottom: 30px;
+}
+
+.title2-textbox {
+    padding-top: 5px;
+    padding-bottom: 30px;
+}
+.title3-textbox {
+    padding-top: 5px;
+    padding-bottom: 30px;
+}
+
+.signArea {
+    width: 612px;
+    padding-top: 20px;
+    margin-top: 20px;
+}
+
+.tdSign {
+    padding-top: 10px;
+    padding-bottom: 8px;
+    padding-right: 10px;
+    vertical-align: middle;
+}
+
+
+.signLabel {
+    width: 108px;
+    font-size: 10px;
+    font-weight: bold;
+    text-align: right;
+}
+
+.signText {
+    width: 160px;
+    font-size: 10px;
+    border-bottom: 1px solid #000; 
+}
+
+/*tr:last-child .tdd {
+    padding-bottom: 50px;*/
+    /*visibility: hidden;
+}*/
+
+
+/*
+.panel-spacing1 {
+    padding-bottom: 100px;
+    margin-bottom: 100PX;
+}
+
+.panel-spacing2 {
+    padding-top: 300px;
+}
+
+
+.panel-spacing3 {
+    padding-top: 600px;
+}*/

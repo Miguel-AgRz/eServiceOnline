@@ -1,0 +1,21 @@
+@model eServiceOnline.Models.BinBoard.BinInformationModel
+
+@using (Html.BeginForm("UpdateBlend", "BinBoard", FormMethod.Post, new {enctype = "multipart/form-data"}))
+{
+    @Html.HiddenFor(m => m.BinId)
+    <div class="sj_dialog_body sj_lsd_ud">
+        <div class="det_list">
+            <label class="det_label">BlendChemical</label>
+            <div class="det_text">
+                <ejs-combobox id="blendId" dataSource="@ViewData["BlendList"]" placeholder="Select a blend" popupHeight="300px" width="280px" allowFiltering="true" autofill="true" >
+                    <e-combobox-fields text="Name" value="Id"></e-combobox-fields>
+                </ejs-combobox>
+            </div>
+        </div>
+    </div>
+    <div class="sj_dialog_foot">
+        <input type="submit" value="Save"/>
+    </div>
+}
+
+    <ejs-scripts></ejs-scripts>

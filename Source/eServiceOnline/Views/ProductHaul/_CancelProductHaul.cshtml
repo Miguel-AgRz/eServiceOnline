@@ -1,0 +1,51 @@
+@using eServiceOnline.BusinessProcess
+@using eServiceOnline.Models.ProductHaul
+@model eServiceOnline.Models.ProductHaul.CancelProductViewModel
+
+@using (Html.BeginForm("CancelProductHaul", "ProductHaul", FormMethod.Post, new { enctype = "multipart/form-data", onsubmit = "return ValidateData()" }))
+{
+    @Html.HiddenFor(m => m.ProductHaulId)
+    <div id="is_confirm_jump">
+        <input type="hidden" id="display_notes" value="@ViewBag.LoadsNotes" />
+        <div style="margin-top: 20px; padding: 0 20px 0 150px; text-align: left;" id="div_display_notes">
+            The product haul has following shipping load sheet(s): <br /><br />
+                @for(int i=0;i< Model.CheckShipingLoadSheetModels.Count;i++)
+                {
+                    var load = @Model.CheckShipingLoadSheetModels[i];
+                    var source = load.ShippingLoadSheetModel.CallSheetNumber == 0 ? string.Empty : load.ShippingLoadSheetModel.CallSheetNumber.ToString();
+        <span>
+            @if (Model.CheckShipingLoadSheetModels[i].IsReadOnly)
+            {
+                @Html.CheckBoxFor(model => model.CheckShipingLoadSheetModels[i].IsChecked, new { @readonly = true })
+            }
+            else
+            {
+                @Html.CheckBoxFor(model => model.CheckShipingLoadSheetModels[i].IsChecked)
+            }
+            @Html.HiddenFor(model => model.CheckShipingLoadSheetModels[i].ShippingLoadSheetModel.Id)
+            @Html.HiddenFor(model => model.CheckShipingLoadSheetModels[i].ShippingLoadSheetModel.ProductHaul.Id)
+            @source - From @load.ShippingLoadSheetModel.BulkPlant.Name to @load.ShippingLoadSheetModel.Destination - @load.ShippingLoadSheetModel.Name -  @(load.ShippingLoadSheetModel.LoadAmount / 1000)  t -  @load.ShippingLoadSheetModel.ExpectedOnLocationTime.ToString("MMM d H:mm")  <br />
+
+        </span>
+                }
+                <br/>
+                Are you sure you want to delete the product haul and these shipping load sheets ?
+        </div>
+
+        <div style="text-align: center; margin: auto; line-height: 100px;">
+            <div class="sj_dialog_foot">
+                <input type="submit" class="yes" value="Yes" /> <input type="button" value="No" class="no" onclick="eServiceOnline.Site.prototype.CloseDialog()" />
+            </div>
+        </div>
+    </div>
+}
+
+@*<script>
+    $(function () {
+        $("#div_display_notes").html("");
+        var note = $("#display_notes").val();
+        note = "<label>" + note + " <br/>Are you sure you want to delete the haul and these product haul load ? </label>";
+        console.log(note);
+        $("#div_display_notes").append(note);
+    });
+</script>*@

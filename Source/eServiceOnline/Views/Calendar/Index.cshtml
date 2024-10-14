@@ -1,0 +1,297 @@
+@using Microsoft.AspNetCore.Http
+@model List<eServiceOnline.Models.Calendar.ScheduleModel>
+@{
+    ViewData["Title"] = "Schedule Board";
+}
+
+@section SampleHeading{
+    <style>
+        .container {
+            width: 90%;
+            min-width: 1800px;
+            padding: 0 !important;
+        }
+    </style>
+    <link href="~/css/crewBoard.css" rel="stylesheet" />
+    <div style="padding: 0; overflow: hidden;">
+        <div id="retrieval_conditions" style="line-height: 40px; font-size: 18px; font-family: Segoe UI; background: #000000; overflow: hidden;">
+            <div style="padding: 0 100px 0 20px; color: #BFBFBF; text-align: center; float: left;">
+                <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="69" onclick="selectionCriteria(this, 'BR')" />BR
+                <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="85" onclick="selectionCriteria(this, 'RD')" />RD
+                <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="67" onclick="selectionCriteria(this, 'Edm')" />Edm
+                <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="81" onclick="selectionCriteria(this, 'Eds')" />Eds
+                <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="71" onclick="selectionCriteria(this, 'GP')" />GP
+                <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="66" onclick="selectionCriteria(this, 'FSJ')" />FSJ
+                <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="89" onclick="selectionCriteria(this, 'NW')" />NW
+                <span color="Yellow">&nbsp;|&nbsp;</span>
+                <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="72" onclick="selectionCriteria(this, 'EST')" />EST
+                <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="70" onclick="selectionCriteria(this, 'SC')" />SC
+                <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="88" onclick="selectionCriteria(this, 'KD')" />KD
+                <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="61" onclick="selectionCriteria(this, 'LLD')" />LLD
+                <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="65" onclick="selectionCriteria(this, 'LLB')" />LLB
+            </div>
+            <div id="filterId" style="float: right; height: 34px; line-height: 34px; color: #ffffff;">
+                <input name="scheduleType" type="checkbox" class="checkboxstyle" value="Crews" onclick="filter(this)" checked="checked" />Crew
+                <input name="scheduleType" type="checkbox" class="checkboxstyle" value="Units" onclick="filter(this)" checked="checked" />Unit
+                <input name="scheduleType" type="checkbox" class="checkboxstyle" value="Workers" onclick="filter(this)" checked="checked" />Worker
+            </div>
+
+        </div>
+        <div id="tipContent" style="cursor: pointer; border: 2px solid #111; position: fixed; z-index: 100; background-color: #fff;">
+        </div>
+        <input id="RetrievalConditions" name="RetrievalConditions" type="hidden" value='' />
+        <div>
+        </div>
+    </div>
+
+}
+
+@section ControlsSection{
+    <div style="background: #74223C; height: 15px; margin-bottom: -1px; position: relative; z-index: 90"></div>
+    <h3 style="color: #bfbfbf">Crews Schedule</h3>
+    <div id="Crews">
+        @* @Html.Partial("_Crew") *@
+    </div>
+    <h3 style="color: #bfbfbf">Units Schedule</h3>
+    <div id="Units">
+        @* @Html.Partial("_Unit") *@
+    </div>
+    <h3 style="color: #bfbfbf">Workers Schedule</h3>
+    <div id="Workers">
+        @* @Html.Partial("_Worker") *@
+    </div>
+    <input id="MenuUrl" type="hidden" value="@Url.Action("GetContextMenu","Calendar")"/>
+    <div id='container'>
+        <ejs-dialog id="basicDialog" zindex="2100" header="Dialog" showCloseIcon="true" visible="false" target="#container" width="800" close="siteInstance.CloseDialog"></ejs-dialog>
+    </div>
+}
+@section ScriptSection{
+    <script>
+        var siteInstance = new eServiceOnline.Site('@Url.Action("Index", "Calendar")',
+            '@Url.Action("ProcessContextMenu", "Calendar")');
+        var retrieval = { BR: 0, RD: 0, Edm: 0, Eds: 0, GP: 0, FSJ: 0, NW: 0, EST: 0, SC: 0, KD: 0, LLD: 0, LLB: 0 };
+        $(document).ready(function() {
+
+            getSession();
+            InitializeCheckbox();
+            init("Crews", '@Url.Action("GetCrewData", "Calendar")', true, "TimelineDay");
+            init("Units", ' @Url.Action("GetUnitData", "Calendar")', true, "TimelineDay");
+            init("Workers", '@Url.Action("GetWorkData", "Calendar")', true, "TimelineDay");
+        });
+
+        function InitializeCheckbox() {
+            retrieval = JSON.parse($("#RetrievalConditions").val());
+            $("#retrieval_conditions input").each(function(i, ele) {
+                var inputVal = $(ele).val();
+                $.each(retrieval,
+                    function(name, value) {
+                        if (inputVal == value) {
+                            $("#retrieval_conditions").find("input[type='checkbox']").eq(i).prop("checked", true);
+                        }
+                    });
+            });
+        }
+
+        function getSession() {
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetSessionValue", "Calendar")',
+                async: false,
+                success: function(data) {
+                    $("#RetrievalConditions").val(data);
+                },
+                error: function(e) {
+                    alert('Error: ' + e);
+                }
+            });
+        }
+
+        function filter(obj) {
+            $("#" + obj.value).show();
+            if ($(obj).is(':checked')) {
+
+                if (obj.value == "Crews") {
+                    init(obj.value, '@Url.Action("GetCrewData", "Calendar")', true, "TimelineDay");
+                }
+                if (obj.value == "Units") {
+                    init(obj.value, '@Url.Action("GetUnitData", "Calendar")', true, "TimelineDay");
+                }
+                if (obj.value == "Workers") {
+                    init(obj.value, '@Url.Action("GetWorkData", "Calendar")', true, "TimelineDay");
+                }
+            } else {
+
+                $("#" + obj.value).html("");
+                $("#" + obj.value).hide();
+            }
+        }
+
+        function init(scheduleType, url, isReadonly) {
+            var selectedDate = '@DateTime.UtcNow.ToString("yyyy\'-\'MM\'-\'dd\'T\'HH\':\'mm\':\'ss")';
+            $.ajax({
+                type: "GET",
+                url: url,
+                dataType: "json",
+                async: false,
+                success: function(data) {
+                    DrawSchedule(scheduleType, data, isReadonly, "TimelineDay", selectedDate);
+                },
+                error: function(e) {
+                    alert('Error: ' + e);
+                }
+            });
+        }
+
+        function DrawSchedule(scheduleType, data, isReadonly, currentView, selectedDate) {
+            var height = 0;
+            if (data.ScheduleStyleModels.length == 0) {
+                height = 700;
+            } else {
+                height = data.ScheduleStyleModels.length * 65 + 42 + 94;
+            }
+
+            var nonscheduled = new ejs.schedule.Schedule({
+                "agendaDaysCount": 7.0,
+                "currentView": currentView,
+                "eventSettings": {
+                    "dataSource": ej.data.DataUtil.parse.isJson(data.ScheduleModels),
+                    "fields": {
+                        "description": {
+                            "name": "Description",
+                            "title": "Comments"
+                        },
+                        "subject": {
+                            "name": "Subject",
+                            "title": "Subject"
+                        }
+                    }
+                },
+                "firstDayOfWeek": 0.0,
+                "group": {
+                    "byGroupID": false,
+                    "resources": [
+                        scheduleType
+                    ]
+                },
+                "height": height,
+                "readonly": isReadonly,
+                "enableTooltip": true,
+                "timeScale": {
+                    "interval": 60,
+                    "slotCount": 1
+                },
+
+                "resources": [
+                    {
+                        "dataSource": ej.data.DataUtil.parse.isJson(data.ScheduleStyleModels),
+                        "field": "OwnerId",
+                        "name": scheduleType,
+                        "title": "Choose " + scheduleType
+                    }
+                ],
+                "selectedDate": selectedDate,
+
+                "views": [
+                    {
+                        "interval": 1.0,
+                        "slotCount": "1",
+                        "option": "TimelineDay"
+                    },
+                    {
+                        "interval": 1.0,
+                        "option": "TimelineWeek",
+                        "timeScale": { "enable": false }
+                    },
+                    {
+                        "interval": 1.0,
+                        "option": "TimeLineMonth",
+                        "timeScale": { "enable": false }
+                    }
+                ],
+                "actionComplete": initSchedule1,
+                "popupOpen": initSchedule,
+                "created": siteInstance.CreatedCalenderContext
+
+            });
+
+            nonscheduled.appendTo("#" + scheduleType);
+        }
+
+        function initSchedule1(args) {
+
+            var startTime = this.selectedDate;
+            var viewStyle = this.currentView;
+            var scheduleType = this.resources[0].name;
+            if (args.requestType === "dateNavigate" || args.requestType === "viewNavigate") {
+                var schedulerObject = document.getElementById(scheduleType).ej2_instances[0]; 
+                $.ajax({
+                    url: '@Url.Action("GetData", "Calendar")',
+                    data: {
+                        "startTime": startTime.toISOString(),
+                        "viewStyle": viewStyle,
+                        "viewType": scheduleType
+                    },
+                    method: "Post",
+                    success: function(data) {
+//                        DrawSchedule(scheduleType, data, true, viewStyle, startTime);
+                        schedulerObject.eventSettings.dataSource = ej.data.DataUtil.parse.isJson(data.ScheduleModels);
+
+                        schedulerObject.resources[0].dataSource= ej.data.DataUtil.parse.isJson(data.ScheduleStyleModels);
+                        schedulerObject.render();
+                    }
+
+                });
+            }
+        }
+
+        function initSchedule(args) {
+
+            $(document).delegate(args.cell,
+                'contextmenu',
+                function(e) {
+                    e.preventDefault();
+                });
+        }
+
+        function selectionCriteria(item, data) {
+
+            var url = '@Url.Action("UpdateSessionValue", "Calendar")';
+            console.log($("#RetrievalConditions").val());
+            retrieval = JSON.parse($("#RetrievalConditions").val());
+
+            if ($(item).is(":checked")) {
+                $("#" + data).val($(item).val());
+                $(item).prop("checked", true);
+                retrieval[data] = $(item).val();
+            } else {
+                $("#" + data).val("");
+                $(item).prop("checked", false);
+                retrieval[data] = 0;
+            }
+            $.ajax({
+                url: url,
+                method: "Post",
+                data: retrieval,
+                success: function() {
+                    $("#filterId input").each(function(i, ele) {
+                        if ($(ele).is(":checked")) {
+                            getSession();
+                            if ($(ele).val() == "Crews") {
+                                $("#Crews").html("");
+                                init($(ele).val(), '@Url.Action("GetCrewData", "Calendar")', true);
+                            }
+                            if ($(ele).val() == "Units") {
+                                $("#Units").html("");
+                                init($(ele).val(), '@Url.Action("GetUnitData", "Calendar")', true);
+                            }
+                            if ($(ele).val() == "Workers") {
+                                $("#Workers").html("");
+                                init($(ele).val(), '@Url.Action("GetWorkData", "Calendar")', true);
+                            }
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+}

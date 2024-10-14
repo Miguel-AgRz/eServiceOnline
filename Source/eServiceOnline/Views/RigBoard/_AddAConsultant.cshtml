@@ -1,0 +1,142 @@
+﻿@using eServiceOnline.Models.RigBoard
+@model eServiceOnline.Models.RigBoard.ConsultantViewModel
+
+<style>
+    .copylist {
+        position: relative;
+        width: 70%;
+        height: 36px;
+    }
+
+        .copylist .sj_text_list {
+            width: 100%;
+            height: 36px;
+            border: 1px solid #999;
+            padding: 6px 12px;
+            border-radius: 2px;
+            line-height: 22px;
+        }
+
+            .copylist .sj_text_list:focus {
+                outline: none;
+                border: 1px solid #B44c6b;
+            }
+
+        .copylist i {
+            position: absolute;
+            width: 36px;
+            height: 36px;
+            text-align: center;
+            line-height: 36px;
+            right: 0;
+            top: 0;
+        }
+
+    .copylistbox {
+        position: absolute;
+        display: none;
+        width: 97% !important;
+        height: auto !important;
+        max-height: 147px;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        border: 1px solid #ccc;
+        z-index: 1;
+    }
+
+        .copylistbox .e-content {
+            width: 100% !important;
+        }
+
+        .copylistbox .e-lv .e-list .e-chevron-right_01 {
+            padding-top: 9px;
+            padding-bottom: 9px;
+        }
+
+        .copylistbox ul li {
+            white-space: nowrap;
+            overflow: hidden;
+        }
+</style>
+@using (Html.BeginForm("AddAConsultant", "RigBoard", FormMethod.Post, new { enctype = "multipart/form-data", onsubmit = "return saveNameRepeat();" }))
+{
+    @Html.HiddenFor(m => m.CallSheetId)
+    @Html.HiddenFor(m => m.ConsultantId)
+    @Html.HiddenFor(m => m.Phone2)
+    @Html.HiddenFor(m => m.Cell)
+
+    <div class="sj_dialog_body sj_lsd_ud">
+        <div class="det_list">
+            <label class="det_label">Name</label>
+            <div class="det_text" style="position: relative;">
+                @Html.HiddenFor(m => m.Name)
+                <ej-drop-down-list id="ClientConsultantId" enable-filter-search="true" Width="280px" Select="getShift">
+                    <e-datamanager id="ClientConsultantName" json="@ViewBag.ClientConsultantList"></e-datamanager>
+                    <e-drop-down-list-fields text="Text" id="ClientConsultantName" value="Value" />
+                </ej-drop-down-list>
+                <span id="ClientConsultantTip" style="color: firebrick;position: absolute;left: 290px;top: 0px;"></span>
+            </div>
+        </div>
+
+        <div class="det_list">
+            <label class="det_label">Phone</label>
+            <div class="det_text">@Html.TextBoxFor(model => model.PhoneNumber, new { @class = "sj_text" })</div>
+            <input type="hidden" name="rigJobId" id="rigJobId" value="@ViewBag.RigJobId" />
+        </div>
+        <div class="det_list">
+            <label class="det_label">Email</label>
+            <div class="det_text">@Html.TextBoxFor(model => model.Email, new { @class = "sj_text" })</div>
+        </div>
+
+    </div>
+
+    <div class="sj_dialog_foot">
+        <input type="submit" value="Save" />
+    </div>
+}
+<ej-script-manager></ej-script-manager>
+<script>
+
+        function getShift(obj) {
+            if ($(obj).length > 0) {
+                $.ajax({
+                    url: '@(this.Url.Action("GetConsultantInfo", "RigBoard"))',
+                    type: 'POST',
+                    async: false,
+                    data: {
+                        "consultantId": obj.value
+                    },
+                    dateType: "json",
+                    success: function (data) {
+                        $("#Name").val(data.Name);
+                        $("#PhoneNumber").val(data.PhoneNumber);
+                        $("#Email").val(data.Email);
+                        $("#Cell").val(data.Cell);
+                        $("#Phone2").val(data.Phone2);
+                        $("#ConsultantId").val(data.ConsultantId);
+                    }
+                });
+            }
+        }
+
+        function CheckNameRepeat() {
+            var name = $("#Name").val();
+            if (name == "" || name == null) {
+                $("#Name").next().show();
+            } else {
+                $("#Name").next().hide();
+            }
+        }
+        function saveNameRepeat() {
+            var name = $("#Name").val();
+            if (name == "" || name == null) {
+                $("#ClientConsultantTip").html("*required");
+                return false;
+            } else {
+                $("#ClientConsultantTip").html("");
+                return true;
+            }
+        }
+
+</script>
+

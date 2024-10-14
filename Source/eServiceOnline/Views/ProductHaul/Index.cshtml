@@ -1,0 +1,593 @@
+﻿@using System.Threading.Tasks
+@using eServiceOnline.Data
+@using eServiceOnline.Models.ProductHaul
+@using eServiceOnline.SecurityControl
+@using MetaShare.Common.Foundation.EntityBases
+@using MetaShare.Common.Foundation.Permissions
+@using Syncfusion.JavaScript
+@model ProductHaulViewModel
+
+@{
+    ViewData["Title"] = "Product Hauls";
+    this.ViewBag.Drivers = new List<NamedObject> { new NamedObject { Id = 1, Name = "111111111" }, new NamedObject { Id = 2, Name = "22222222222" } };
+
+
+
+    //List<NamedObject> drivers = new List<NamedObject> {new NamedObject {Id = 1, Name = "111111111"}, new NamedObject {Id = 2, Name = "22222222222"}};
+
+    List<SelectListItem> truckUnitItems = this.ViewData["truckUnitItems"] as List<SelectListItem>;
+
+    List<SelectListItem> employeeItems = this.ViewData["employeeItems"] as List<SelectListItem>;
+}
+@section SampleHeading{
+
+    <script src="~/js/EServiceExpress.js" asp-append-version="true"></script>
+    <script src="~/js/verifyDailog.js"></script>
+    <style>
+        .container {
+            width: 1400px !important;
+        }
+    </style>
+
+    <style>
+        #EditDialog_FlatGrid_Save, #EditDialog_FlatGrid_Cancel {
+            display: none;
+        }
+    </style>
+    <div style="padding: 10px 0; overflow: hidden;">
+        <div style="float: left; height: 34px; line-height: 34px;">
+            <span class="sampleName" style="display: inline-block; padding-right: 25px">Filters: </span>
+            <span style="display: inline-block; padding-right: 10px">Service Points</span>
+        </div>
+        <div style="float: left;">
+            <ej-drop-down-list id="customerList" enable-filter-search="true">
+                <e-datamanager id="servicePoints" json="@Model.DistrictList"></e-datamanager>
+                <e-drop-down-list-fields text="Name" id="Id" value="Name" />
+            </ej-drop-down-list>
+        </div>
+    </div>
+    <div>
+        <input type="text" id="districtModel_Id" value="@Model.DistrictModel.Id" style="display: none" />
+    </div>
+}
+
+@section ControlsSection{
+    <ej-grid id="FlatGrid" allow-paging="true" allow-resize-to-fit="true" allow-sorting="true" action-complete="complete" enable-query-string="true">
+        <e-page-settings page-size="18"> </e-page-settings>
+        <e-datamanager url="@Url.Action("GetPagedProductHaulLoads", "ProductHaul", new {servicePointId = this.Model.DistrictModel.Id})" adaptor="UrlAdaptor" />
+        <e-sort-settings>
+            <e-sorted-columns>
+                <e-sorted-column field="ProductHaulLoadId" direction="Descending"></e-sorted-column>
+            </e-sorted-columns>
+        </e-sort-settings>
+        <e-edit-settings allow-adding="true" allow-editing="true" allow-deleting="true" dialog-editor-template-id="#template" edit-mode="@(EditMode.DialogTemplate)"></e-edit-settings>
+        <e-toolbar-settings show-toolbar="@ViewBag.HavePermission" toolbar-items="@(new List<string>() {"add", "edit", "delete", "update", "cancel", "printGrid", "pdfExport"})">
+
+        </e-toolbar-settings>
+        <e-columns>
+            <e-column field="ProductHaulLoadId" header-text="Load Sheet #" text-align="Left" is-primary-key="true" width="70"></e-column>
+            <e-column field="CallSheetNumber" header-text="Call Sheet#" validation-rules='new Dictionary<string, object>() { {"required",true}, {"number",true} }' text-align="Left" width="70"></e-column>
+            <e-column field="RigName" header-text="Rig Name" text-align="Left" width="80"></e-column>
+            <e-column field="Category" header-text="Category" width="60" />
+            <e-column field="BaseBlend" header-text="Blend" text-align="Left" width="160"></e-column>
+            <e-column field="Amount" header-text="Amount" text-align="Left" width="50"></e-column>
+            <e-column field="BulkUnitName" header-text="Primary Unit" text-align="Left" width="80"></e-column>
+            <e-column field="TractorUnitName" header-text="Tractor Unit" text-align="Left" width="80"></e-column>
+            <e-column field="Driver" header-text="Driver" text-align="Left" width="120"></e-column>
+            <e-column field="BinInformationName" header-text="Bin #" text-align="Left" width="50"></e-column>
+            <e-column field="BulkPlantName" header-text="Bulk Plant" text-align="Left" width="80"></e-column>
+            <e-column field="StatusString" header-text="Status" text-align="Left" width="70"></e-column>
+        </e-columns>
+        <ej-grid query-string="ProductHaulLoadId" width="300" allow-selection="false">
+            <e-datamanager url="@Url.Action("GetProductLoadSectionModels", "ProductHaul")" adaptor="UrlAdaptor"></e-datamanager>
+            <e-columns>
+                <e-column field="BlendChemicalModel.Name" header-text="Material" width="75"></e-column>
+                <e-column field="RequiredAmount" format="{0:N1}" header-text="Required(kg)" width="100"></e-column>
+            </e-columns>
+
+        </ej-grid>
+    </ej-grid>
+}
+
+
+
+
+@section ScriptSection{
+    <script type="text/template" id="template">
+
+        <table cellspacing="10" style="width: 500px;">
+            <tr>
+                <td style="text-align: right;width: 128px;">
+                    Call Sheet Number
+                </td>
+                <td style="text-align: left">
+                    <span style="display:inline-block;width:90%;">
+                        <input id="CallSheetNumber" name="CallSheetNumber" value="{{: CallSheetNumber}}" readonly="readonly" class="e-ejinputtext" />
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: right;">
+                    Base Blend
+                </td>
+                <td style="text-align: left">
+                    <select id="BaseBlendSectionId" name="BaseBlendSectionId">
+                        @for (int i = 0; i < 100; i++)
+                        {
+                            <option value=""></option>
+                        }
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: right;height: 34px;" colspan="2">
+                    <label>
+                        <span style="display:inline-block;margin: auto 10px;width:13px;">
+                            <input type="radio" name="IsTotalBlendTonnage" value="true" onclick="javascript: $('#IsTotalBlendTonnage').val(this.value)" />
+                        </span>Total Blend Tonnage
+                    </label>
+                    <label>
+                        <span style="display:inline-block;margin: auto 10px;width:13px;">
+                            <input type="radio" name="IsTotalBlendTonnage" value="false" checked="checked" onclick="javascript: $('#IsTotalBlendTonnage').val(this.value)" />
+                        </span>Base Blend Tonnage
+                    </label>
+                    <input type="hidden" id="IsTotalBlendTonnage" value="false" />
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: right;">
+                    Amount
+                </td>
+                <td style="text-align: left">
+                    <span style="display:inline-block;width:90%;margin-right: 6px;">
+                        <input id="Amount" name="Amount" value="{{: Amount}}" onblur="Verify.VerifyDailog.prototype.verifyEmpty(this);" class="e-ejinputtext" />
+                    </span>t
+                    <div style="display:none;color:red;">Amount is required</div>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: right;">
+                    Mix Water
+                </td>
+                <td style="text-align: left">
+                    <span style="display:inline-block;width:90%;">
+                        <input id="MixWater" name="MixWater" value="{{: MixWater}}" onblur="Verify.VerifyDailog.prototype.verifyEmpty(this);" class="e-ejinputtext" />
+                    </span>
+                    <div style="display:none;color:red;">Mix Water is required</div>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: right;width: 128px;">
+                    Load to Bin
+                </td>
+                <td style="text-align: left">
+                    <span style="display:inline-block;width:90%;">
+                        <input id="BinNumber" name="BinNumber" value="{{: BinNumber}}" readonly="readonly" class="e-ejinputtext" />
+                        <input type="hidden" id="BinId" name="BinId" value="{{: BinId}}" class="e-ejinputtext" />
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: right;">
+                    ExpectedOnLocationTime
+                </td>
+                <td style="text-align: left">
+                    <span style="display:inline-block;width:90%;margin-right: 6px;" id="span_ExpectedOnLocationTime">
+                        <input id="ExpectedOnLocationTime" type="hidden" name="ExpectedOnLocationTime" value="{{: ExpectedOnLocationTime}}" class="e-ejinputtext" />
+                        <input id="ExpectedOnLocation_Time" type="datetime-local" name="ExpectedOnLocation_Time" class="e-ejinputtext" />
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: right;">
+                    Driver
+                </td>
+                <td style="text-align: left;">
+                    <select id="DriverId" name="DriverId" style="width: 90%; height: 32px;">
+                        @if (employeeItems != null)
+                        {
+                            foreach (SelectListItem item in employeeItems)
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+                        }
+                    </select>
+                </td>
+            </tr>
+
+            <tr>
+                <td style="text-align: right;">
+                    Bulk Unit
+                </td>
+                <td style="text-align: left;">
+                    <select id="BulkUnitId" name="BulkUnitId" style="width: 90%; height: 32px;">
+                        @if (truckUnitItems != null)
+                        {
+                            foreach (SelectListItem item in truckUnitItems)
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+                        }
+                    </select>
+                </td>
+            </tr>
+
+            <tr>
+                <td style="text-align: right;">
+                    Tractor Unit
+                </td>
+                <td style="text-align: left;">
+                    <select id="TractorUnitId" name="TractorUnitId" style="width: 90%; height: 32px;">
+                        @if (truckUnitItems != null)
+                        {
+                            foreach (SelectListItem item in truckUnitItems)
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+                        }
+                    </select>
+                </td>
+            </tr>
+
+            <tr>
+                <td style="text-align: right;">
+                    Comments
+                </td>
+                <td style="text-align: left">
+                    <span style="display:inline-block;width:90%;">
+                        <textarea id="Comments" name="Comments" style="height: 64px; width: 100%;" class="e-ejinputtext">{{: Comments}}</textarea>
+                    </span>
+                </td>
+            </tr>
+        </table>
+        <div style="text-align: center;">
+            <input class="e-save e-button e-btnsub e-flat e-js e-ntouch e-btn e-select e-widget e-txt e-btn-normal" style="width: 100px; height: 35px;" id="EditDialog_Flat_Save" tabindex="" role="button" value="Save" aria-describedby="Save" aria-disabled="false" type="button">
+            <input class="e-cancel e-button e-btncan e-flat e-js e-ntouch e-btn e-select e-widget e-txt e-btn-normal" style="margin-left: 20px; width: 100px; height: 35px;" id="EditDialog_Flat_Cancel" tabindex="" role="button" value="Cancel" aria-describedby="Cancel" aria-disabled="false" type="button">
+        </div>
+    </script>
+
+    <script type="text/javascript">
+        function complete(args) {
+            if ((args.requestType === "beginedit" || args.requestType === "add") &&
+                args.model.editSettings.editMode ===
+                "dialogtemplate") {
+//                $("#BaseBlendSectionId").ejDropDownList({ width: '90%', enableFilterSearch: true });
+                if (args.requestType === "beginedit") {
+                    $("#BaseBlendSectionId").ejDropDownList({ width: '90%' });
+                    $("#CallSheetNumber").attr("disabled", "disabled");
+                    $("#BaseBlendSectionId").ejDropDownList("setSelectedValue", args.row.children().eq(8).text());
+                }
+            }
+        }
+
+        function blurCallSheet() {
+            var callSheetNumber = $("#CallSheetNumber").val();
+
+            if (callSheetNumber === "" || callSheetNumber <= 0) {
+                var baseBlendChemicalId = "";
+                if ($("#FlatGrid table tr[aria-selected='true']").length > 0) {
+                    baseBlendChemicalId = $("#FlatGrid table tr[aria-selected='true'] td").eq(8).text();
+                };
+
+                $("#BaseBlendSectionId").html("");
+                $("#BaseBlendSectionId_popup_wrapper ul").html("");
+                $("#BaseBlendSectionId_hidden").val("");
+                $.ajax({
+                    type: "post",
+                    url: '@(this.Url.Action("GetBlendChemicalCollection", "ProductHaul"))',
+                    success: function(data) {
+                        var content = "";
+                        var contentnew = "";
+                        $.each(data,
+                            function(i, ele) {
+                                if (baseBlendChemicalId == "") {
+                                    content += '<option value="' +
+                                        ele.I +
+                                        '">' +
+                                        ele.N +
+                                        '</option>';
+                                    contentnew += '<li data-value="' +
+                                        ele.I +
+                                        '" unselectable="on" role="option" class="">' +
+                                        ele.N +
+                                        '</li>';
+                                    $("#BaseBlendSectionId").html(content);
+                                    $("#BaseBlendSectionId_popup_wrapper ul").html(contentnew);
+                                    if (i == 0) {
+                                        $("#BaseBlendSectionId_hidden").val(ele.N);
+                                    }
+                                } else if ($.trim(baseBlendChemicalId) == $.trim(ele.I)) {
+                                    content += '<option value="' +
+                                        ele.I +
+                                        '" selected="selected">' +
+                                        ele.N +
+                                        '</option>';
+//                                    contentnew += '<li data-value="' +
+//                                        ele.I +
+//                                        '" unselectable="on" role="option" class="">' +
+//                                        ele.N +
+//                                        '</li>';
+                                    $("#BaseBlendSectionId").html(content);
+//                                    $("#BaseBlendSectionId_popup_wrapper ul").html(contentnew);
+                                    $("#BaseBlendSectionId_hidden").val(ele.N);
+                                }
+                            });
+
+                        if (baseBlendChemicalId == "") {
+                            $("#BaseBlendSectionId").ejDropDownList({ width: '90%', enableFilterSearch: true });
+                            $("#BaseBlendSectionId_hidden")
+                                .val($("#BaseBlendSectionId_popup ul li:first-child").text());
+                        };
+
+//                        $("#BaseBlendSectionId").ejDropDownList({ width: '90%' });
+//                        var target = $('#BaseBlendSectionId').data("ejDropDownList");
+//                        target.option("enableFilterSearch", true);
+//                        $("#BaseBlendSectionId_popup ul li:first-child").trigger("click");
+                    }
+                });
+                return;
+            } else {
+                var baseBlendSectionId = "";
+                if ($("#FlatGrid table tr[aria-selected='true']").length > 0) {
+                    baseBlendSectionId = $("#FlatGrid table tr[aria-selected='true'] td").eq(8).text();
+                }
+
+                $("#BaseBlendSectionId").html("");
+                $("#BaseBlendSectionId_popup_wrapper ul").html("");
+                $("#BaseBlendSectionId_hidden").val("");
+
+                $.ajax({
+                    type: "post",
+                    url: '@(this.Url.Action("GetBlendSectionModelCollectionByCallSheetNumber", "ProductHaul"))',
+                    data: { "callSheetNumber": callSheetNumber },
+                    success: function(data) {
+                        if (JSON.stringify(data) !== "null" && data != null) {
+                            var content = "";
+                            var contentnew = "";
+
+                            $.each(data,
+                                function(i, ele) {
+                                    if (baseBlendSectionId == "") {
+                                        content += '<option value="' +
+                                            ele.Id +
+                                            '">' +
+                                            ele.Blend +
+                                            '</option>';
+                                        contentnew += '<li data-value="' +
+                                            ele.Id +
+                                            '" unselectable="on" role="option" class="">' +
+                                            ele.Blend +
+                                            '</li>';
+                                        $("#BaseBlendSectionId").html(content);
+                                        $("#BaseBlendSectionId_popup_wrapper ul").html(contentnew);
+                                    } else if ($.trim(baseBlendSectionId) == $.trim(ele.Id)) {
+
+                                        content += '<option value="' +
+                                            ele.Id +
+                                            '" selected="selected">' +
+                                            ele.Blend +
+                                            '</option>';
+                                        contentnew += '<li data-value="' +
+                                            ele.Id +
+                                            '" unselectable="on" role="option" class="">' +
+                                            ele.Blend +
+                                            '</li>';
+                                        $("#BaseBlendSectionId").html(content);
+                                        $("#BaseBlendSectionId_popup_wrapper ul").html(contentnew);
+                                        $("#BaseBlendSectionId_hidden").val(ele.Blend);
+                                    }
+                                });
+                        }
+                    }
+                });
+            }
+        }
+
+        window.onload = function() {
+            $("#FlatGrid_printGrid").unbind();
+            $("#FlatGrid_pdfExport").unbind();
+            $("#FlatGrid_delete").unbind();
+
+            Verify.VerifyDailog.prototype.printGrid('@(this.Url.Action("LoadSheet", "Load"))');
+            Verify.VerifyDailog.prototype.pdfExport('@(this.Url.Action("ExportPdf", "ProductHaul"))');
+            Verify.VerifyDailog.prototype.delete('@(this.Url.Action("Delete", "ProductHaul"))');
+
+            $(document)
+                .on('dblclick',
+                    "#FlatGrid .e-gridcontent table tr",
+                    function () {
+
+                        var driverId = $("#FlatGrid table tr[aria-selected='true'] td").eq(14).text();
+                        var bulkUnitId = $("#FlatGrid table tr[aria-selected='true'] td").eq(15).text();
+                        var tractorUnitId = $("#FlatGrid table tr[aria-selected='true'] td").eq(16).text();
+                        Isselected("DriverId", driverId);
+                        Isselected("BulkUnitId", bulkUnitId);
+                        Isselected("TractorUnitId", tractorUnitId);
+
+                        var now = new Date();
+                        if ($("#ExpectedOnLocationTime").val().length == 0) {
+                            $("#ExpectedOnLocation_Time")
+                                .val(new Date().getFullYear() +
+                                    "-" +
+                                    fix((now.getMonth() + 1), 2) +
+                                    "-" +
+                                    fix(now.getDate(), 2) +
+                                    "T" +
+                                    fix(now.getHours(), 2) +
+                                    ":" +
+                                    fix(now.getMinutes(), 2));
+                        } else {
+                            now = new Date($("#ExpectedOnLocationTime").val());
+                            $("#ExpectedOnLocation_Time")
+                                .val(new Date().getFullYear() +
+                                    "-" +
+                                    fix((now.getMonth() + 1), 2) +
+                                    "-" +
+                                    fix(now.getDate(), 2) +
+                                    "T" +
+                                    fix(now.getHours(), 2) +
+                                    ":" +
+                                    fix(now.getMinutes(), 2));
+                        }
+                        $("#FlatGrid_edit").trigger("click");
+                        var isTotalBlendTonnage = $("#FlatGrid table tr[aria-selected='true'] td")
+                            .eq(9)
+                            .find("input")
+                            .is(':checked');
+
+                        if (isTotalBlendTonnage === true) {
+                            $("input[name='IsTotalBlendTonnage']:first").trigger("click");
+                        }
+                    });
+
+
+
+
+
+            $("#FlatGrid_add, #FlatGrid_edit, #FlatGrid_pdfExport")
+                .on("click",
+                    function() {
+                        var driverId = $("#FlatGrid table tr[aria-selected='true'] td").eq(14).text();
+                        var bulkUnitId = $("#FlatGrid table tr[aria-selected='true'] td").eq(15).text();
+                        var tractorUnitId = $("#FlatGrid table tr[aria-selected='true'] td").eq(16).text();
+                        Isselected("DriverId", driverId);
+                        Isselected("BulkUnitId", bulkUnitId);
+                        Isselected("TractorUnitId", tractorUnitId);
+
+                        var now = new Date();
+                        if ($("#ExpectedOnLocationTime").val().length == 0) {
+                            $("#ExpectedOnLocation_Time")
+                                .val(new Date().getFullYear() +
+                                    "-" +
+                                    fix((now.getMonth() + 1), 2) +
+                                    "-" +
+                                    fix(now.getDate(), 2) +
+                                    "T" +
+                                    fix(now.getHours(), 2) +
+                                    ":" +
+                                    fix(now.getMinutes(), 2));
+                        } else {
+                            now = new Date($("#ExpectedOnLocationTime").val());
+                            $("#ExpectedOnLocation_Time")
+                                .val(new Date().getFullYear() +
+                                    "-" +
+                                    fix((now.getMonth() + 1), 2) +
+                                    "-" +
+                                    fix(now.getDate(), 2) +
+                                    "T" +
+                                    fix(now.getHours(), 2) +
+                                    ":" +
+                                    fix(now.getMinutes(), 2));
+                        }
+
+                        $("#BaseBlendSectionId_container")
+                            .css({
+                                "width": "100%"
+                            });
+                        $("input[name='IsTotalBlendTonnage']")
+                            .css({
+                                "height": "13px"
+                            });
+                        var isTotalBlendTonnage = $("#FlatGrid table tr[aria-selected='true'] td")
+                            .eq(9)
+                            .find("input")
+                            .is(':checked');
+                        if (isTotalBlendTonnage === true) {
+                            $("input[name='IsTotalBlendTonnage']:first").trigger("click");
+                        }
+                        blurCallSheet();
+                    });
+
+            $("#customerList_popup").find("#" + $("#districtModel_Id").val()).trigger("click");
+        }
+
+        function fix(num, length) {
+            return ('' + num).length < length ? ((new Array(length + 1)).join('0') + num).slice(-length) : '' + num;
+        }
+
+        function Isselected(id, value) {
+            if (value != 0) {
+                $("#" + id +" option") .each(function () { //遍历全部option
+                    if ($(this).val() == value) {
+                        console.log(value);
+                        console.log($(this));
+                        $(this).attr("selected", true);
+                    }
+                });
+            }
+        }
+
+        $(document)
+            .on("click",
+                "#EditDialog_Flat_Cancel",
+                function() { $("#EditDialog_FlatGrid_Cancel").trigger("click"); });
+
+        $(document)
+            .on("click",
+                "#EditDialog_Flat_Save",
+                function() {
+                    $("#ExpectedOnLocationTime").val($("#ExpectedOnLocation_Time").val());
+                    var driverId = $('#DriverId').val();
+                    var bulkUnitId = $('#BulkUnitId').val();
+                    var tractorUnitId = $('#TractorUnitId').val();
+                    var driverName = $("#DriverId").find("option:selected").text();
+                    var bulkUnitName = $("#BulkUnitId").find("option:selected").text();
+                    var tractorUnitName = $("#TractorUnitId").find("option:selected").text();
+
+                    var prama = {
+                        ProductHaulId: $("#FlatGrid table tr[aria-selected='true'] td").eq(1).text(),
+                        CallSheetNumber: $('input[name=CallSheetNumber]').val(),
+                        BaseBlendSectionId: $('#BaseBlendSectionId').val(),
+                        IsTotalBlendTonnage: $('input[name=IsTotalBlendTonnage]:checked').val(),
+                        Amount: $('input[name=Amount]').val(),
+                        MixWater: $('input[name=MixWater]').val(),
+                        BinNumber: $('input[name=BinNumber]').val(),
+                        BinId: $('input[name=BinId]').val(),
+                        DriverId: driverId,
+                        BulkUnitId: bulkUnitId,
+                        BulkUnitName: bulkUnitName,
+                        TractorUnitId: tractorUnitId,
+                        TractorUnitName: tractorUnitName,
+                        PreferedName: driverName,
+                        ExpectedOnLocationTime: $('#ExpectedOnLocationTime').val(),
+                        Comments: $('textarea[name=Comments]').val(),
+                        Submit: 'save'
+                    }
+
+                    if ($('input[name=Amount]').val() === "") {
+                        $('input[name=Amount]').parent().next().show();
+                        return false;
+                    }
+                    $("#EditDialog_Flat_Save").attr("disabled", "disabled");
+
+                    Verify.VerifyDailog.prototype.save(prama,
+                        '@(this.Url.Action("Insert", "Load"))',
+                        '@(this.Url.Action("ExportPdf", "Load"))',
+                        '@(this.Url.Action("LoadSheet", "ProductHaul"))');
+                    return false;
+                });
+
+        var flag = false;
+        $(document)
+            .on('click',
+                "#customerList_popup_list_wrapper li",
+                function() {
+                    if (flag) {
+                        window.location.href = window.location.protocol +
+                            "//" +
+                            window.location.host +
+                            '@(this.Url.Action("Index", "ProductHaul"))' +
+                            "?pointId=" +
+                            $(this).attr("id");
+                    };
+                    $("#customerList_hidden").val($(this).text());
+
+                    flag = true;
+                });
+
+        window.onbeforeunload = function() {
+            var url = '@Url.Action("UpdateAccessRecord", "RigBoard")';
+            EServiceExpress.Common.prototype.LogOut(url);
+        }
+    </script>
+}

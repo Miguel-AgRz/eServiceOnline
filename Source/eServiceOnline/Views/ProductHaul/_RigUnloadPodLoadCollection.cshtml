@@ -1,0 +1,171 @@
+@model eServiceOnline.Models.ProductHaul.RescheduleProductHaulViewModel
+@{
+    bool IsStatic = false;
+    if (ViewData["isReadOnly"] != null)
+    {
+        IsStatic = (bool)ViewData["isReadOnly"];
+    }
+    foreach(var model in Model.PodLoadAndBendUnLoadModels)
+    {
+        model.PodLoadModels = model.PodLoadModels.OrderBy(p => p.PodIndex).ToList();
+    }
+}
+
+   @for(var j=0;j<Model.PodLoadAndBendUnLoadModels.Count;j++)
+{
+<div class="podLoadAndBlendLoad">
+
+
+    <div class="det_list">
+        <label class="det_label">Shipping Load Sheet @(j + 1) @Html.CheckBoxFor(model=>model.PodLoadAndBendUnLoadModels[j].IsCheckShippingLoadSheet, new {@class="ischeck_shippingloadsheet",  onclick = "removeShippingLoadSheet($(this),"+j+")" })</label>
+        @Html.HiddenFor(model=>model.PodLoadAndBendUnLoadModels[j].ShippingLoadSheetId)
+        <div class="det_text">
+            <div id="ShippingLoadCheck_@j" style="color:red; display:none">Keep at least one Shipping Load Sheet</div>
+        </div>
+    </div>
+     @*//Feb 05, 2023 tongtao 279_PR_CouldNotChangeCallSheet: set hidden save callsheetnumber *@
+    @if (Model.PodLoadAndBendUnLoadModels[j].CallSheetNumber > 0)
+    {
+        <div class="det_list">
+            <label class="det_label">Call Sheet Number</label>
+            <div class="det_text">
+                @*//Dec 11, 2023 zhangyuan 224_PR_ShowCallSheetList: Modify Call Sheet Number DropDownList*@
+                @*@Html.TextBoxFor(model => model.PodLoadAndBendUnLoadModels[j].CallSheetNumber, new { @class = "sj_text" })*@
+                @*//jan 25, 2024 tongtao 273_PR_UnloadChangeHasErrorAfterRigChangeRig:Add a parameter to determine whether this method is called during initialization or modification.*@
+                @(this.Html.DropDownListFor(model => model.PodLoadAndBendUnLoadModels[j].CallSheetNumber, new SelectList(Model.PodLoadAndBendUnLoadModels[j].CallSheetNumbers, "Value", "Text"), new { @onChange = "LoadRigByCallSheetNumber(" + j + ",1)", @class = "sj_select" }))
+                @Html.HiddenFor(model => model.PodLoadAndBendUnLoadModels[j].IsRigJobBlend, new { id = "hid_" + Model.PodLoadAndBendUnLoadModels[j].CallSheetNumber + "__IsRigJobBlend" })
+                @Html.HiddenFor(model => model.PodLoadAndBendUnLoadModels[j].CallSheetNumber, new { id = "hid_" + Model.PodLoadAndBendUnLoadModels[j].CallSheetNumber + "__CallSheetNumber" })
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="det_list">
+            <label class="det_label">Program Id.Revision</label>
+            <div class="det_text">
+                @Html.TextBoxFor(model => model.PodLoadAndBendUnLoadModels[j].ProgramId, new {  @class = "sj_text" })
+            </div>
+        </div>
+        <div class="det_list">
+            @*//Dec 7, 2023 zhangyuan 224_PR_ShowCallSheetList: add Call Sheet Number*@
+            <label class="det_label">Call Sheet Number</label>
+            <div class="det_text">
+                @*//jan 23, 2024 tongtao 274_PR_RigCouldNotChange: set rigid is readonly when callSheet has been selected//jan 25, 2024 tongtao 273_PR_UnloadChangeHasErrorAfterRigChangeRig:Add a parameter to determine whether this method is called during initialization or modification.*@
+                @(this.Html.DropDownListFor(model => model.PodLoadAndBendUnLoadModels[j].CallSheetNumber, new SelectList(Model.PodLoadAndBendUnLoadModels[j].CallSheetNumbers, "Value", "Text"), new { @onChange = "LoadRigByCallSheetNumber(" + j + ",1)", @class = "sj_select" }))
+                @Html.HiddenFor(model => model.PodLoadAndBendUnLoadModels[j].IsRigJobBlend, new { id = "hid_" + Model.PodLoadAndBendUnLoadModels[j].CallSheetNumber + "__IsRigJobBlend" })
+                @Html.HiddenFor(model => model.PodLoadAndBendUnLoadModels[j].CallSheetNumber, new { id = "hid_" + Model.PodLoadAndBendUnLoadModels[j].CallSheetNumber + "__CallSheetNumber" })
+            </div>
+        </div>
+    }
+
+    <div class="det_list">
+        <label class="det_label">Blend</label>
+        <div class="det_text">
+            @Html.TextBoxFor(model => model.PodLoadAndBendUnLoadModels[j].Blend, new {  @class = "sj_text" })
+        </div>
+    </div>
+
+    <div class="det_list">
+        <label class="det_label">Load Amount</label>
+        <div class="det_text">
+            @Html.TextBoxFor(model => model.PodLoadAndBendUnLoadModels[j].LoadAmount, new {  @class = "sj_text LoadAmount" })
+        </div>
+    </div>
+     @*//jan 25, 2024 tongtao  273_PR_UnloadChangeHasErrorAfterRigChangeRig: when call sheet is not seleted,go with crew not show*@
+     <div class="det_list" id="GoWithCrewPart@(j)">
+         <label class="det_label">Go With Crew</label>
+         @Html.HiddenFor(model => model.PodLoadAndBendUnLoadModels[j].RigName)        
+         <div class="det_text">
+
+             @Html.CheckBoxFor(model => model.PodLoadAndBendUnLoadModels[j].IsGoWithCrew,new{@class="isGoWithCrew",onclick="checkIsGoWithCrew($(this))"})
+
+             @Html.HiddenFor(model => model.PodLoadAndBendUnLoadModels[j].ShippingLoadSheetId)
+         </div>
+     </div>
+     <div class="det_list">
+         <label class="det_label">From Rig/BulkPlant</label>
+         <div class="det_text">
+             @Html.TextBoxFor(model => model.PodLoadAndBendUnLoadModels[j].FromRigBulkPlant, new { @readonly = true, @class = "sj_text" })
+         </div>
+     </div>
+     <div class="det_list">
+         <label class="det_label">From Bin</label>
+         <div class="det_text">
+             @Html.TextBoxFor(model => model.PodLoadAndBendUnLoadModels[j].FromBin, new { @readonly = true, @class = "sj_text" })
+         
+         </div>
+     </div>
+
+    <div class="det_list">
+        <label class="det_label">Rig/BulkPlant</label>
+        <div class="det_text">
+
+            @*@Html.TextBoxFor(model => model.PodLoadAndBendUnLoadModels[j].RigName, new { @readonly = true, @class = "sj_text" })
+
+                @Html.HiddenFor(model => model.PodLoadAndBendUnLoadModels[j].RigId)*@
+            @*//Dec 7, 2023 zhangyuan 224_PR_ShowCallSheetList: modify and rig list*@
+            @*//jan 23, 2024 tongtao 274_PR_RigCouldNotChange: set rigid is readonly when callSheet has been selected*@
+             @*//Feb 23, 2024 tongtao 303_PR_NotSaveRigWhenCallsheetNumberChanged: change hidden control id*@
+            @(this.Html.DropDownListFor(model => model.PodLoadAndBendUnLoadModels[j].RigId, new SelectList(this.ViewBag.AllRigs, "Id", "Name"), new { onchange = "LoadPodLoadAndBendUnLoadByRig(" +j+")", @class = "sj_select"}))
+            @Html.HiddenFor(model => model.PodLoadAndBendUnLoadModels[j].RigName)
+            @Html.HiddenFor(model => model.PodLoadAndBendUnLoadModels[j].RigId, new { id = "hid_" + j + "_RigId" })
+        </div>
+    </div>
+    @*//jan 23, 2024 tongtao 273_PR_UnloadChangeHasErrorAfterRigChangeRig: when reschedule producthaul,get blend unload amout by shippingLoadSheetId*@
+    <div class="rigUnload" id="rigUnload@(j)">
+        @if(Model.PodLoadAndBendUnLoadModels[j].BlendUnloadSheetModels!=null)
+        {
+            for(int i=0;i< Model.PodLoadAndBendUnLoadModels[j].BlendUnloadSheetModels.Count;i++)
+            {
+                <div class="det_list">
+                    <label class="det_label">Bin @Model.PodLoadAndBendUnLoadModels[j].BlendUnloadSheetModels[i].DestinationStorage.Name  Offload Amount</label>
+                    <div class="det_text">
+                        @if (IsStatic)
+                        {
+                            @Html.TextBoxFor(model => model.PodLoadAndBendUnLoadModels[j].BlendUnloadSheetModels[i].UnloadAmount, new { @readonly = true, @class = "sj_text" })
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(model => model.PodLoadAndBendUnLoadModels[j].BlendUnloadSheetModels[i].UnloadAmount, new { @class = "sj_text blend_unload_amount" })
+                            @Html.HiddenFor(model=>model.PodLoadAndBendUnLoadModels[j].BlendUnloadSheetModels[i].DestinationStorage.Id)
+                            //Nov 28, 2023 zhangyuan 201_PR_AddingDifferrentBlend: Add different BlendDescription and Display prompt information
+                            @if (Model.PodLoadAndBendUnLoadModels[j].BlendUnloadSheetModels[i].DestinationStorage.Quantity > 0.001 && Model.PodLoadAndBendUnLoadModels[j].Blend != Model.PodLoadAndBendUnLoadModels[j].BlendUnloadSheetModels[i].DestinationStorage.BlendChemical.Description)
+                            {
+                                //jan 11, 2023 zhangyuan 259_PR_HaulBlendBugs: Modify  fix Quantity accuracy
+                                <div name="Bin_Different_@Model.PodLoadAndBendUnLoadModels[j].BlendUnloadSheetModels[i].DestinationStorage.Name" style="color:red;">@(Math.Round(Model.PodLoadAndBendUnLoadModels[j].BlendUnloadSheetModels[i].DestinationStorage.Quantity,3) + "t " + Model.PodLoadAndBendUnLoadModels[j].BlendUnloadSheetModels[i].DestinationStorage.BlendChemical.Name?.Replace(" + Additives", "") + " in Bin"))</div>
+                            }
+
+                        }
+                        @Html.HiddenFor(model=>model.PodLoadAndBendUnLoadModels[j].BlendUnloadSheetModels[i].Id)
+
+                    </div>
+                </div>
+            }
+        }
+    </div>
+    <div class="det_list">
+
+
+        @for(var i=0;i<Model.PodLoadAndBendUnLoadModels[j].PodLoadModels.Count;i++)
+        {
+            <div style="width:150px;display:inline-block">
+                <label class="det_label">Pod @(i+1)</label>
+                <div class="det_text">
+                    @if (Model.PodLoadAndBendUnLoadModels[j].ShippingLoadSheetId!=Model.PodLoadAndBendUnLoadModels[j].PodLoadModels[i].ShippingLoadSheet.Id && Model.PodLoadAndBendUnLoadModels[j].PodLoadModels[i].ShippingLoadSheet.Id > 0)
+                    {
+                        @Html.TextBoxFor(model => model.PodLoadAndBendUnLoadModels[j].PodLoadModels[i].LoadAmount, new {@onblur="ChangePodLoadAmount($(this))", @readOnly = true, @class = "sj_text pod_load_amount",@style="color:red",podIndex=Model.PodLoadAndBendUnLoadModels[j].PodLoadModels[i].PodIndex,shippingLoadSheetId=Model.PodLoadAndBendUnLoadModels[j].PodLoadModels[i].ShippingLoadSheet.Id })
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(model => model.PodLoadAndBendUnLoadModels[j].PodLoadModels[i].LoadAmount, new {@onblur="ChangePodLoadAmount($(this))", @class = "sj_text pod_load_amount",podIndex=Model.PodLoadAndBendUnLoadModels[j].PodLoadModels[i].PodIndex,shippingLoadSheetId=Model.PodLoadAndBendUnLoadModels[j].PodLoadModels[i].ShippingLoadSheet.Id })
+                    }
+                    @Html.HiddenFor(model=>model.PodLoadAndBendUnLoadModels[j].PodLoadModels[i].Id)
+                    @Html.HiddenFor(model=>model.PodLoadAndBendUnLoadModels[j].PodLoadModels[i].PodIndex)
+                    @Html.HiddenFor(model=>model.PodLoadAndBendUnLoadModels[j].PodLoadModels[i].ShippingLoadSheet.Id,new{@class="shipping_loadsheet_id"})
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+}

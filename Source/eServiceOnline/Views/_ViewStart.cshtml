@@ -1,0 +1,23 @@
+﻿@using System.Web
+
+@{
+
+    var controllerName = this.ViewContext.RouteData.Values["controller"].ToString();
+    dynamic _layout;
+    switch (controllerName)
+    {
+        case "RigBoard":
+        case "BulkPlant":
+        case "Load":
+        case "ProductHaul":
+        case "OperationBoard":
+        case "UpcomingJobs":
+        case "BlendBoard":
+            _layout = "~/Views/Shared/_Ej1Layout.cshtml";
+            break;
+        default:
+            _layout = "~/Views/Shared/_Layout.cshtml";
+            break;
+    }
+    Layout = _layout;
+}

@@ -1,0 +1,49 @@
+﻿@using eServiceOnline.Models.CrewBoard
+@model eServiceOnline.Models.CrewBoard.CrewModel
+
+@using (Html.BeginForm("AdjustJobDuration", "RigBoard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(m => m.RigJobId)
+    <div class="sj_dialog_body sj_lsd_ud">
+
+        <div class="det_list">
+            <label class="det_label">Estimated Job Duration</label>
+            <div class="det_text">@Html.TextBoxFor(model => model.EstJobDuration, new { placeholder = 8,@class = "sj_text", onchange = "getEstJobDuration()" })</div>
+            <span id="validValue" style="color: red;position: absolute;right: 25px;"></span>
+        </div>
+    </div>
+
+    <div class="sj_dialog_foot">
+        <input type="submit" value="Save" onclick="return getEstJobDuration()" />
+    </div>
+}
+
+
+<script>
+    $(function () {
+        getEstJobDuration();
+    });
+
+    var isPass = false;
+
+    function getEstJobDuration() {
+        var options = $("#crewList option:selected");
+        $("#Id").val(options.val());
+        $("#validValue").html("");
+        var duration;
+        if ($("#EstJobDuration").val() === "") {
+            duration = 8;
+        } else {
+            duration = $("#EstJobDuration").val();
+        }
+
+        if (duration < 1 || duration > 72) {
+            $("#validValue").html("*between 1 and 72");
+
+            return isPass;
+        }
+
+ 
+    }
+
+</script>

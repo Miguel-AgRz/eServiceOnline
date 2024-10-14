@@ -1,0 +1,34 @@
+@model eServiceOnline.Models.ProductHaul.ProductHaulInfoModel
+@{
+    var IsStatic = (bool)ViewData["isStatic"];
+    var label = Html.Label("", "Crew", new { @class = "det_label" });
+    @Html.HiddenFor(m => m.OrigCrewId)
+}
+@if (IsStatic)
+{
+    @*<div class="det_list" id="div_SanjelCrew" style="position: relative;">
+        @label
+        <div class="det_text">
+            <input type="hidden" id="CrewId" value="@Model.CrewId" name="CrewId" />
+            <input type="text" id="existing_SanjelCrew" value="@Model.CrewName" name="existing_SanjelCrew" class="sj_text" />
+        </div>
+    </div>*@
+    <div class="det_list" id="Crew">
+        @label
+        <div class="det_text" id="crew_select">
+            @Html.DropDownListFor(m => m.CrewId, new List<SelectListItem>(),
+                "None", new { onchange = "getCrew(this)", @class = "sj_select",disabled="true" })
+        </div>
+    </div>
+}
+else
+{
+    <div class="det_list" id="Crew">
+        @label
+        <div class="det_text" id="crew_select">
+            @Html.DropDownListFor(m => m.CrewId, new List<SelectListItem>(),
+                "None", new { onchange = "getCrew(this)", @class = "sj_select" })
+            <div id="CrewId_tip" style="display: none; color: red;">crew is required</div>
+        </div>
+    </div>
+}

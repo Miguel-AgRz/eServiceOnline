@@ -1,0 +1,32 @@
+@model eServiceOnline.Models.ProductHaul.ProductHaulInfoModel
+@{
+    var IsStatic = Convert.ToBoolean(ViewData["isStatic"]);
+    var label = Html.Label("", "Expected On Location Time", new { @class = "det_label" });
+}
+@if (IsStatic)
+{
+    <div class="det_list" id="existing_expectedOlTime" style="position: relative;">
+        @label
+        <div class="det_text">
+            @*<input type="text" id="existing_olTime" name="existing_olTime" class="sj_text" readonly="readonly" />*@
+            @Html.TextBoxFor(model => model.ExpectedOlTime, new { @readonly = true, @class = "sj_text" })
+        </div>
+    </div>
+}
+else
+{
+    <div class="det_list" id="ExpOlTime">
+        @label
+        <div class="det_text">
+            <ej-date-time-picker id="exp_on_location_time" width="282px" ej-for="@Model.ExpectedOnLocationTime" time-display-format="H:mm" date-time-format="M/d/yyyy H:mm" change="onChange">
+            </ej-date-time-picker>
+        </div>
+    </div>
+}
+@Html.HiddenFor(model => model.ExpectedOnLocationTime, new { id = "hidExpectedOnLocationTime" })
+
+<script>
+    function onChange() {
+        window.thirdParty.getThirdParty()
+    }
+</script>

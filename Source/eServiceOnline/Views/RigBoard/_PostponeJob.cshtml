@@ -1,0 +1,70 @@
+@using System.Threading.Tasks
+@using eServiceOnline.Models.RigBoard
+@model eServiceOnline.Models.RigBoard.RigJobModel
+
+@{
+    Layout = null;
+}
+@using (Html.BeginForm("PostponeJob", "RigBoard", FormMethod.Post, new {enctype = "multipart/form-data"}))
+{
+    @Html.HiddenFor(model => model.Id)
+<div class="sj_dialog_body sj_lsd_ud">
+    <div class="det_list">
+        <label class="det_label">Company</label>
+        <div class="det_text">@Html.TextBoxFor(model => model.Company, new {@class = "sj_text", @readonly = "true"})</div>
+    </div>
+    <div class="det_list">
+        <label class="det_label">LSD</label>
+        <div class="det_text">@Html.TextBoxFor(model => model.LSD, new {@class = "sj_text", @readonly = "true"})</div>
+    </div>
+    <div class="det_list">
+        <label class="det_label">Rig Name</label>
+        <div class="det_text">@Html.TextBoxFor(model => model.RigName, new {@class = "sj_text", @readonly = "true"})</div>
+    </div>
+    <div class="det_list">
+        <label class="det_label">Job Type</label>
+        <div class="det_text">@Html.TextBoxFor(model => model.JobType, new {@class = "sj_text", @readonly = "true"})</div>
+    </div>
+    <div class="det_list">
+        <label class="det_label">Requested Date/Time</label>
+        <div id="ej_readonly_datetime" class="det_text">
+            <input id="oldJobDate" value='@ViewBag.JobDateTime.ToString("M/d/yyyy H:mm")' class="sj_text" readonly="readonly"/>
+        </div>
+    </div>
+
+    <div class="det_list">
+        <label class="det_label">New Requested Date/Time</label>
+        <div class="det_text">
+            <ej-date-time-picker id="ejDate" width="282px" value=@DateTime.Now time-display-format="H:mm" date-time-format="M/d/yyyy H:mm"></ej-date-time-picker>
+            @Html.HiddenFor(model => model.Date)
+            <div id="validateDateTime" style="display: none; color: red;"> The new Date/Time can not be earlier than current Date/Time </div>
+        </div>
+    </div>
+    <div class="det_list">
+        <label class="det_label">Release Crew</label>
+        <div class="det_text">          
+            @Html.CheckBoxFor(model=>model.IsReleaseCrew)
+        </div>
+    </div>
+</div>
+    <div class="sj_dialog_foot">
+        <input type="submit" value="Save" onclick="return submitReuestedDataTime();"/>
+    </div>
+}
+
+<ej-script-manager></ej-script-manager>
+
+<script>
+
+    function submitReuestedDataTime() {
+
+        $("#Date").val($("#ejDate").val());
+        if (Date.parse($("#ejDate").val().toString()) < Date.parse(new Date())) {
+            $("#validateDateTime").show();
+            return false;
+        }
+        $("#validateDateTime").hide();
+
+        return true;
+    }
+</script>

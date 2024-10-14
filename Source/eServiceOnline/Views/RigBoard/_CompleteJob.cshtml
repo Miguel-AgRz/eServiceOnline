@@ -1,0 +1,25 @@
+@using Sesi.SanjelData.Entities.BusinessEntities.WellSite
+@model eServiceOnline.Models.Job.JobCompletionModel
+@{
+    Layout = null;
+}
+
+@using (Html.BeginForm("CompleteJob", "RigBoard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    
+    @Html.HiddenFor(m => m.RigJobId)
+    
+<div class="sj_dialog_body sj_lsd_ud">
+    <div style="text-align: center; padding: 10px;">
+        @Html.CheckBoxFor(m => m.IsClearAll)  Clear All Cement?If yes,all product hauls are marked "On Location",all bins are emptied.
+    </div>
+    <div style="text-align: center; margin: auto; line-height: 100px;">
+        <div style="display: inline-block;width: 50px; line-height: 25px; text-align: center;">
+            <input class="confirmDialog_button" type="submit" value="OK"  />
+        </div>
+       
+    </div>
+</div>
+}
+
+

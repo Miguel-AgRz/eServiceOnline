@@ -1,0 +1,47 @@
+@*Dec 25, 2023 zhangyuan 195_PR_Haulback: Add HaulBack Partial Page*@
+@model eServiceOnline.Models.ProductHaul.ShippingLoadSheetModel
+@{
+    bool IsStatic = false;
+    if (ViewData["isReadOnly"] != null)
+    {
+        IsStatic = (bool)ViewData["isReadOnly"];
+    }
+    @Html.HiddenFor(model => model.RigId)
+    @Html.HiddenFor(model => model.RigName)
+    @Html.HiddenFor(model => model.BulkPlantId)
+    @Html.HiddenFor(model => model.BulkPlantName)
+}
+<div class="det_list">
+    <label class="det_label">Haul Amount</label>
+    <div class="det_text">
+        @if (IsStatic)
+        {
+            @Html.TextBoxFor(model => model.LoadAmount, new { @readonly = true, @class = "sj_text" })
+        }
+        else
+        {
+            @Html.TextBoxFor(model => model.LoadAmount, new { @class = "sj_text", onchange = "IsRequired('LoadAmount')" })
+            <input type="checkbox" id="isHaulAll" name="isHaulAll"><label>&nbsp;&nbsp;Haul All</label>
+            <div id="Is_LoadAmount" style="display:none; color:red;">Haul Amount is required</div>
+            @Html.HiddenFor(model => model.Quantity)
+        }
+    </div>
+
+</div>
+
+<script>
+    $("#isHaulAll").change(function () {
+        var loadAmountInput = $("#LoadAmount");
+        if ($(this).prop("checked")) {
+
+            var quantityValue = $("#Quantity").val();
+            loadAmountInput.val(quantityValue).prop({ "readonly": true, "disabled": false }).css("background-color", "#f2f2f2");
+        } else {
+
+            loadAmountInput.val("").prop({ "readonly": false, "disabled": false }).css("background-color", "white");
+        }
+
+        changeAmount(0);
+    });
+
+</script>

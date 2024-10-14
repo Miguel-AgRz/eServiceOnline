@@ -1,0 +1,22 @@
+﻿<ejs-grid id="FlatGrid4" allowTextWrap="true" created="siteInstance.Created" enableHover="false" allowPaging="true" allowResizing="false" allowSorting="false" allowSelection="true" queryCellInfo="siteInstance.QueryCellInfo" gridLines="Both">
+    <e-grid-selectionSettings mode="Cell" type="Single" />
+    <e-grid-textWrapSettings wrapMode="Content" />
+    <e-grid-pagesettings pageSize="8"></e-grid-pagesettings>
+    <e-data-manager url="@Url.Action("GetPageBinModels", "BinBoard", new {})" adaptor="UrlAdaptor" />
+
+    <e-grid-columns>
+        <e-grid-column field="BinNumber" headerText="NUMBER" textAlign="Justify" width="22" customAttributes=@(new {@class = "generalStyle"})></e-grid-column>
+        <e-grid-column field="Location" headerText="LOCATION" textAlign="Justify" width="30" customAttributes=@(new {@class = "generalStyle"})></e-grid-column>
+        <e-grid-column field="WorkServicePoint" headerText="WORKING SP" textAlign="Justify" width="30" customAttributes=@(new {@class = "generalStyle"})></e-grid-column>
+        <e-grid-column field="Blend" headerText="BLEND" textAlign="Justify" width="30" customAttributes=@(new {@class = "generalStyle"})></e-grid-column>
+        <e-grid-column field="Quantity" headerText="QTY" textAlign="Justify" width="15" customAttributes=@(new {@class = "generalStyle"})></e-grid-column>
+        <e-grid-column field="Capacity" headerText="CTY" textAlign="Justify" width="15" customAttributes=@(new {@class = "generalStyle"})></e-grid-column>
+        <e-grid-column field="Notes" headerText="NOTES" textAlign="Justify" width="20" customAttributes=@(new {@class = "generalStyle"})></e-grid-column>
+    </e-grid-columns>
+</ejs-grid>
+
+<style>
+    .e-grid.e-responsive .e-rowcell, .e-grid.e-responsive .e-headercelldiv {
+         text-overflow: unset;
+    }
+</style>

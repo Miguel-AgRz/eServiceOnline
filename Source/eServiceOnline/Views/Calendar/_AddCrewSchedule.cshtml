@@ -1,0 +1,38 @@
+﻿@model eServiceOnline.Models.Calendar.ScheduleModel
+
+@using (Html.BeginForm("AddCrewSchedule", "Calendar", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div class="sj_dialog_body sj_lsd_ud">
+        <div class="det_list">
+            <label class="det_label">Subject</label>
+            <div class="det_text">@Html.TextBoxFor(model => model.Subject, new { @class = "sj_text" })</div>
+        </div>
+        <div class="det_list">
+            <label class="det_label">StartTime</label>
+            <div class="det_text"><ejs-datetimepicker id="StartTime" placeholder="Select a date and time"  format="yyyy/MM/dd HH:mm"></ejs-datetimepicker></div>
+            <span id="crew_type" style="color: red;position: absolute;right: 60px;"></span>
+        </div>
+        <div class="det_list">
+            <label class="det_label">EndTime</label>
+            <div class="det_text"><ejs-datetimepicker id="EndTime"  placeholder="Select a date and time"  format="yyyy/MM/dd HH:mm"></ejs-datetimepicker></div>
+        </div>
+        <div class="det_list">
+            <label class="det_label">Crew</label>
+            <div class="det_text">@Html.DropDownListFor(m => m.OwnerId, ViewData["Crews"] as List<SelectListItem>, new { @class = "sj_select" })</div>
+        </div>
+        <div class="det_list">
+            <label class="det_label">Comments</label>
+            <div class="det_text">@Html.TextAreaFor(model => model.Comment, new { @class = "sj_textarea" })</div>
+        </div>
+    </div>
+    <ejs-scripts></ejs-scripts>
+    <div class="sj_dialog_foot">
+        <input type="submit" value="Save" />
+    </div>
+    <script>
+        function checkTime() {
+            $("#StartTime").val();
+
+        }
+    </script>
+}

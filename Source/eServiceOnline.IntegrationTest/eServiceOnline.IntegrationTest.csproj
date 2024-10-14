@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net461</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+	  <NoWarn>NUnit2021,NUnit2005</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MetaShare.Common.Core.Extensions" Version="1.0.3" />
+    <PackageReference Include="NUnit" Version="3.12.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.16.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
+    <PackageReference Include="Eservice.Daos" Version="1.1.2" />
+    <PackageReference Include="EService.MicroService" Version="1.1.2" />
+    <PackageReference Include="EService.MicroService.Interfaces" Version="1.1.2" />
+    <PackageReference Include="MetaShare.Common.Core" Version="1.1.0" />
+    <PackageReference Include="MetaShare.Common.Foundation" Version="1.1.0" />
+    <PackageReference Include="MetaShare.Common.ServiceModel" Version="1.1.0" />
+    <PackageReference Include="MetaShare.Common.Utilities" Version="1.1.0" />
+    <PackageReference Include="Sanjel.BusinessEntities" Version="1.1.2" />
+    <PackageReference Include="Sanjel.BusinessEntities.Standard" Version="1.1.0" />
+    <PackageReference Include="Sanjel.Common.ApiServices" Version="1.1.2" />
+    <PackageReference Include="Sanjel.Common.BusinessEntities.Standard" Version="1.1.0" />
+    <PackageReference Include="Sanjel.Common.Core" Version="1.1.0" />
+    <PackageReference Include="Sanjel.Common.Daos" Version="1.1.0" />
+    <PackageReference Include="Sanjel.Common.Security.Daos" Version="1.1.0" />
+    <PackageReference Include="Sanjel.Common.Security.Services" Version="1.1.0" />
+    <PackageReference Include="Sanjel.Common.Services" Version="1.1.0" />
+    <PackageReference Include="Sanjel.Services" Version="1.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\eServiceOnline\eServiceOnline.csproj" />
+  </ItemGroup>
+
+</Project>

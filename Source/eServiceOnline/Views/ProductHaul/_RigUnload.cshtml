@@ -1,0 +1,66 @@
+@model eServiceOnline.Models.ProductHaul.ShippingLoadSheetModel
+@{
+    bool IsStatic = false;
+    if (ViewData["isReadOnly"] != null)
+    {
+        IsStatic = (bool)ViewData["isReadOnly"];
+    }
+}
+    
+    @*//jan 22, 2024 tongtao 264_PR_GoWithCrewError: set rigid is readonly when callSheet has been selected*@
+    <div class="det_list">
+    <label class="det_label">Rig</label>
+    <div class="det_text">
+        @if (Model.RigId != 0)
+        {
+            @Html.TextBoxFor(model => model.RigName, new { @readonly = true, @class = "sj_text" })
+            @Html.HiddenFor(model => model.RigId)
+        }
+        else
+        {
+            @(this.Html.DropDownListFor(model => model.RigId, new SelectList(this.ViewBag.AllRigs, "Id", "Name"), new { onchange = "LoadUnloadByRig()", @class = "sj_select"}))
+            @Html.HiddenFor(model => model.RigName)
+            @Html.HiddenFor(model => model.RigId, new { id = "hidRigId" })
+        }
+    </div>    
+</div>
+<div id="rigUnload">
+    @if (Model.RigId != 0)
+    {
+        @for (int i = 0; i < Model.BlendUnloadSheetModels.Count; i++)
+        {
+            <div class="det_list">
+                <label class="det_label">Bin @Model.BlendUnloadSheetModels[i].DestinationStorage.Name Offload Amount</label>
+                <div class="det_text">
+                    @if (IsStatic)
+                    {
+
+                        @Html.TextBoxFor(model => model.BlendUnloadSheetModels[i].UnloadAmount, new { @readonly = true, @class = "sj_text" })
+                        //April 24, 2024 tongtaop 183-offload-all-selection-on-product-haul: add offloadall checkbox
+                        <input type="checkbox" id="chkUnloadAll_@i" class="unloadAll_chk" name="UnloadAll[@i]" onclick="offloadAll(this,1)" />
+                        <label for="chkUnloadAll_@i">Offload All</label>
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(model => model.BlendUnloadSheetModels[i].UnloadAmount, new { @class = "sj_text blend_unload_amount", BinInformationId = Model.BlendUnloadSheetModels[i].DestinationStorage.Id.ToString() })
+                        @Html.HiddenFor(model => model.BlendUnloadSheetModels[i].DestinationStorage.Id)
+                        //Nov 28, 2023 zhangyuan 201_PR_AddingDifferrentBlend: Add different BlendDescription and Display prompt information
+                        @Html.HiddenFor(model => model.BlendUnloadSheetModels[i].DestinationStorage.Quantity)
+                        @Html.HiddenFor(model => model.BlendUnloadSheetModels[i].DestinationStorage.Name)
+                        @Html.HiddenFor(model => model.BlendUnloadSheetModels[i].DestinationStorage.BlendChemical.Description)
+                        //April 24, 2024 tongtaop 183-offload-all-selection-on-product-haul: add offloadall checkbox
+                        <input type="checkbox" id="chkUnloadAll_@i" class="unloadAll_chk" name="UnloadAll[@i]" onclick="offloadAll(this,1)" />
+                        <label for="chkUnloadAll_@i">Offload All</label>
+                        //jan 11, 2023 zhangyuan 259_PR_HaulBlendBugs: Modify  fix Quantity accuracy
+                        <div name="Bin_Different_@Model.BlendUnloadSheetModels[i].DestinationStorage.Name" style="display:none; color:red;">@(Math.Round(Model.BlendUnloadSheetModels[i].DestinationStorage.Quantity,3)+"t "+Model.BlendUnloadSheetModels[i].DestinationStorage.BlendChemical.Name?.Replace(" + Additives", "")+" in Bin")</div>
+
+                    }
+                </div>
+            </div>
+        }
+    }
+</div>
+<script> 
+     //Nov 28, 2023 zhangyuan 201_PR_AddingDifferrentBlend: Add different BlendDescription  Onload event
+    window.onload =LoadBlendDescriptionAndSetBinDisplay(); 
+</script>

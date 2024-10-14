@@ -1,0 +1,151 @@
+
+@model eServiceOnline.Models.RigBoard.AssginPlugLoadingHeadModel
+
+@using (Html.BeginForm("AssignPlugLoadingHead", "RigBoard", FormMethod.Post, new {enctype = "multipart/form-data"}))
+{
+    @Html.HiddenFor(s => s.ServicePointId)
+    @Html.HiddenFor(s => s.RigJobId)
+    @Html.HiddenFor(s => s.CallSheetNumber)
+    <div class="sj_dialog_body sj_lsd_ud">
+        <div class="det_list">
+            <label class="det_label">Plug Loading Head</label>
+            <div class="det_text">
+                <ej-drop-down-list id="PlugLoadingHeadId" enable-filter-search="true" Width="280px" read-only="false" select="SelecPlugLoadingHead">
+                    <e-datamanager json="@ViewBag.plugLoadingList"></e-datamanager>
+                    <e-drop-down-list-fields text="Text" value="Value"/>
+                </ej-drop-down-list>
+                <div id="PlugLoadingHeadIdTip" style="display:none; color:red;">* PlugLoadingHead is required</div>
+            </div>
+        </div>
+        <div id="OtherEquipment">
+            <div class="det_list" id="ManifoldDiv">
+                <label class="det_label">Manifold</label>
+                <div class="det_text">
+                    <ej-drop-down-list id="ManifoldId" enable-filter-search="true" Width="280px" select="selectManifoldId">
+                        <e-datamanager json="@ViewBag.ManifoldList"></e-datamanager>
+                        <e-drop-down-list-fields text="Text" value="Value"/>
+                    </ej-drop-down-list>
+                    <div id="ManifoldTip" style="display:none; color:red;">* Manifold is required</div>
+                </div>
+            </div>
+            <div class="det_list" id="HasManifoldDiv">
+                <label class="det_label">Manifold</label>
+                <div class="det_text">
+                   <input type="text" id="hasManifold" class="sj_select" readonly="readonly"/>
+                </div>
+            </div>
+            <div class="det_list">
+                <label class="det_label">Top Drive Adapter Required</label>
+                <div class="det_text">
+                    @Html.CheckBoxFor(model => model.TopDriveAdapterRequired, new {@Onchange = "displayTopDriveAdapter(this)"})
+                </div>
+            </div>
+            <div class="det_list" id="TopDriveAdapterDiv">
+                <label class="det_label">Top Drive Adapter</label>
+
+                <div class="det_text">
+                    <ej-drop-down-list id="TopDriveAdapterId" enable-filter-search="true" Width="280px">
+                        <e-datamanager json="@ViewBag.topDriveAdaptorList"></e-datamanager>
+                        <e-drop-down-list-fields text="Text" value="Value"/>
+                    </ej-drop-down-list>
+
+                </div>
+            </div>
+            <div class="det_list">
+                <label class="det_label">Plug Loading Head Sub Required</label>
+                <div class="det_text">
+                    @Html.CheckBoxFor(model => model.PlugLoadingHeadSubRequired, new {@Onchange = "displayPlugLoadingHeadSub(this)"})
+                </div>
+            </div>
+            <div class="det_list" id="PlugLoadingHeadSubDiv">
+                <label class="det_label">Plug Loading Head Sub</label>
+
+                <div class="det_text">
+                    <ej-drop-down-list id="PlugLoadingHeadSubId" enable-filter-search="true" Width="280px">
+                        <e-datamanager json="@ViewBag.plugLoadingHeadSubList"></e-datamanager>
+                        <e-drop-down-list-fields text="Text" value="Value"/>
+                    </ej-drop-down-list>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="sj_dialog_foot">
+        <input type="submit" value="Save" onclick="return verfiy()"/>
+    </div>
+}
+
+<ej-script-manager></ej-script-manager>
+<script>
+    $(document).ready(function() {
+        $("#OtherEquipment").hide();
+
+    });
+
+    function SelecPlugLoadingHead(obj) {
+        $("#OtherEquipment").show();
+        $("#PlugLoadingHeadIdTip").hide();
+        if ($("#TopDriveAdapterRequired").prop("checked")) {
+            $("#TopDriveAdapterDiv").show();
+        } else {
+            $("#TopDriveAdapterDiv").hide();
+        }
+        if ($("#PlugLoadingHeadSubRequired").prop("checked")) {
+            $("#PlugLoadingHeadSubDiv").show();
+        } else {
+            $("#PlugLoadingHeadSubDiv").hide();
+        }
+
+        $.ajax({
+            url: '@Url.Action("PlugLoadingHeadhasManifold", "RigBoard")',
+            async: false,
+            method: "get",
+            data: {
+                plugLoadingHeadId: obj.value
+            },
+            success: function (data) {
+                if (data.flag===true) {
+                    $("#hasManifold").val(data.data[0].Text);
+                    $("#ManifoldId").val(data.data[0].Value);
+                    $("#ManifoldDiv").hide();
+                    $("#HasManifoldDiv").show();
+                } else {
+                    $("#ManifoldDiv").show();
+                    $("#HasManifoldDiv").hide();
+                    $("#ManifoldId").val(0);
+                }               
+            }
+        });
+
+    }
+    function selectManifoldId(obj) {
+        $("#ManifoldTip").hide();
+    }
+    function verfiy() {        
+        if ($("#PlugLoadingHeadId").val() === 0 || $("#PlugLoadingHeadId").val() === "") {           
+            $("#PlugLoadingHeadIdTip").show();
+            return false;
+        }
+        if ($("#ManifoldId").val() === 0 || $("#ManifoldId").val() === "") {          
+            $("#ManifoldTip").show();
+            return false;
+        } 
+    }
+    function displayTopDriveAdapter(obj) {
+        if ($(obj).prop("checked")) {
+            $("#TopDriveAdapterDiv").show();
+        } else {
+            $("#TopDriveAdapterDiv").hide();
+        }
+
+    }
+
+    function displayPlugLoadingHeadSub(obj) {
+        if ($(obj).prop("checked")) {
+            $("#PlugLoadingHeadSubDiv").show();
+        } else {
+            $("#PlugLoadingHeadSubDiv").hide();
+        }
+    }
+</script>

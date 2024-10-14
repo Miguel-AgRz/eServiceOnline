@@ -1,0 +1,65 @@
+﻿@using System.Threading.Tasks
+@using eServiceOnline.Models.ProductHaul
+@using Syncfusion.JavaScript.Mobile
+@model eServiceOnline.Models.ProductHaul.ReScheduleBlendFromRigJobBlendViewModel
+
+@{
+    Layout = null;
+}
+
+@using (Html.BeginForm("ReScheduleBlendFromRigJobBlend", "ProductHaul", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+
+    @Html.HiddenFor(m => m.ProductHaulLoadId)
+     @Html.HiddenFor(m => m.OrigBulkPlantId)
+    @Html.HiddenFor(m => m.OrigBinInformationId)
+    <div class="sj_dialog_body sj_lsd_ud">
+        @Html.Partial("_RigHide", Model.ProductLoadInfoModel)
+        @Html.Partial("_CallSheetNumber",Model.ProductLoadInfoModel, new ViewDataDictionary(ViewData) {{ "isStatic", true }})
+        @Html.Partial("_BaseBlend", Model.ProductLoadInfoModel, new ViewDataDictionary(ViewData) { { "isStatic", true } })
+        @Html.Partial("_TonnageAmountWaterControls", Model.ProductLoadInfoModel)
+        @Html.Partial("_BlendTestCheckNew", Model.ProductLoadInfoModel, new ViewDataDictionary(ViewData) { { "isStatic", false } })
+        @Html.Partial("_BulkPlantNew", Model.ProductLoadInfoModel, new ViewDataDictionary(ViewData) { { "isStatic", false } })
+        @Html.Partial("_LoadToBin", Model.ProductLoadInfoModel, new ViewDataDictionary(ViewData) {{ "isStatic", false }})    
+        @Html.Partial("_EstimatedLoadTime", Model.ProductHaulInfoModel, new ViewDataDictionary(ViewData) { { "dateTimeValue", DateTime.Now }, { "isStatic", false } })
+        @Html.Partial("_CommentsTexArea", Model.ProductLoadInfoModel)
+    </div>
+
+    @Html.Partial("_SubmitButton", Model)
+}
+
+@Html.Partial("_Dialogs")
+
+<script>
+    var existingHaul,  scheduleValidations, thirdParty;
+
+    $(function () {
+
+        var initSchedule = new InitSchedule(function () {
+              loadBulkPlants(); 
+            loadBulkPlantBinInformations();
+            LoadBlendDescriptionAndSetBinDisplay();
+            InitializeDialogs();
+        });
+
+        //#region validation
+
+        var val1 = new ValidationsChain(true, validateRequiredAmount);
+        var val2 = new ValidationsChain(true, validateBulkPlant);
+       
+        qualityOfTheBinChainValidation = new ValidationsChain(true, VerifyQualityOfTheBin, function () { return $("#BinInformationId").val() !== "None"; }, undefined, dataQualityOfTheBin);
+        amountAndMixWaterChainValidation = new ValidationsChain(true, verifyAmountAndMixWater, undefined, undefined, dataAmountAndMixWater);
+        
+        val1.setNextFuncOrValidation(val2);
+        val2.setNextFuncOrValidation(qualityOfTheBinChainValidation);
+
+        qualityOfTheBinChainValidation.setNextFuncOrValidation(amountAndMixWaterChainValidation);
+
+        scheduleValidations = new ValidationsBuilder(val1);
+
+        //#endregion
+
+        initSchedule.Initialize();
+    });
+
+</script>

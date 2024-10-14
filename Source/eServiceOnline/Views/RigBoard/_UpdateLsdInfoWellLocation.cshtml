@@ -1,0 +1,94 @@
+@using eServiceOnline.Models.RigBoard
+@model eServiceOnline.Models.RigBoard.WellLocationInformationViewModel
+
+@{
+    Layout = null;
+}
+<script>
+    function selectType(value, item) {
+        $("#" + item).val($(value).val());
+    }
+
+    $(function () {
+        var surfaceWellLocation = $("#DownHoleWellLocationTypeId").val();
+        var downHoleWellLocation = $("#WellLocationTypeId").val();
+        $('input[name="downHoleWellLocationType"]').each(function (i, ele) {
+            if ($(ele).val() == downHoleWellLocation ) { $(ele).prop("checked", true)}
+        });
+        $('input[name="surfaceWellLocationType"]').each(function (i, ele) {
+            if ($(ele).val() == surfaceWellLocation) { $(ele).prop("checked", true) }
+        });
+    });
+    
+</script>
+
+@using (Html.BeginForm("UpdateLsdInfoWellLocation", "RigBoard", FormMethod.Post, new { enctype = "multipart/form-data"}))
+{
+    <div class="sj_dialog_body sj_lsd_ud">
+        <div class="det_list">
+            <label class="det_label">Surface Well Location Type</label>
+            <div class="det_text">
+                <label class="sj_cont_lab">
+                    <input type="radio" class="hide" name="surfaceWellLocationType" value="3" onclick="selectType(this,'DownHoleWellLocationTypeId')" />
+                    <i class="redio"></i>
+                    <span>Torren</span>
+                </label>
+                <label class="sj_cont_lab">
+                    <input type="radio" class="hide" name="surfaceWellLocationType" value="5" onclick="selectType(this,'DownHoleWellLocationTypeId')" />
+                    <i class="redio"></i>
+                    <span>NTS</span>
+                </label>
+                <label class="sj_cont_lab">
+                    <input type="radio" class="hide" name="surfaceWellLocationType" value="1" onclick="selectType(this,'DownHoleWellLocationTypeId')" />
+                    <i class="redio"></i>
+                    <span>General</span>
+                </label>
+            </div>
+            @Html.HiddenFor(model => model.DownHoleWellLocationTypeId)
+        </div>
+        <div class="det_list">
+            <label class="det_label">Surface Well Location</label>
+            <div class="det_text">
+                @Html.TextBoxFor(model => model.WellLocation, new { @class = "sj_text" })
+            </div>
+        </div>
+        <div class="det_list">
+            <label class="det_label">Down Hole Well Location Type</label>
+            <div class="det_text">
+                <label class="sj_cont_lab">
+                    <input type="radio" class="hide" name="downHoleWellLocationType" value="3" onclick="selectType(this,'WellLocationTypeId')" />
+                    <i class="redio"></i>
+                    <span>Torren</span>
+                </label>
+                <label class="sj_cont_lab">
+                    <input type="radio" class="hide" name="downHoleWellLocationType" value="5" onclick="selectType(this,'WellLocationTypeId')" />
+                    <i class="redio"></i>
+                    <span>NTS</span>
+                </label>
+                <label class="sj_cont_lab">
+                    <input type="radio" class="hide" name="downHoleWellLocationType" value="1" onclick="selectType(this,'WellLocationTypeId')" />
+                    <i class="redio"></i>
+                    <span>General</span>
+                </label>
+            </div>
+            @Html.HiddenFor(model => model.WellLocationTypeId)
+            @Html.HiddenFor(model=>model.CallSheetNumber)
+            @Html.HiddenFor(model => model.RigJobId)
+        </div>
+        <div class="det_list">
+            <label class="det_label">Down Hole Well Location</label>
+            <div class="det_text">
+            @Html.TextBoxFor(model => model.DownHoleWellLocation,new{@class="sj_text"})
+            </div>
+        </div>
+        <div class="det_list">
+            <label class="det_label">Directions</label>
+            <div class="det_text">
+            @Html.TextAreaFor(model => model.DirectionToLocation, new { @class = "sj_textarea" })
+            </div>
+        </div>
+    </div>
+    <div class="sj_dialog_foot">
+        <input id="sj_updatelsdinfowelllocation" type="submit" value="Save" onclick="return verifyLsdIsChange();"/>
+    </div>
+}

@@ -1,0 +1,26 @@
+@using Sesi.SanjelData.Entities.BusinessEntities.WellSite
+@model Sesi.SanjelData.Entities.BusinessEntities.WellSite.BinInformation
+@{
+    Layout = null;
+}
+
+@using (Html.BeginForm("EmptyBin", "BulkPlant", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(m => m.Id)
+
+<div class="sj_dialog_body sj_lsd_ud">
+    <div style="text-align: center; padding: 10px;">
+        You are emptying Bin @Model.Name, are you sure to continue?
+    </div>
+    <div style="text-align: center; margin: auto; line-height: 100px;">
+        <div style="display: inline-block;width: 50px; line-height: 25px; text-align: center;">
+            <input class="confirmDialog_button" type="submit" value="Yes"  />
+        </div>
+        <div style="display: inline-block;width: 50px; line-height: 25px; text-align: center;">
+            <input class="confirmDialog_button " type="button" value="No" onclick="$('#basicDialog').ejDialog('close');" />
+        </div>
+    </div>
+</div>
+}
+
+

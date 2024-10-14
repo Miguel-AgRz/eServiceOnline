@@ -1,0 +1,62 @@
+﻿@model eServiceOnline.Models.ThirdPartyCrewBoard.ThirdPartyCrewModel
+
+@using (Html.BeginForm("UpdateThirdPartyCrew", "ThirdPartyCrewBoard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(m => m.ContractorCompanyName)
+    @Html.HiddenFor(m => m.ServicePointName)
+    @Html.HiddenFor(m => m.Id)
+<div class="sj_dialog_body sj_lsd_ud">
+    <div class="det_list">
+        <label class="det_label">Supplier Company</label>
+        <div class="det_text">
+            <ejs-combobox id="ContractorCompanyId" dataSource="@ViewBag.contractorCompanies" placeholder="Select a company" popupHeight="300px" width="280px" allowFiltering="false" value="@Model.ContractorCompanyName" change="valueChange">
+                <e-combobox-fields text="Name" value="Id"></e-combobox-fields>
+            </ejs-combobox>
+        </div>
+    </div>
+
+    <div class="det_list">
+        <label class="det_label">Service Points</label>
+        <div class="det_text">
+            <ejs-combobox id="ServicePointId" dataSource="@ViewBag.servicePointItems" placeholder="Select a service points" popupHeight="350px" width="280px" allowFiltering="false" value="@Model.ServicePointName" change="valueChange">
+                <e-combobox-fields text="Text" value="Value"></e-combobox-fields>
+            </ejs-combobox>
+        </div>
+    </div>
+    <div class="det_list">
+        <label class="det_label">Third Party Unit Number</label>
+        <div class="det_text">@Html.TextBoxFor(model => model.ThirdPartyUnitNumber, new { @class = "sj_text" })</div>
+    </div>
+    <div class="det_list">
+        <label class="det_label">Supplier Contact Name</label>
+        <div class="det_text">@Html.TextBoxFor(model => model.SupplierContactName, new { @class = "sj_text" })</div>
+    </div>
+    <div class="det_list">
+        <label class="det_label">Supplier Contact Number</label>
+        <div class="det_text">@Html.TextBoxFor(model => model.SupplierContactNumber, new { @class = "sj_text" })</div>
+    </div>
+    <div class="det_list">
+        <label class="det_label">Notes</label>
+        <div class="det_text">@Html.TextAreaFor(model => model.Notes, new { @class = "sj_textarea" })</div>
+    </div>
+
+</div>
+
+    <div class="sj_dialog_foot">
+        <input type="submit" value="Save" />
+    </div>
+}
+
+<script>
+
+    function valueChange() {
+        var company = document.getElementById('ContractorCompanyId').ej2_instances[0];
+        $("#ContractorCompanyName").val(company.text);
+
+
+        var servicePoint = document.getElementById('ServicePointId').ej2_instances[0];
+        $("#ServicePointName").val(servicePoint.text);
+    }
+
+</script>
+<ejs-scripts></ejs-scripts>

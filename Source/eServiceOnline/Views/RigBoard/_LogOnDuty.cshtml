@@ -1,0 +1,26 @@
+@using eServiceOnline.Models.CrewBoard
+@model eServiceOnline.Models.CrewBoard.CrewModel
+
+@using (Html.BeginForm("LogOnDuty", "RigBoard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(m => m.RigJobId)
+    <div id="is_confirm_jump">
+        <div style="margin-top: 20px; text-align: center;" id="div_display_notes">
+
+        </div>
+
+        <div style="text-align: center; margin: auto; line-height: 100px;">
+            <div class="sj_dialog_foot">
+                <input type="submit" class="yes" value="Yes" /> <input type="button" value="No" class="no" onclick="eServiceOnline.Site.prototype.CloseDialog()" />
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    $(function () {
+        $("#div_display_notes").html("");
+        var note = "<label> Are you sure you want to log on duty these crews ? </label>";
+        $("#div_display_notes").append(note);
+    });
+</script>

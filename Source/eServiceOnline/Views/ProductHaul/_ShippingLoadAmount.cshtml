@@ -1,0 +1,44 @@
+@model eServiceOnline.Models.ProductHaul.ShippingLoadSheetModel
+@{
+    bool IsStatic = false;
+    if (ViewData["isReadOnly"] != null)
+    {
+        IsStatic = (bool)ViewData["isReadOnly"];
+    }
+}
+<div class="det_list">
+    <label class="det_label">Haul Amount</label>
+    <div class="det_text">
+        @if (IsStatic)
+        {
+            @Html.TextBoxFor(model => model.LoadAmount, new { @readonly = true, @class = "sj_text" })
+        }
+        else
+        {       
+            @*April 25, 2024 tongtaop 183-offload-all-selection-on-product-haul: add onblur function  for changeAmount*@
+            @Html.TextBoxFor(model => model.LoadAmount, new { @class = "sj_text", onblur="changeAmount(0)",onchange = "IsRequired('LoadAmount')" })
+            <input type="checkbox" id="isHaulAll" name="isHaulAll"><label>&nbsp;&nbsp;Haul All</label>
+            <div id="Is_LoadAmount" style="display:none; color:red;">Haul Amount is required</div>
+            @Html.HiddenFor(model => model.Quantity)
+        }
+    </div>
+
+</div>
+
+<script>
+    $("#isHaulAll").change(function () {
+        var loadAmountInput = $("#LoadAmount");
+        if ($(this).prop("checked")) {
+
+            var quantityValue = $("#Quantity").val();
+            loadAmountInput.val(quantityValue).prop({ "readonly": true, "disabled": false }).css("background-color", "#f2f2f2");
+        } else {
+
+            loadAmountInput.val("").prop({ "readonly": false, "disabled": false }).css("background-color", "white");
+        }
+
+        @* April 25, 2024 tongtaop 183-offload-all-selection-on-product-haul: when haulAll check box change,use function  changeAmount*@
+        changeAmount(0);
+    });
+
+</script>

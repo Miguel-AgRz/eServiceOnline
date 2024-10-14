@@ -1,0 +1,1 @@
+﻿<%@ServiceHost Language=C# Debug="true" Service="Sanjel.Common.Messaging.MessageReceiver" %>

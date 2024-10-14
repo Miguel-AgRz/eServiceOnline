@@ -1,0 +1,40 @@
+@using System.ComponentModel
+@using eServiceOnline.Models.RigBoard
+@model eServiceOnline.Models.RigBoard.FirstCallViewModel
+
+    @using (Html.BeginForm("UpdateConsultantInfo", "RigBoard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+
+        <div class="sj_dialog_body sj_lsd_ud">
+            <div class="det_list">
+                <label class="det_label">Alert By 1</label>
+                <span class="det_text">@Html.TextBoxFor(model => model.AlertByConsultant1)</span>
+                @Html.HiddenFor(model => model.CallSheetNumber)
+            </div>
+            <div class="det_list">
+                <label class="det_label">Phone Number</label>
+                <span class="det_text">@Html.TextBoxFor(model => model.AlertByConsultantCellNumber1)</span>
+            </div>
+            <div class="det_list">
+                <label class="det_label">Email</label>
+                <span class="det_text">@Html.TextBoxFor(model => model.AlertByConsultantEmail1)</span>
+            </div>
+            <div class="det_list">
+                <label class="det_label">Alert By 2</label>
+                <span class="det_text">@Html.TextBoxFor(model => model.AlertByConsultant2)</span>
+            </div>
+            <div class="det_list">
+                <label class="det_label">Phone Number</label>
+                <span class="det_text">@Html.TextBoxFor(model => model.AlertByConsultantCellNumber2)</span>
+            </div>
+            <div class="det_list">
+                <label class="det_label">Email</label>
+                <span class="det_text">@Html.TextBoxFor(model => model.AlertByConsultantEmail2)</span>
+            </div>
+        </div>
+
+        <div class="sj_dialog_foot">
+            <input type="submit" value="Save" />
+        </div>
+    }
+

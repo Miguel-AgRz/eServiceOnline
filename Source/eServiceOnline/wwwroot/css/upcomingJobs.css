@@ -1,0 +1,189 @@
+﻿html {
+    height: 100%;
+}
+
+body {
+    min-height: 100%;
+    position: relative;
+    padding-bottom: 70px;
+    background: #000000 !important;
+}
+
+footer {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+}
+/***body****/
+
+.container {
+    width: 100%;
+    min-width: 1900px;
+    padding: 0 !important;
+}
+
+.e-grid {
+    font-family: Segoe UI !important;
+    border-color: #000000 !important;
+    color: white !important;
+    border-top: none !important;
+    background: #000000 !important;
+}
+
+.e-grid .e-pager, .e-animate {
+    background: #000000 !important;
+    color: white !important;
+    border: 0;
+}
+
+.e-numericcontainer, .e-default, .e-pagercontainer .e-icon, .e-link, .e-disable, .e-arrowheadright-2x, .e-firstpagedisabled, .e-prevpagedisabled, .e-lastpagedisabled, .e-mediaforward {
+    background: #000000 !important;
+    color: white !important;
+    border: 1px;
+    -ms-filter: "progid:DXImageTraneorm.Microsoft.Alpha(Opacity=30)" !important;
+    filter: alpha(opacity=30) !important;
+    -moz-opacity: .3 !important;
+    -khtml-opacity: .3 !important;
+    opacity: 1 !important;
+    text-align: center;
+    border: 0 !important;
+}
+
+.e-currentitem, .e-active {
+    color: red !important;
+    border: 0 !important;
+}
+.disableMenuStyle, .contextMenuStyle {
+    line-height: 35px;
+    display: block;
+    text-decoration: none;
+    padding: 0 34px;
+    white-space: nowrap;
+    overflow: hidden;
+    color: #575757;
+}
+
+.e-cellselectionbackground {
+    background: -webkit-linear-gradient(top,#B44c6b,#6E273d) !important;
+}
+
+.disableMenuStyle, .disableMenuStyle:hover {
+    color: #CFCFCF !important;
+    cursor: default;
+}
+
+.disableMenuStyle:before {
+    font-family: Segoe UI;
+    content: "";
+    display: block;
+    margin: 0 auto;
+    border-top: 1px solid #DCDBDB;
+}
+.contextMenuStyle:hover {
+    color: #B44c6b !important;
+    background-color: RGBA(180,76,107,0.1)
+}
+.contextMenuStyle:before {
+    font-family: Segoe UI;
+    content: "";
+    display: block;
+    margin: 0 auto;
+    border-top: 1px solid #DCDBDB;
+}
+#tipContent div:nth-child(2) .contextMenuStyle:before {
+    border-top: none;
+}
+/***head****/
+.e-headercelldiv {
+    font-size: 20px !important;
+}
+
+/***line****/
+.generalStyle.e-headercell {
+    background: #383838;
+    font-size: 20px !important;
+    border-top-color: #000;
+    border-left-color: #000;
+    border-bottom-color: #000;
+    color: #FFFFFF
+}
+
+.generalStyle.e-rowcell {
+    background: #383838;
+    font-size: 18px;
+    border-color: #000;
+    color: #FFFFFF;
+    width: 200px;
+}
+
+.compareStyle.e-headercell {
+    background: #FFFFFF;
+    font-size: 20px !important;
+    border-top-color: #000;
+    border-left-color: #000;
+    border-bottom-color: #000;
+    color: #383838;
+}
+
+.compareStyle.e-rowcell {
+    background: #FFFFFF;
+    font-size: 18px;
+    border-color: #000;
+    color: #383838;
+}
+
+.e-grid .e-gridheader {
+    color: #282827;
+    border-bottom-color: #000;
+    border-top-color: #000;
+}
+
+
+.generalNotesStyle.e-headercell {
+    background: #383838;
+    font-size: 20px !important;
+    border-top-color: #000;
+    border-left-color: #000;
+    border-bottom-color: #000;
+    color: #FFFFFF
+}
+
+.generalNotesStyle.e-rowcell {
+    background: #383838;
+    font-size: 18px;
+    border-color: #000;
+    color: #FFFFFF;
+    white-space: pre-wrap !important;
+}
+
+
+/*rig*/
+.rig-topdrive:after {
+    content: "*";
+    color: red;
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-left: 6px;
+}
+
+/*job*/
+.job-jobtypestate {
+    background: red !important;
+}
+
+/*crew\unit\blends*/
+.wrap-text {
+    line-height: 20px !important;
+    white-space: normal !important;
+}
+
+/***checkbox****/
+.checkboxstyle {
+    vertical-align: middle;
+    width: 16px;
+    height: 16px;
+    margin: 0 !important;
+}
+
+

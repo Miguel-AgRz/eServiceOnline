@@ -1,0 +1,91 @@
+@using eServiceOnline.Models.RigBoard
+@model eServiceOnline.Models.RigBoard.CallInformationViewModel
+
+@{
+    Layout = null;
+}
+
+@using (Html.BeginForm("UpdateJobDate", "RigBoard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(m => m.CallSheetNumber)
+    @Html.HiddenFor(m => m.CalloutConsultantName)
+    @Html.HiddenFor(m => m.Operation)
+
+    <div class="sj_dialog_body sj_lsd_ud">
+        
+        <div class="det_list">
+                <label class="det_label">Confirmed By</label>
+            <div class="det_text">@Html.DropDownListFor(m => m.SelectedCalloutConsultantId, ViewData["calloutConsultantsList"] as List<SelectListItem>, "None", new {onchange = "getCalloutConsultantName(this)", @class = "sj_select"})</div>
+        </div>
+        <div class="det_list">
+            <label class="det_label">Call Date/Time</label>
+            <div id="ej_readonly_datetime" class="det_text">
+                <ej-date-time-picker id="ejCallDateTime" width="282px" value='@ViewBag.CallDateTime' time-display-format="H:mm" date-time-format="M/d/yyyy H:mm"></ej-date-time-picker>
+                @Html.HiddenFor(model => model.CallDateTime)
+            </div>
+        </div>
+        
+        <div class="det_list">
+            <label class="det_label">Requested Date/Time</label>
+            <div class="det_text"><ej-date-time-picker id="ejRequestedDateTime" width="282px" value='@ViewBag.RequestedDateTime' time-display-format="H:mm" date-time-format="M/d/yyyy H:mm"></ej-date-time-picker>
+                @Html.HiddenFor(model => model.RequestedDateTime)
+                <input type="hidden" name="rigJobId" id="rigJobId" value="@ViewBag.RigJobId"/>
+            </div>
+        </div>
+            <div class="det_list">
+                <label class="det_label">Call Crew At Date/Time</label>
+                <div class="det_text">
+                    <ej-date-time-picker id="ejCallCrewDateTime" width="282px" value='@ViewBag.CallCrewDateTime' time-display-format="H:mm" date-time-format="M/d/yyyy H:mm"></ej-date-time-picker>
+                    @Html.HiddenFor(model => model.CallCrewDateTime)
+                    <div id="validateDateTime" style="display: none; color: red;"> Call Crew At Date/Time cannot be earlier than Call Date/Time </div>
+                    <div id="validateDateTime1" style="display: none; color: red;"> Call Crew At Date/Time cannot be later than Requested Date/Time </div>
+                </div>
+            </div>
+    </div>
+    <div class="sj_dialog_foot">
+        <input type="submit" value="Save" onclick="return submitReuestedDataTime()"/>
+    </div>
+}
+
+<ej-script-manager></ej-script-manager>
+
+<script>
+    
+    $(function () {
+        if ($("#CallDateTime").length > 0) {
+            if ($("#CallDateTime").val().trim() != "" || $("#CallDateTime").val().indexOf("01/01/9999") < 0) {
+                $("#ejCallDateTime").val($("#CallDateTime").val().substring(0, $("#CallDateTime").val().length - 3));
+                $("#ejCallDateTime").attr("readonly", true);
+                $("#ejCallDateTime_wrapper .e-select").hide();
+            }
+        }
+    });
+
+    function submitReuestedDataTime() {
+        if ($("#SelectedCalloutConsultantId").val().trim() == "" ) return false;
+        $("#RequestedDateTime").val($("#ejRequestedDateTime").val());
+            $("#CallCrewDateTime").val($("#ejCallCrewDateTime").val());
+
+            if (Date.parse($("#ejCallCrewDateTime").val().toString()) < Date.parse($("#ejCallDateTime").val().toString())) {
+                $("#validateDateTime").show();
+                return false;
+            }
+            if (Date.parse($("#ejCallCrewDateTime").val().toString()) > Date.parse($("#ejRequestedDateTime").val().toString())) {
+                $("#validateDateTime1").show();
+                return false;
+            }
+
+
+            $("#validateDateTime").hide();
+            $("#validateDateTime1").hide();
+
+        return true;
+    }
+
+    function getCalloutConsultantName(obj) {
+
+        $("#CalloutConsultantName").val($(obj).find("option:selected").text());
+
+    }
+
+</script>

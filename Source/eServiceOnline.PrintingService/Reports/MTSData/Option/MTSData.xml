@@ -1,0 +1,155 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<report id="MTSPrint">
+	<sections>
+
+
+		<PdfSection id="mtsInfoSection"  repeat="true" modelVar="PerMtsItem" dataModel="MtsItems">
+			<pageHeader>
+				<HorizontalPanel id="panel" class="pageHeader">
+					<ImageControl id="titleHeader" source="Reports\MTSData\Image\PB_SanjelLogo.png" class="logo"></ImageControl>
+					<TextFieldControl id="textField" refModel="PerMtsItem" dataField="MtsSerialNumber" class="textHeader"></TextFieldControl>
+				</HorizontalPanel>
+			</pageHeader>
+
+			<pageFooter>
+				<VerticalPanel id="mtsInfoSectionFooter" class="pageFooter">
+					<ShapeControl id="horizontalLine" type="HorizontalLine"></ShapeControl>
+					<HorizontalPanel id="panelHorizontal">
+						<TextFieldControl  id="textField" refModel="PerMtsItem" dataField="LatestVersionInfo" class="vesionFooter" ></TextFieldControl>
+						<PageNumberControl id="pageNumber" showTotalCount="true" totalCountSplitter="  of  "></PageNumberControl>
+					</HorizontalPanel>
+				</VerticalPanel>
+			</pageFooter>
+			<pageContent>
+				<VerticalPanel id="mainPanel">
+
+					<GridControl id="ProductHaulTable" dataTable="ProductHaulInfo"  dataModel="ProductHaulDataSet"    refModel="PerMtsItem">
+						<colGroup>
+							<col id="ColLableOne"  class="tddphl1" />
+							<col id="ColValueOne"  class="tddphv1" />
+							<col id="ColLableTwo"  class="tddphl2" />
+							<col id="ColValueTwo"  class="tddphv2" />
+							<col id="ColLableThree"  class="tddphl3" />
+							<col id="ColValueThree"  class="tddphv3" />
+						</colGroup>
+						<tr id="rowProductHaul" class="rowDataOdd:odd">
+							<td class="tddphl1" id="itemLableOne" startColumn="0" endColumn="0" dataField="LableOne" ></td>
+							<td class="tddphv1" id="itemValueOne" startColumn="1" endColumn="1" dataField="ValueOne"></td>
+							<td class="tddphl2" id="itemLableTwo" startColumn="2" endColumn="2"  dataField="LableTwo"></td>
+							<td class="tddphv2" id="itemValueTwo" startColumn="3" endColumn="3" dataField="ValueTwo"></td>
+							<td class="tddphl3" id="itemLableThree" startColumn="4" endColumn="4"  dataField="LableThree"></td>
+							<td class="tddphv3" id="itemValueThree" startColumn="5" endColumn="5"  dataField="ValueThree"></td>
+						</tr>
+					</GridControl>
+
+					<VerticalPanel id="PodPanel" class="panel">
+						<TextFieldControl id="textField" text="Table 1:BULKER POD LOAD"  class="title" />
+
+						<GridControl id="PodTable" dataTable="PodInfo"  dataModel="PodLoadDataSet"  refModel="PerMtsItem" >
+							<colGroup class="rowHeader">
+								<col id="ColPodIndex" class="tdd-width tdd-width-podNum" />
+								<col id="ColTotalTonnage" class="tdd-width tdd-width-podTonnage"  />
+								<col id="ColProductDes" class="tdd-width tdd-width-podDesc" />
+								<col id="ColBaseTonnage" class="tdd-width tdd-width-podTonnage"  />
+								<col id="ColTempDesc"  class="tdd-width"/>
+							</colGroup>
+							<!--Caption Row-->
+							<tr id="rowCaption" class="rowHeader" >
+								<td id="ColPodIndex" class="tdd-width tdd-width-podNum"   startColumn="0" endColumn="0" >Pod # (Front to Rear)</td>
+								<td id="ColTotalTonnage"  class="tdd-width tdd-width-podTonnage"  startColumn="1" endColumn="1" >Total Tonnage</td>
+								<td id="ColProductDes"  class="tdd-width tdd-width-podDesc" startColumn="2" endColumn="2"  >Product</td>
+								<td id="ColBaseTonnage" class="tdd-width tdd-width-podTonnage"   startColumn="3" endColumn="3" >Base Tonnage</td>
+								<td id="ColTempDesc" class="tdd-width" startColumn="4" endColumn="4"  >Temp</td>
+							</tr>
+
+							<tr id="rowPodItem"  class="rowDataOdd:odd">
+								<td  id="itemPodIndex" class="tdd-width tdd-width-podNum" startColumn="0" endColumn="0" dataField="PodIndex" ></td>
+								<td  id="itemTotalTonnage" class="tdd-width tdd-width-podTonnage"  startColumn="1" endColumn="1" dataField="TotalTonnage"></td>
+								<td id="itemProductDes" class="tdd-width tdd-width-podDesc" startColumn="2" endColumn="2"  dataField="ProductDes"></td>
+								<td  id="itemBaseTonnage" class="tdd-width tdd-width-podTonnage" startColumn="3" endColumn="3" dataField="BaseTonnage"></td>
+								<td  id="itemTempDesc"  class="tdd-width" startColumn="4" endColumn="4"  dataField="TempDesc"></td>
+							</tr>
+						</GridControl>
+					</VerticalPanel>
+
+					<VerticalPanel id="productHaulLoadPanel"  class="panel" >
+						<TextFieldControl id="textField" text="Table 2:TOTAL WEIGHTS AND SAMPLE"  class="title" />
+						<GridControl id="ProductHaulLoadTable" dataTable="ProductHaulLoadInfo"  refModel="PerMtsItem"  dataModel="ProductHaulLoadDataSet" >
+							<colGroup>
+								<col id="ColBlendRequestNum" class="tdd-width tdd-width-blendId"  />
+								<col id="ColTotalTonnage"  class="tdd-width  tdd-width-other" />
+								<col id="ColProductDes" />
+								<col id="ColBaseTonnage" class="tdd-width  tdd-width-other" />
+								<col id="ColSample" class="tdd-width  tdd-width-other" />
+								<col id="ColRequestedBy" class="tdd-width  tdd-width-other1" />
+								<col id="ColBlendedBy"  class="tdd-width  tdd-width-other2" />
+							</colGroup>
+
+							<!--Caption Row-->
+							<tr id="rowCaption" class="rowHeader" >
+								<td id="ColBlendRequestNum" class="tdd-width tdd-width-blendId"  endColumn="0" >Blend Request#</td>
+								<td id="ColTotalTonnage"  class="tdd-width  tdd-width-other" startColumn="1" endColumn="1" >Total Tonnage</td>
+								<td id="ColProductDes" class="tdd-width"  startColumn="2" endColumn="2"  >Product</td>
+								<td id="ColBaseTonnage"  class="tdd-width tdd-width-other"  startColumn="3" endColumn="3" >Base Tonnage</td>
+								<td id="ColSample" class="tdd-width  tdd-width-other" startColumn="4" endColumn="4"  >Sample#</td>
+								<td id="ColRequestedBy" class="tdd-width  tdd-width-other1" startColumn="5" endColumn="5"  >Requested By</td>
+								<td id="ColBlendedBy" class="tdd-width  tdd-width-other2" startColumn="6" endColumn="6"  >Blended By</td>
+							</tr>
+
+							<tr id="rowProductHaulLoadItem"  class="rowDataOdd:odd">
+								<td id="itemBlendRequestNum" class="tdd-width tdd-width-blendId" startColumn="0" endColumn="0" dataField="BlendRequestNum"></td>
+								<td id="itemTotalTonnage"   class="tdd-width  tdd-width-other" startColumn="1" endColumn="1" dataField="TotalTonnage"></td>
+								<td id="itemProductDes" class="tdd-width  tdd-width-other" startColumn="2" endColumn="2"  dataField="ProductDes"></td>
+								<td id="itemBaseTonnage"  class="tdd-width  tdd-width-other" startColumn="3" endColumn="3" dataField="BaseTonnage"></td>
+								<td id="itemSample" class="tdd-width  tdd-width-other" startColumn="4" endColumn="4" dataField="Sample"></td>
+								<td id="itemRequestedBy" class="tdd-width  tdd-width-other1" startColumn="5" endColumn="5" dataField="RequestedBy"></td>
+								<td id="itemBlendedBy" class="tdd-width  tdd-width-other2" startColumn="6" endColumn="6" dataField="BlendedBy"></td>
+							</tr>
+						</GridControl>
+					</VerticalPanel>
+
+					<VerticalPanel id="BlendUnloadPanel"  class="panel" >
+						<TextFieldControl id="textField" text="Table 3:OFFLOAD INSTRUCTION"  class="title" />
+
+						<GridControl id="BlendUnloadTable" dataTable="BlendUnloadInfo" dataModel="BlendUnloadSheetDataSet"  refModel="PerMtsItem"  GroupBy="true" class="panel-spacing3"  >
+							<colGroup>
+								<col id="ColBinNum"  class="tdd-width tdd-width-unloadBin"/>
+								<col id="ColTotalTonnage" class="tdd-width tdd-width-unloadTonnage" />
+								<col id="ColProductDes"  class="tdd-width"/>
+								<col id="ColBaseTonnage"  class="tdd-width tdd-width-unloadTonnage"/>
+							</colGroup>
+
+							<!--Caption Row-->
+							<tr id="rowCaption" class="rowHeader" >
+								<td id="ColBinNum" class="tdd-width tdd-width-unloadBin" startColumn="0" endColumn="0" >Bin #</td>
+								<td id="ColTotalTonnage" class="tdd-width tdd-width-unloadTonnage" startColumn="1" endColumn="1" >Total Tonnage</td>
+								<td id="ColProductDes" class="tdd-width" startColumn="2" endColumn="2"  >Product</td>
+								<td id="ColBaseTonnage" class="tdd-width tdd-width-unloadTonnage" startColumn="3" endColumn="3" >Base Tonnage</td>
+							</tr>
+
+							<tr id="rowBlendItem"  class="rowDataOdd:odd" >
+								<td id="itemBinNum" class="tdd-width tdd-width-unloadBin" startColumn="0" endColumn="0" dataField="BinNum"></td>
+								<td id="itemTotalTonnage"  class="tdd-width tdd-width-unloadTonnage" startColumn="1" endColumn="1" dataField="TotalTonnage"></td>
+								<td id="itemProductDes" class="tdd-width" startColumn="2" endColumn="2"  dataField="ProductDes"></td>
+								<td id="itemBaseTonnage" class="tdd-width tdd-width-unloadTonnage" startColumn="3" endColumn="3" dataField="BaseTonnage"></td>
+							</tr>
+						</GridControl>
+					</VerticalPanel>
+
+				</VerticalPanel>
+			</pageContent>
+
+		</PdfSection>
+		<PdfSection id="printSignSection" fromNewPaper="false">
+			<pageContent>
+				<HorizontalPanel id="PrintSign" class="signArea">
+					<TextFieldControl class="tdSign signLabel" text="Printed By"  ></TextFieldControl>
+					<TextFieldControl class="tdSign signText" text=" "></TextFieldControl>
+					<TextFieldControl class="tdSign signLabel" text="Loaded By" ></TextFieldControl>
+					<TextFieldControl class="tdSign signText" text=" " ></TextFieldControl>
+				</HorizontalPanel>
+			</pageContent>
+		</PdfSection>
+
+	</sections>
+</report>

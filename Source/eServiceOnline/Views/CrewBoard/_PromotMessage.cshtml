@@ -1,0 +1,211 @@
+﻿<div class="sj_confirm"></div>
+
+<ejs-dialog id="is_confirm_jump" cssClass="sj_confirmDialog1" showCloseIcon="false" header="Confirm" target=".sj_confirm" visible="false">
+    <e-content-template>
+        <div id="is_confirm_jump">
+            <div style="margin-top: 20px; padding: 0 10px 0 10px; text-align: center;">Have future schedules, do you want to continue?</div>
+            <div style="text-align: center; margin: auto; line-height: 100px;">
+                <div style="display: inline-block; width: 50px; line-height: 25px; text-align: center;">
+                    <input class="confirmDialog_button" type="button" value="Yes" onclick="CloseConfirmDialog('Yes')"/>
+                </div>
+                <div style="display: inline-block; width: 50px; line-height: 25px; text-align: center;">
+                    <input class="confirmDialog_button" type="button" value="No" onclick="CloseConfirmDialog('No')"/>
+                </div>
+            </div>
+
+        </div>
+    </e-content-template>
+</ejs-dialog>
+<ejs-dialog id="is_confirm_jump1" cssClass="sj_confirmDialog1" showCloseIcon="false" header="Confirm" target=".sj_confirm" visible="false">
+    <e-content-template>
+        <div id="is_confirm_jump1">
+            <div style="margin-top: 20px; padding: 0 10px 0 10px; text-align: center;" id="message"></div>
+            <div style="text-align: center; margin: auto; line-height: 100px;">
+                <div style="display: inline-block; width: 50px; line-height: 25px; text-align: center;">
+                    <input class="confirmDialog_button" type="button" value="Yes" onclick="CloseConfirmDialog1('Yes')"/>
+                </div>
+                <div style="display: inline-block; width: 50px; line-height: 25px; text-align: center;">
+                    <input class="confirmDialog_button" type="button" value="No" onclick="CloseConfirmDialog1('No')"/>
+                </div>
+            </div>
+
+        </div>
+    </e-content-template>
+</ejs-dialog>
+<ejs-scripts></ejs-scripts>
+<script>
+
+    var isPass = false;
+    var schedule = null;
+    var message = null;
+
+    function CloseConfirmDialog(item) {
+        var flag = null;
+        if (item === "Yes") {
+            if ($("#operate").val()=="remove") {
+                isPass = true;
+                $("#submitButton").trigger("click");
+            } else {
+                if ($("#type").val() == "unit") {
+                    flag = verifyUnit(schedule);
+                } else {
+                    flag = verifyWorker(schedule);
+                }
+                if (flag == true) {
+                    isPass = true;
+                    $("#submitButton").trigger("click");
+                } else {
+                    $(".sj_confirm").fadeIn(300,
+                        function() {
+                            var dialog = document.getElementById("is_confirm_jump1").ej2_instances[0];
+                            dialog.show();
+                            $("#is_confirm_jump1").removeAttr("style");
+                            $("#is_confirm_jump1").css({ "width": 400 });
+                        }
+                    );
+                    $("#message").html(message);
+                }
+            }
+           
+
+        } else {
+            isPass = false;
+            var dialog = document.getElementById("is_confirm_jump").ej2_instances[0];
+            dialog.hide();
+            $(".sj_confirm").hide();
+        }
+     
+    }
+
+    function CloseConfirmDialog1(item) {
+        if (item === "Yes") {
+            isPass = true;
+            $("#submitButton").trigger("click");
+        } else {
+            isPass = false;
+        }
+        var dialog = document.getElementById("is_confirm_jump1").ej2_instances[0];
+        dialog.hide();
+        $(".sj_confirm").hide();
+    }
+
+    function verifyUnitSchedule() {
+        var itemurl = '@Url.Action("VerifyCrewSchedule", "CrewBoard")';
+        $.ajax({
+            url: itemurl,
+            async: false,
+            method: "Post",
+            data: {
+                "crewId": $('#Id').val()
+            },
+            success: function(data) {             
+                if (!isPass) {
+                    isPass = data.state;
+                    if (!data.state) {
+                        schedule = data.data;
+                        var divs = document.getElementsByTagName("div");
+                        var max = 0;
+                        for (var i = 0; i < divs.length; i++) {
+                            max = Math.max(max, divs[i].style.zIndex || 0);
+                        }
+
+                        $(".sj_confirm").fadeIn(300,
+                            function() {
+                                var dialog = document.getElementById("is_confirm_jump").ej2_instances[0];
+                                dialog.show();
+                                $("#is_confirm_jump").removeAttr("style");
+                                $("#is_confirm_jump").css({ "width": 400 });
+                            }
+                        );
+                    }
+                }
+                return isPass;
+            }
+        });
+        return isPass;
+    }
+
+    function verifyWorkerSchedule() {
+
+        var itemurl = '@Url.Action("VerifyCrewSchedule", "CrewBoard")';
+        $.ajax({
+            url: itemurl,
+            async: false,
+            method: "Post",
+            data: {
+                "crewId": $('#Id').val()
+            },
+            success: function(data) {
+                if (!isPass) {
+                    isPass = data.state;
+                    if (!data.state) {
+                        schedule = data.data;
+                        var divs = document.getElementsByTagName("div");
+                        var max = 0;
+                        for (var i = 0; i < divs.length; i++) {
+                            max = Math.max(max, divs[i].style.zIndex || 0);
+                        }
+
+                        $(".sj_confirm").fadeIn(300,
+                            function() {
+                                var dialog = document.getElementById("is_confirm_jump").ej2_instances[0];
+                                dialog.show();
+                                $("#is_confirm_jump").removeAttr("style");
+                                $("#is_confirm_jump").css({ "width": 400 });
+                            }
+                        );
+                    }
+                }
+                return isPass;
+            }
+        });
+        return isPass;
+    }
+
+    function verifyUnit(schedule) {
+        var flag = true;
+        var itemurl = '@Url.Action("VerifyUnitSchedule", "Calendar")';
+        var data = {
+            "truckUnitId": $("#TruckUnitId").val(),
+            "startTime": schedule.StartTime,
+            "endTime": schedule.EndTime
+        };
+        $.ajax({
+            url: itemurl,
+            async: false,
+            method: "Post",
+            data: data,
+            success: function(data) {
+                if (data != "") {
+                    message = data;
+                    flag = false;
+                }
+            }
+        });
+        return flag;
+    }
+
+    function verifyWorker(schedule) {
+        var flag = true;
+        var itemurl = '@Url.Action("VerifyWorkerSchedule", "Calendar")';
+        var data = {
+            "workerId": $("#WorkerId").val(),
+            "startTime": schedule.StartTime,
+            "endTime": schedule.EndTime
+        };
+        $.ajax({
+            url: itemurl,
+            async: false,
+            method: "Post",
+            data: data,
+            success: function(data) {
+                if (data != "") {
+                    message = data;
+                    flag = false;
+                }
+            }
+
+        });
+        return flag;
+    }
+</script>

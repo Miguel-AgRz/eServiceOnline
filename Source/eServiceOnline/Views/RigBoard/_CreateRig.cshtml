@@ -1,0 +1,190 @@
+@using eServiceOnline.Models.RigBoard
+@model eServiceOnline.Models.RigBoard.RigViewModel
+
+@*<div class="sj_dialog_head">*@
+@*    <span>Create Rig</span>*@
+@*    <a class="sj_dialog_close" onclick="siteInstance.CloseDialog('dialog_addnewrig')">+</a>*@
+@*</div>*@
+    @using (Html.BeginForm("CreateRig", "RigBoard", FormMethod.Post, new { enctype = "multipart/form-data", onsubmit = "return dosubmit()" }))
+    {
+        @Html.HiddenFor(m => m.DrillingCompanyName)
+        @Html.HiddenFor(m => m.RigSizeTypeName)
+        @Html.HiddenFor(m => m.SizeValue)
+        @Html.HiddenFor(m => m.ThreadTypeName)
+
+        <div class="sj_dialog_body sj_lsd_ud">
+            <div class="det_list">
+                <label class="det_label">Rig Contractor</label>
+                <div class="det_text">
+                    <ej-drop-down-list id="DrillingCompanyId" enable-filter-search="true" Width="280px">
+                        <e-datamanager id="DrillingCompanyName" json="@ViewData["drillingCompany"]"></e-datamanager>
+                        <e-drop-down-list-fields text="Text" id="DrillingCompanyName" value="Value" />
+                    </ej-drop-down-list>
+                    <span id="drillingCompanytip" style="color: firebrick;"></span>
+                </div>
+            </div>
+            <div class="det_list">
+                <label class="det_label">Rig Number</label>
+                <div class="det_text">@Html.TextBoxFor(model => model.RigNumber, new { @class = "sj_text" })
+                    <span id="rigNumbertip" style="color: firebrick;"></span>
+                </div>                
+            </div>
+            <div class="det_list">
+                <label class="det_label">Rig Size</label>
+                <div class="det_text">@Html.DropDownListFor(m => m.RigSizeTypeId, ViewData["rigSizeList"] as List<SelectListItem>, "None", new { onchange = "getRigSize(this)", @class = "sj_select" })</div>
+            </div>
+            <div class="det_list">
+                <label class="det_label">Rig Name</label>
+                <div class="det_text">@Html.TextBoxFor(model => model.Name, new { @class = "sj_text" })
+                    <span id="rigNametip" style="color: firebrick;"></span>
+                </div>                
+            </div>
+            <div class="det_list">
+                <label class="det_label">Is Project Rig</label>
+                <div class="det_text">
+                    <label class="sj_cont_lab">
+                        @Html.CheckBoxFor(model => model.IsProjectRig, new { @class = "hide" })
+                        <i class="check"></i>
+                    </label>
+                </div>
+            </div>
+            <div class="det_list">
+                <label class="det_label">Is Service Rig</label>
+                <div class="det_text">
+                    <label class="sj_cont_lab">
+                        @Html.CheckBoxFor(model => model.IsServiceRig, new { @class = "hide" })
+                        <i class="check"></i>
+                    </label>
+                </div>
+            </div>
+            <div class="det_list">
+                <label class="det_label">Is Top Drive</label>
+                <div class="det_text">
+                    <label class="sj_cont_lab">
+                        @Html.CheckBoxFor(model => model.IsTopDrive, new { @class = "hide" })
+                        <i class="check"></i>
+                    </label>
+                </div>
+@*                @Html.CheckBoxFor(model => model.IsTopDrive)*@
+            </div>
+            <div class="det_list">
+                <label class="det_label">Size (mm)</label>
+                <div class="det_text">@Html.DropDownListFor(m => m.SizeId, ViewData["valueUnit"] as List<SelectListItem>, "None", new { onchange = "getSize(this)", @class = "sj_select" })</div>
+            </div>
+            <div class="det_list">
+                <label class="det_label">Thread Type</label>
+                <div class="det_text">@Html.DropDownListFor(m => m.ThreadTypeId, ViewData["threadList"] as List<SelectListItem>, "None", new { onchange = "getThread(this)", @class = "sj_select" })</div>
+            </div>
+
+        </div>
+
+        <div class="sj_dialog_foot">
+            <input type="submit" value="Save" onclick="return ValidateData();"/>
+        </div>
+    }
+
+<ej-script-manager></ej-script-manager>
+
+<script>
+
+    var isCommitted = false;
+    function dosubmit() {
+        if(isCommitted == false) {
+            isCommitted = true;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function getContractor(obj) {
+        $("#DrillingCompanyName").val($(obj).find("option:selected").text());
+    }
+
+    function getRigSize(obj) {
+        $("#RigSizeTypeName").val($(obj).find("option:selected").text());
+    }
+
+    function getSize(obj) {
+        $("#SizeValue").val($(obj).find("option:selected").text());
+    }
+
+    function getThread(obj) {
+        $("#ThreadTypeName").val($(obj).find("option:selected").text());
+    }
+
+    function ValidateData() {
+        var drillingCompany = $("#DrillingCompanyId").val();
+        var rigNumber = $("#RigNumber").val().trim();
+        var rigName = $("#Name").val().trim();
+        var rigId = $("#RigId").val();
+        var flag = true;
+
+        if (drillingCompany == "" || drillingCompany == null) {
+            $("#drillingCompanytip").html("*required");
+            flag = false;
+        } else {
+            $("#drillingCompanytip").html("");
+        }
+
+        if (rigName == "" || rigName == null) {
+            $("#rigNametip").html("*required");
+            flag = false;
+        } else {
+             $.ajax({
+                url: '@(this.Url.Action("VerifyRigName", "RigBoard"))',
+                type: 'POST',
+                async: false,
+                data: {
+                    "rigName": rigName,
+                    "rigId": rigId
+                },
+                dateType: "json",
+                success: function (data) {
+                    if (data == true) {
+                        $("#rigNametip").html("*already exist");
+                        flag = false;
+                    } else {
+                        $("#rigNametip").html("");
+                    }
+                }
+            });
+        }
+
+        if (rigNumber == "" || rigNumber == null) {
+            $("#rigNumbertip").html("*required");
+            flag = false;
+        } else {
+            $.ajax({
+                url: '@(this.Url.Action("VerifyRigNumber", "RigBoard"))',
+                type: 'POST',
+                async: false,
+                data: {
+                    "drillingCompanyId": drillingCompany,
+                    "rigNumber": rigNumber
+                },
+                dateType: "json",
+                success: function (data) {
+                    if (data == true) {
+                        $("#rigNumbertip").html("*already exist");
+                        flag = false;
+                    } else {
+                        $("#rigNumbertip").html("");
+                    }
+                }
+            });
+        }
+
+        return flag;
+    }
+
+
+//        var flag = true ;
+//        if ($('#IsTopDrive').is(':checked')) {
+//            $("#IsTopDrive").val(flag);
+//        } else {
+//            flag = false;
+//            $("#IsTopDrive").val(flag);
+//        }
+</script>
+

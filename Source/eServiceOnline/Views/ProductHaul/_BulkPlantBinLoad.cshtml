@@ -1,0 +1,65 @@
+﻿@model eServiceOnline.Models.ProductHaul.BulkPlantBinLoadModel
+@{
+    bool IsStatic = false;
+    if (ViewData["isReadOnly"] != null)
+    {
+        IsStatic = (bool)ViewData["isReadOnly"];
+    }
+}
+
+<div class="det_list">
+    <label class="det_label">Bulk Plant</label>
+    <div class="det_text">
+        @Html.TextBoxFor(model => model.BulkPlantName, new { @class = "sj_text", @readonly = true })
+        @Html.HiddenFor(m => m.BulkPlantId)
+    </div>
+</div>
+
+@Html.HiddenFor(m => m.BinInformationId)
+<div class="det_list">
+    <label class="det_label">From Storage</label>
+    <div class="det_text">
+        @Html.TextBoxFor(model => model.BinInformationName, new { @class = "sj_text", @readonly = true })
+    </div>
+</div>
+<div class="det_list">
+    <label class="det_label">Base Blend</label>
+    <div class="det_text">
+            @Html.TextBoxFor(model => model.BaseBlend, new { @readonly = true, @class = "sj_text" })
+            @Html.HiddenFor(model => model.BaseBlendSectionId)
+            @Html.HiddenFor(model => model.BlendChemicalDescription)
+    </div>
+</div>
+<div class="det_list">
+    <label class="det_label">Call Sheet Number</label>
+    <div class="det_text">
+            @(this.Html.DropDownListFor(model => model.CallSheetNumber, new SelectList(ViewBag.CallSheetNumbers, "Value", "Text"), new { @onChange = "LoadRigAndUnLoadByCallSheetNumber()", @class = "sj_select"}))
+    </div>
+</div>
+<div class="det_list">
+    <label class="det_label">Customer</label>
+    <div class="det_text">
+        @Html.TextBoxFor(model => model.ClientName, new { @class = "sj_text", @readonly = true })
+        @Html.HiddenFor(model => model.ClientId)
+    </div>
+</div>
+@*//Dec 11, 2023 zhangyuan 226_PR_CalcRemainsAmount: And  calculate remains amount*@
+<div class="det_list">
+    <label class="det_label">Total Tonnage(Adds included)</label>
+    <div class="det_text">
+       
+        @Html.TextBoxFor(model => model.Amount, new {  @readonly = true, @class = "sj_text" })
+        
+
+    </div>    
+</div>
+<div class="det_list">
+    <label class="det_label">Remains Amount</label>
+    <div class="det_text">
+       
+        @Html.TextBoxFor(model => model.RemainsAmount, new {  @readonly = true, @class = "sj_text" })
+        
+
+    </div>    
+</div>
+

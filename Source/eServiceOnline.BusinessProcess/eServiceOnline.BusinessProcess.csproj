@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{006C23C0-B4FD-47A8-9BD0-FE1AD7620C92}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>eServiceOnline.BusinessProcess</RootNamespace>
+    <AssemblyName>eServiceOnline.BusinessProcess</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BinBoardProcess.cs" />
+    <Compile Include="BinProcess.cs" />
+    <Compile Include="BlendChemicalProcess.cs" />
+    <Compile Include="BulkPlantProcess.cs" />
+    <Compile Include="CrewBoardProcess.cs" />
+    <Compile Include="CalendarProcess.cs" />
+    <Compile Include="CrewProcess.cs" />
+    <Compile Include="ManifoldProcess.cs" />
+    <Compile Include="NoteProcess.cs" />
+    <Compile Include="NubbinBoardProcess.cs" />
+    <Compile Include="PlugLoadingHeadBoardProcess.cs" />
+    <Compile Include="PlugLoadingHeadSubBoardProcess.cs" />
+    <Compile Include="ProductHaulProcess.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RigBoardProcess.cs" />
+    <Compile Include="RigJobProcess.cs" />
+    <Compile Include="ScheduleProcess.cs" />
+    <Compile Include="SwedgeBoardProcess.cs" />
+    <Compile Include="ThirdPartyCrewBoardProcess.cs" />
+    <Compile Include="TopDrivceAdaptorProcess.cs" />
+    <Compile Include="UpcomingJobsProcess.cs" />
+    <Compile Include="Utility.cs" />
+    <Compile Include="Validations\CallSheetValidation.cs" />
+    <Compile Include="Validations\ProductHaulValidation.cs" />
+    <Compile Include="Validations\ScheduleValidation.cs" />
+    <Compile Include="WitsBoxBoardProcess.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\eServiceOnline.BusinessProcess.Interface\eServiceOnline.BusinessProcess.Interface.csproj">
+      <Project>{76D9DCCA-874B-4A30-AAD6-3DA12F79C646}</Project>
+      <Name>eServiceOnline.BusinessProcess.Interface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\eServiceOnline.Gateway\eServiceOnline.Gateway.csproj">
+      <Project>{246d82ab-e4ce-4853-8497-b67a50b8ba9e}</Project>
+      <Name>eServiceOnline.Gateway</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="BlendLibrary" Version="1.0.4" />
+    <PackageReference Include="MetaShare.Common.Core.ng" Version="1.7.0" />
+    <PackageReference Include="NotficationLibrary" Version="1.0.1" />
+    <PackageReference Include="SanjelData.Entities" Version="1.7.1" />
+    <PackageReference Include="SanjelPrintingService" Version="1.0.8" />
+    <PackageReference Include="EService.MicroService" Version="1.1.2" />
+    <PackageReference Include="EService.MicroService.Interfaces" Version="1.1.2" />
+    <PackageReference Include="MetaShare.Common.Foundation" Version="1.1.0" />
+    <PackageReference Include="MetaShare.Common.ServiceModel" Version="1.1.0" />
+    <PackageReference Include="Sanjel.BusinessEntities" Version="1.1.2" />
+    <PackageReference Include="Sanjel.BusinessEntities.Facades" Version="1.1.0" />
+    <PackageReference Include="Sanjel.Common.BusinessEntities.Mdd" Version="1.1.2" />
+    <PackageReference Include="Sanjel.Common.BusinessEntities.Standard" Version="1.1.0" />
+    <PackageReference Include="Sanjel.Common.Core" Version="1.1.0" />
+    <PackageReference Include="Sanjel.Common.Services.Interfaces.Standard" Version="1.1.0" />
+    <PackageReference Include="Sanjel.Services" Version="1.1.2" />
+    <PackageReference Include="Sanjel.Services.Interfaces" Version="1.1.0" />
+    <PackageReference Include="Sanjel.Services.Interfaces.Standard" Version="1.1.0" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

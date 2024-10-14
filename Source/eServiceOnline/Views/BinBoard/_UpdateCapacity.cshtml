@@ -1,0 +1,18 @@
+@using eServiceOnline.Models.CrewBoard
+@model eServiceOnline.Models.BinBoard.BinInformationModel
+
+@using (Html.BeginForm("UpdateCapacity", "BinBoard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(m => m.BinId)
+    <div class="sj_dialog_body sj_lsd_ud">
+        <div class="det_list">
+            <label class="det_label">Capacity</label>
+            <div class="det_text">@Html.TextBoxFor(model => model.Capacity, new { @class = "sj_text" }) t</div>
+        </div>
+    </div>
+
+    <div class="sj_dialog_foot">
+        <input type="submit" value="Save" />
+    </div>
+}
+

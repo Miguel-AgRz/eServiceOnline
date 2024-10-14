@@ -1,0 +1,221 @@
+﻿@using eServiceOnline.Models.RigBoard
+@using Microsoft.AspNetCore.Http
+@model eServiceOnline.Models.RigBoard.RigBoardViewModel
+@{
+    ViewData["Title"] = "Rig Board";
+}
+
+@section SampleHeading{
+
+    <link href="~/css/rigBoard.css" rel="stylesheet"/>
+
+    <div id="retrieval_conditions" style="line-height: 40px; font-size: 18px;font-family: Segoe UI; background: #000000; overflow: hidden;">
+        <div style="padding: 0 60px 0 20px;color: #BFBFBF; text-align: center; float: left;display: none">
+            <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="69" onclick="selectionCriteria(this,'BR')" />BR
+            <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="85" onclick="selectionCriteria(this,'RD')" />RD
+            <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="67" onclick="selectionCriteria(this,'Edm')" />Edm
+            <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="81" onclick="selectionCriteria(this,'Eds')" />Eds
+            <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="71" onclick="selectionCriteria(this,'GP')" />GP
+            <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="66" onclick="selectionCriteria(this,'FSJ')" />FSJ
+            <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="89" onclick="selectionCriteria(this,'NW')" />NW
+            <span style="color:#FFFF00">&nbsp;|&nbsp;</span>
+            <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="72" onclick="selectionCriteria(this,'EST')" />EST
+            <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="70" onclick="selectionCriteria(this,'SC')" />SC
+            <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="88" onclick="selectionCriteria(this,'KD')" />KD
+            <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="61" onclick="selectionCriteria(this,'LLD')" />LLD
+            <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="65" onclick="selectionCriteria(this,'LLB')" />LLB
+        </div>
+        <div style="padding: 0 20px;font-family: Segoe UI; color: #FFFF00; text-align: center;float: left; display: none">
+            <input name="IsProjectRig" type="checkbox" class="checkboxstyle" value="1" onclick="selectionCriteria(this,'IsProjectRig')" />Project Rig
+        </div>
+        <div style="padding: 0 20px;font-family: Segoe UI; color: #BFBFBF; text-align: center;float: left;display: none">
+            <input name="DrillingRig" type="checkbox" class="checkboxstyle" value="1" onclick="selectionCriteria(this,'DrillingRig')" />Drilling Rig
+            <input name="ServiceRig" type="checkbox" class="checkboxstyle" value="1" onclick="selectionCriteria(this,'ServiceRig')" />Service Rig
+        </div>
+        <div style="padding: 0  0 0 60px;font-family: Segoe UI; text-align: center;float: left;">
+            <span class="date-alerted"><input name="JobStatus" type="checkbox" class="checkboxstyle" value="1" onclick="selectionCriteria(this,'Alerted')" disabled="disabled"/>Alerted</span>
+            <span class="date-pending"><input name="JobStatus" type="checkbox" class="checkboxstyle" value="2" onclick="selectionCriteria(this,'Pending')" disabled="disabled"/>Pending</span>
+            <span class="date-confirmed"><input name="JobStatus" type="checkbox" class="checkboxstyle" value="3" onclick="selectionCriteria(this,'Confirmed')" disabled="disabled"/>Confirmed</span>
+            <span class="date-scheduled"><input name="JobStatus" type="checkbox" class="checkboxstyle" value="4" onclick="selectionCriteria(this,'Scheduled')" disabled="disabled"/>Scheduled</span>
+            <span class="date-dispatched"><input name="JobStatus" type="checkbox" class="checkboxstyle" value="5" onclick="selectionCriteria(this,'Dispatched')" disabled="disabled"/>Dispatched</span>
+            <span class="date-inprogress"><input name="JobStatus" type="checkbox" class="checkboxstyle" value="7" onclick="selectionCriteria(this,'InProgress')" disabled="disabled"/>In Progress</span>
+            <span class="date-completed"><input name="JobStatus" type="checkbox" class="checkboxstyle" value="8" onclick="selectionCriteria(this,'Completed')" disabled="disabled"/>Completed</span>
+            <input id="RetrievalConditions" name="RetrievalConditions" type="hidden" value='@this.Context.Session.GetString("ServicePoint")' />
+        </div>
+        <div style="padding: 0 15px 0 40px;font-family: Segoe UI; color: #BFBFBF; text-align: center;float: left;">
+            <input name="IsShowFutureJobs" type="checkbox" class="checkboxstyle" value="1" onclick="selectionCriteria(this,'IsShowFutureJobs')" checked="checked" disabled="disabled"/>Future Job
+        </div>
+
+    </div>
+    <div id="tipContent" style="cursor: pointer; border: 2px solid #111; position: fixed;z-index:100; display: none; background-color: #fff;">
+    </div>
+}
+
+
+@section ControlsSection{
+    <div style="background: #74223C; height: 15px; margin-bottom: -1px; position: relative;z-index: 90"></div>
+    <ej-grid id="FlatGrid" allow-paging="true" allow-resize-to-fit="true" allow-text-wrap="true" allow-sorting="true" allow-cell-merging="true" merge-cell-info="siteInstance.MergeStyledCell">
+        <e-selection-settings selection-mode="@(new List<string>(){"cell"})" />
+        <e-text-wrap-settings wrap-mode="Content" />
+        <e-page-settings page-size="18"></e-page-settings>
+        <e-datamanager url="@Url.Action("GetPagedDistrictRigJobViewModels", "RigBoard", new { } )" adaptor="UrlAdaptor" />
+
+        <e-columns>
+            <e-column field="SequenceNumber" header-text=" " text-align="Center" css-class="generalStyle" width="20"></e-column>
+            <e-column field="Company" header-text="COMPANY" text-align="Left" width="40" css-class="generalStyle" tooltip="#colTipCompany"></e-column>
+            <e-column field="Lsd" header-text="LSD" width="65" css-class="generalStyle" tooltip="#colTipLsd" allow-sorting="false"></e-column>
+            <e-column field="Rig" header-text="RIG" width="45" css-class="generalStyle" tooltip="#colTipRig"></e-column>
+            <e-column field="Job" header-text="JOB" width="50" css-class="generalStyle" tooltip="#colTip" allow-sorting="false"></e-column>
+            <e-column field="Date" header-text="DATE" width="45" css-class="generalStyle" tooltip="#colTipDate" allow-sorting="false"></e-column>
+            <e-column field="Bl1" header-text="BL1" width="25" css-class="generalStyle" tooltip="#colTipBL1" allow-sorting="false"></e-column>
+            <e-column field="Bl2" header-text="BL2" width="25" css-class="generalStyle" tooltip="#colTipBL2" allow-sorting="false"></e-column>
+            <e-column field="Bl3" header-text="BL3" width="25" css-class="generalStyle" tooltip="#colTipBL3" allow-sorting="false"></e-column>
+            <e-column field="Crew" header-text="CREW" width="30" css-class="generalStyle" tooltip="#colTipCrew" allow-sorting="false"></e-column>
+            <e-column field="Notes" header-text="NOTES" width="130" css-class="generalNotesStyle" tooltip="#colTip" allow-sorting="false"></e-column>
+            <e-column field="Bin" header-text="BIN" width="30" css-class="generalStyle" tooltip="#colTip" allow-sorting="false"></e-column>
+            <e-column field="ConsultantContacts" header-text="OSR" width="120" css-class="generalStyle" tooltip="#colTipConsultant" allow-sorting="false"></e-column>
+        </e-columns>
+    </ej-grid>
+
+    <ej-dialog id="basicDialog" css-class="sj_dialog" title="Dialog" width="800" z-index="2100" show-on-init="false" enable-resize="false" close="eServiceOnline.Site.prototype.CloseDialog">
+        <e-content-template>
+        </e-content-template>
+    </ej-dialog>
+
+    <div class="sj_confirm"></div>
+
+    <ej-dialog id="confirmDialog" css-class="sj_confirmDialog" title="Confirm" width="400" show-on-init="false" enable-resize="false" close="CloseConfirmjumpDialog">
+        <e-content-template>
+            <div id="is_confirm_jump">
+                <div style="margin-top: 20px;padding: 0 10px 0 10px">Directions is not changed with location change, are you sure to save?</div>
+                <div style="text-align: center; margin: auto; line-height: 100px;">
+                    <div style="display: inline-block;width: 50px; line-height: 25px; text-align: center;">
+                        <input class="confirmDialog_button" type="button" value="Yes" onclick="CloseConfirmjumpDialog('Yes')" />
+                    </div>
+                    <div style="display: inline-block;width: 50px; line-height: 25px; text-align: center;">
+                        <input class="confirmDialog_button" type="button" value="No" onclick="CloseConfirmjumpDialog('No')" />
+                    </div>
+                </div>
+            </div>
+        </e-content-template>
+    </ej-dialog>
+    <script>
+        @*window.onbeforeunload = function () {
+            var url = '@Url.Action("UpdateAccessRecord", "RigBoard")';
+            EServiceExpress.Common.prototype.LogOut(url);
+        }*@
+        $(".confirmDialog_button").hide();
+        $("#is_confirm_jump").hide();
+        var confirmjump = false;
+        function verifyLsdIsChange() {
+            var obj = {
+                CallSheetNumber: $("#CallSheetNumber").val(),
+                DirectionToLocation: $("#DirectionToLocation").val()
+            }
+            var itemurl = '@Url.Action("VerifyLsdIsChange", "RigBoard")';
+            if (!confirmjump) {
+                $.ajax({
+                    url: itemurl,
+                    async: false,
+                    method: "Post",
+                    data: obj,
+                    success: function (data) {
+                        if (!data) {
+                            var divs = document.getElementsByTagName("div");
+                            var max = 0;
+                            for (var i = 0; i < divs.length; i++) {
+                                max = Math.max(max, divs[i].style.zIndex || 0);
+                            }
+                            console.log(max);
+                            $(".sj_confirm").css({ "z-index": max + 1});
+                            $(".sj_confirm").fadeIn(300,
+                                function () {
+                                    $("#confirmDialog").ejDialog("open");
+                                }
+                            );
+                            $("#is_confirm_jump").show();
+                            $(".confirmDialog_button").show();
+                            //                        $(".sj_confirm_jump").show();
+                            confirmjump = false;
+                        } else {
+                            confirmjump = true;
+                        }
+                    }
+                });
+            }
+            return confirmjump;
+        }
+
+        function CloseConfirmjumpDialog(item) {
+            if (item === "Yes") {
+                confirmjump = true;
+                $("#sj_updatelsdinfowelllocation").trigger("click");
+            } else {
+                confirmjump = false;
+            }
+            $("#is_confirm_jump").hide();
+            $(".sj_confirm").fadeOut(300,
+                function () {
+                    $("#confirmDialog").ejDialog("close");
+                }
+            );
+        }
+
+        function submitJobDateInfo() {
+            $("#ExpectedTimeOnLocation").val($("#sj_expected_time_on_location").val());
+
+            return true;
+        }
+
+    </script>
+
+}
+
+@section ScriptSection
+    {
+    <script>
+        var siteInstance = new eServiceOnline.Site('@Url.Action("Index","RigBoard")',
+            '@Url.Action("processContextMenu", "RigBoard")','@Url.Action("GetContextMenu","Calendar")');
+    </script>
+
+    <script type="text/template" id="colTip">
+        {{:value}}
+    </script>
+
+    <script type="text/x-jsrender" id="colTipLsd">
+        {{:Lsd.Notice}}
+    </script>
+
+    <script type="text/template" id="colTipCompany">
+        {{:Company.Notice}}
+    </script>
+    <script type="text/template" id="colTipRig">
+        {{:Rig.Notice}}
+    </script>
+
+    <script type="text/template" id="colTipBL1">
+        {{:Bl1.Notice}}
+    </script>
+
+    <script type="text/template" id="colTipBL2">
+        {{:Bl2.Notice}}
+    </script>
+
+    <script type="text/template" id="colTipBL3">
+        {{:Bl3.Notice}}
+    </script>
+
+    <script type="text/template" id="colTipCrew">
+        {{:Crew.Notice}}
+    </script>
+
+    <script type="text/template" id="colTipRig">
+        {{:Bin.Notice}}
+    </script>
+    <script type="text/template" id="colTipDate">
+        {{:Date.Notice}}
+    </script>
+    <script type="text/template" id="colTipConsultant">
+        {{:ConsultantContacts.Notice}}
+    </script>
+}

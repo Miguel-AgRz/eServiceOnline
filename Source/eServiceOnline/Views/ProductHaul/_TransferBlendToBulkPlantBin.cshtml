@@ -1,0 +1,116 @@
+﻿@using eServiceOnline.Models.ProductHaul
+@using System.Net.Configuration
+@model eServiceOnline.Models.ProductHaul.TanseferBlendViewModel
+
+@using (Html.BeginForm("TransferBlend", "ProductHaul", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(m => m.IsOnlyOneTransferBin)
+    @Html.HiddenFor(m => m.BulkPlantOrRigId)
+    @Html.HiddenFor(m => m.BinInformationId)
+    @Html.HiddenFor(m => m.ShowPageType)
+    var isShowDifferent = !Model.IsBinEmpty && Model.IsOnlyOneTransferBin && !Model.IsSameBlendInBin;
+    
+    <div class="sj_dialog_body">
+        <div class="det_list">
+            <label class="det_label">Bulk Plant</label>
+            <div class="det_text">
+                @Html.TextBoxFor(model => model.BulkPlantOrRigName, new { @class = "sj_text", @readonly = true })
+            </div>
+        </div>
+        <div class="det_list">
+            <label class="det_label">From Storage</label>
+            <div class="det_text" id="bin_select">
+                @Html.TextBoxFor(model => model.BinInformationName, new { @class = "sj_text", @readonly = true })
+            </div>
+        </div>
+        <div class="det_list">
+            <label class="det_label">Remains Amount</label>
+            <div class="det_text" id="bin_select">
+                @Html.TextBoxFor(model => model.BlendQuantity, new { @class = "sj_text", @readonly = true })
+            </div>
+        </div>
+        @if (this.ViewBag.IsNotAnthorBin!=null&&this.ViewBag.IsNotAnthorBin)
+        {
+            <div style="margin-top: 20px; padding: 0 10px 0 10px; text-align: center; color: red; font-size:large">
+                There is only one bin, so transfer blend operations can not be performed.
+            </div>
+            <div style="text-align: center; margin: auto; line-height: 100px;">
+                <div class="sj_dialog_foot">
+                    <input type="button" value="OK" class="no" onclick="eServiceOnline.Site.prototype.CloseDialog()"/>
+                </div>
+            </div>
+        }
+        else
+        {
+        <div class="det_list">
+            <label class="det_label">To Storage</label>
+            <div class="det_text" id="bin_select">
+                @if (Model.IsOnlyOneTransferBin)
+                {
+                    @Html.TextBoxFor(model => model.ToBinInformationName, new { @class = "sj_text", @readonly = true })
+                    @Html.HiddenFor(model => model.ToBinInformationId)
+                }
+                else
+                {
+                    @(this.Html.DropDownListFor(model => model.ToBinInformationId, new SelectList(this.ViewBag.ToStorageList, "Id", "Name"), "None", new { onchange = "loadTransForBins(this)", @class = "sj_select" }))
+                }
+                <div id="Bin_Required" style="display: none; color: red;">Bin is required</div>
+            </div>
+        </div>
+        <div class="det_list" id="BlendinBin" style="display: @(!Model.IsBinEmpty && Model.IsOnlyOneTransferBin ? "block" : "none")">
+            <label class="det_label">Blend in Bin</label>
+            <div class="det_text" id="BlendInBinDescription">@Model.BlendInBinDescription</div>
+        </div>
+        <div class="det_list">
+            <label class="det_label">Blend to Load</label>
+            <div class="det_text" id="BlendToLoadDescription">@Model.BlendToLoadDescription</div>
+        </div>
+
+        <div class="det_list">
+            <label class="det_label">Transfer Quantity</label>
+            <div class="det_text">
+                @Html.TextBoxFor(model => model.TransferQuantity, new { @class = "sj_text" })
+                <div id="Is_TransferQuantity" style="display:none; color:red;">Transfer Quantity is required</div>
+                <div id="Greaterthan_TransferQuantity" style="display:none; color:red;">Transfer Quantity can not exceed Remains Amount</div>
+            </div>
+        </div>
+
+        <div id="differentblend" style="display: @(isShowDifferent ? "block" : "none")">
+            <div style="margin-top: 20px; padding: 0 10px 0 10px; text-align: center; color: red; font-size:large">
+                There is different blend in the bin ,please empty the bin before you transfer blend.
+            </div>
+            <div style="text-align: center; margin: auto; line-height: 100px;">
+                <div class="sj_dialog_foot">
+                    <input type="button" value="OK" class="no" onclick="eServiceOnline.Site.prototype.CloseDialog()"/>
+                </div>
+            </div>
+        </div>
+        <div id="thesameblend" style="display: @(!isShowDifferent ? "block" : "none")">
+            <div style="margin-top: 20px; padding: 0 10px 0 10px; text-align: center;">
+                <label>Are you sure to transfer it?</label>
+            </div>
+            <div style="text-align: center; margin: auto; line-height: 100px;">
+                <div class="sj_dialog_foot">
+                    <input type="submit" class="yes" value="Yes" onclick="return transferValidations.validate()" /> <input type="button" value="No" class="no" onclick="eServiceOnline.Site.prototype.CloseDialog()" />
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+}
+<script>
+
+    var transferValidations ;
+    $(function () {
+        var val1 = new ValidationsChain(true, validateRequiredLoadToBin);
+        var val2 = new ValidationsChain(true, function () { $("#Greaterthan_TransferQuantity").hide(); return IsRequiredAmount("TransferQuantity"); });
+        var val3 = new ValidationsChain(true, function () { return GreaterthanQuantity("BlendQuantity","TransferQuantity"); });
+
+        val1.setNextFuncOrValidation(val2);
+        val2.setNextFuncOrValidation(val3);
+        transferValidations = new ValidationsBuilder(val1);
+        (new InitSchedule(function () {
+            InitializeDialogs();
+        })).Initialize();
+    });
+</script>

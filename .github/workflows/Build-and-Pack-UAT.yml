@@ -1,0 +1,155 @@
+name: Build and Pack eServiceOnline UAT
+
+on:
+  pull_request:
+    branches:
+      - test    
+
+  push:       
+    branches:
+      - test   
+  
+  workflow_dispatch:
+      
+defaults:
+  run:
+    shell: pwsh
+    working-directory: Source
+    
+jobs:
+  Build-and-Pack-UAT: 
+
+    environment:
+      name: 'uat'
+    
+    env:
+      BUILD_CONFIG: 'Release'
+      SOLUTION: 'eServiceOnline.sln'
+
+    #runs-on: self-hosted
+    runs-on: windows-2019
+    
+    permissions:
+      packages: write
+      actions: write
+      checks: write
+      contents: read
+      
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        clean: true
+
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v2    
+
+    - name: Add Sanjel GitHub NuGet source
+      run: |
+        dotnet nuget add source --username USERNAME --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name SanjelGitHub "https://nuget.pkg.github.com/Sanjel-Energy-Services/index.json"
+        
+        if ($LASTEXITCODE -ne 0) {
+          dotnet nuget update source SanjelGitHub --source "https://nuget.pkg.github.com/Sanjel-Energy-Services/index.json" --username USERNAME --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text
+
+          Write-Warning "Issue adding GitHub NuGet source. Exit code: $LASTEXITCODE`n$($error[0])"
+        }
+      continue-on-error: true
+
+    - name: Set BUILD_CONFIG based on branch
+      run: |
+        if ('${{ github.ref }}' -like 'refs/heads/develop' -or '${{ github.ref }}' -like 'refs/heads/test') {
+          $env:BUILD_CONFIG = 'Debug'
+        } else {
+          $env:BUILD_CONFIG = 'Release'
+        }
+        Write-Output "BUILD_CONFIG set to: $env:BUILD_CONFIG"      
+
+#--set variables
+
+    - name: Update eServiceExpress Variables
+      uses: microsoft/variable-substitution@v1
+      with:
+        files: 'source/eServiceExpress/app.config, source/eServiceExpress/appsettings.json'
+      env:
+        applicationContext: ${{ vars.eServiceExpress_applicationContext }}
+        EServiceBaseAddress: ${{ vars.eServiceExpress_EServiceBaseAddress }}
+        ConnectionStrings.ConfigDatabase: ${{ vars.eServiceExpress_ConnectionStrings_ConfigDatabase }}       
+        ConnectionStrings.MessagingDB: ${{ vars.eServiceExpress_ConnectionStrings_MessagingDB }}       
+        SchedulerConfig.PLCDataTransmissionFrequency: ${{ vars.eServiceExpress_SchedulerConfig_PLCDataTransmissionFrequency }}       
+        SchedulerConfig.PLCDataMaxCountPerMessage: ${{ vars.eServiceExpress_SchedulerConfig_PLCDataMaxCountPerMessage }}       
+        MessageQueue.ServerId: ${{ vars.eServiceExpress_MessageQueue_ServerId }}
+        MessageQueue.MqttTcpServer: ${{ vars.eServiceExpress_MessageQueue_MqttTcpServer }}
+        MessageQueue.MqttUser: ${{ vars.eServiceExpress_MessageQueue_MqttUser }}
+        MessageQueue.MqttPwd: ${{ secrets.eServiceExpress_MessageQueue_MqttPwd }}
+        MessageQueue.BridgeName: ${{ vars.eServiceExpress_MessageQueue_BridgeName }}
+        MessageQueue.TopicPrefix: ${{ vars.eServiceExpress_MessageQueue_TopicPrefix }}
+        MessageQueue.PublishMessagesTopicPrefix: ${{ vars.eServiceExpress_MessageQueue_PublishMessagesTopicPrefix }}
+        MessageQueue.Port: ${{ vars.eServiceExpress_MessageQueue_Port }}
+
+#--end set variables
+
+
+    - name: Restore packages
+      run:  |
+        msbuild -t:restore -p:RestorePackagesConfig=true -p:Configuration="$env:BUILD_CONFIG" -p:Platform="Any CPU" $env:SOLUTION 
+        
+    - name: Build Solution
+      run:  |
+        msbuild -t:Build -m -p:Configuration=$env:BUILD_CONFIG $env:SOLUTION -p:Platform="Any CPU" /clp:Verbosity=minimal     
+               
+    - name: Publish eServiceExpress
+      run:  |        
+        ls;
+        msbuild -t:Build -m "eServiceExpress/eServiceExpress.csproj" -p:Configuration="$env:BUILD_CONFIG" -p:Platform="AnyCPU" /p:DeployOnBuild=true /p:PublishProfile=FolderProfile
+        
+    - name: Extract eserviceExpress csproj version 
+      id: get_version
+      run: |
+        $version = Select-String -Path 'eServiceExpress/eServiceExpress.csproj' -Pattern '<AssemblyVersion>([0-9.]+)<\/AssemblyVersion>' | ForEach-Object { $_.Matches.Groups[1].Value }
+        echo "VERSION=$version"
+        echo "::set-output name=version::$version"
+      
+    - name: Replace eService Express .bat version 
+      run: |
+        (Get-Content Deploy/EserviceExpress_uat.bat) -replace '{{Version}}', '${{ steps.get_version.outputs.version }}' | Set-Content Deploy/EserviceExpress_uat.bat
+      
+        
+    - name: Build Setup projects
+      run:  |      
+        iscc /Qp Deploy/EserviceExpress_uat.iss /DAppVersionArg="${{ steps.get_version.outputs.version }}"
+
+        
+    - name: Clean Test Results
+      run: |
+        $testResultsDir = "${{ env.RUNNER_TEMP }}\TestResults"
+        #if (Test-Path -Path $testResultsDir) {
+        #  Remove-Item -Path $testResultsDir -Recurse -Force
+        #}
+        #New-Item -ItemType Directory -Force -Path $testResultsDir
+
+    - name: Run Unit Tests
+      id: run-tests
+      run: |
+        $testResultsDir = "${{ env.RUNNER_TEMP }}\TestResults"
+        #New-Item -ItemType Directory -Force -Path $testResultsDir
+        #dotnet test ${{ env.SOLUTION }} --logger trx --collect "Code coverage" --no-build --configuration $env:BUILD_CONFIG --results-directory $testResultsDir
+        #if ($LASTEXITCODE -ne 0) {
+        #    exit 1
+        #}
+        
+    - name: Upload UAT Setup
+      if: ${{ github.event_name == 'push' }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: eServiceExpress UAT Setup
+        path: Source/Deploy/Output/*uat*.exe
+        retention-days: 30
+        compression-level: 0        
+        
+    #- name: Publish Test Results
+    #  uses: dorny/test-reporter@v1.6.0
+    #  if: ${{ always() }}
+    #  with:
+    #    name: Unit Tests
+    #    path: ${{ env.RUNNER_TEMP }}/TestResults/*.trx
+    #    reporter: dotnet-trx
+    #    fail-on-error: true

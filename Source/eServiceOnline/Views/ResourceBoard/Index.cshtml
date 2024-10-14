@@ -1,0 +1,78 @@
+﻿@using System.Threading.Tasks
+@using eServiceOnline.Models.UpcomingJobs
+@using Microsoft.AspNetCore.Http
+@model eServiceOnline.Models.UpcomingJobs.UpcomingJobsViewModel
+@{
+    ViewData["Title"] = "Resource";
+}
+
+@section SampleHeading{
+    <link href="~/css/crewBoard.css" rel="stylesheet" />
+    <div id="retrieval_conditions" style="line-height: 40px; font-size: 18px;font-family: Segoe UI; background: #000000; overflow: hidden;">
+        @Html.Partial("_Retrieval")
+    </div>
+    <div id="tipContent" style="cursor: pointer; border: 2px solid #111; position: fixed; z-index: 100; display: none; background-color: #fff;"></div>
+}
+
+@section ControlsSection{
+    <div style="background: #74223C; height: 15px; margin-bottom: -1px; position: relative;z-index: 90"></div>
+    <div style="display: inline-block; float: left; width: 50%">
+        <div>
+            @*            <h3 style="color: #c0c0c0; text-align: left;">Bin Board</h3>*@
+            @Html.Partial("../BinBoard/_Index")
+        </div>
+        <div>
+            @*            <h3 style="color: #c0c0c0; text-align: left;">Manifold Board</h3>*@
+            @Html.Partial("../ManifoldBoard/_Index")
+        </div>
+        <div>
+            @*            <h3 style="color: #c0c0c0; text-align: left;">Plug Loading Head Sub Board</h3>*@
+            @Html.Partial("../PlugLoadingHeadSubBoard/_Index")
+        </div>
+        <div>
+
+            @Html.Partial("../SwedgeBoard/_Index")
+        </div>
+    </div>
+    <div style="display: inline-block; float: right;width:49% ">
+        <div>
+@*            <h3 style="color: #c0c0c0; text-align: left;">Unit Board</h3>*@
+            @Html.Partial("../UnitBoard/_Index")
+        </div>
+        <div>
+@*            <h3 style="color: #c0c0c0; text-align: left;">Worker Board</h3>*@
+            @Html.Partial("../WorkerBoard/_Index")
+        </div>
+
+        <div>
+@*            <h3 style="color: #c0c0c0; text-align: left;">Plug Loading Head Board</h3>*@
+            @Html.Partial("../PlugLoadingHeadBoard/_Index")
+        </div>
+        <div>
+@*            <h3 style="color: #c0c0c0; text-align: left;">Top Drive Adaptor Board</h3>*@
+            @Html.Partial("../TopDriveAdaptorBoard/_Index")
+        </div>
+        <div>
+
+            @Html.Partial("../NubbinBoard/_Index")
+        </div>
+        <div>
+
+            @Html.Partial("../WitsBoxBoard/_Index")
+        </div>
+    </div>
+
+    <div id='container'>
+        <ejs-dialog id="basicDialog" zindex="2100" header="Dialog" showCloseIcon="true" visible="false" target="#container" width="800" close="siteInstance.CloseDialog"></ejs-dialog>
+    </div>
+}
+
+@section ScriptSection
+    {
+    <script>
+        var siteInstance = new eServiceOnline.Site('@Url.Action("Index","ResourceBoard")', '@Url.Action("processContextMenu", "ResourceBoard")');
+    </script>
+    <script type="text/template" id="colTipProfile">
+        {{:WorkerName.Notice}}
+    </script>
+}

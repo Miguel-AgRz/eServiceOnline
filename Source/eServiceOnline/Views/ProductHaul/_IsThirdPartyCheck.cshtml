@@ -1,0 +1,22 @@
+@model eServiceOnline.Models.ProductHaul.ProductHaulInfoModel
+@{
+    var IsStatic = false;
+    if (ViewData["isStatic"]!=null) {
+        IsStatic = (bool)ViewData["isStatic"];
+    }
+}
+<div class="det_list" id="isThirdParty">
+    <label class="det_label">Third Party</label>
+    <div class="det_text">
+        @if (IsStatic)
+        {
+            @Html.CheckBoxFor(m => m.IsThirdParty, new { @disabled = "disabled" })
+        }
+        else
+        {
+            @Html.CheckBoxFor(m => m.IsThirdParty, new { onclick = "window.thirdParty.getThirdParty()" })
+        }
+
+    </div>
+</div>
+

@@ -1,0 +1,77 @@
+﻿@using eServiceOnline.Models.ProductHaul
+@model eServiceOnline.Models.ProductHaul.ProductHaulModel
+
+@{
+    Layout = null;
+}
+
+@using (Html.BeginForm("ScheduleBlendToRigBin", "ProductHaul", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(m => m.RigId)
+
+    <div class="sj_dialog_body sj_lsd_ud">
+        @Html.Partial("_CustomerProgramJobBaseBlendHeader", Model.ProductLoadInfoModel)
+        @Html.Partial("_TonnageAmountWaterControls", Model.ProductLoadInfoModel)
+        @Html.Partial("_BlendTestCheck", Model.ProductLoadInfoModel, new ViewDataDictionary(ViewData) { { "isStatic", false } })
+        @Html.Partial("_BulkPlant",Model.ProductLoadInfoModel, new ViewDataDictionary(ViewData) { { "isStatic", false } })
+        @Html.Partial("_LoadToBin", Model.ProductLoadInfoModel, new ViewDataDictionary(ViewData) { { "isStatic", true } })
+        @Html.Partial("_NonBlendTest", Model)
+        @Html.Partial("_CommentsTexArea", Model.ProductLoadInfoModel)
+
+    </div>
+    @Html.Partial("_SubmitButton", Model)
+}
+
+@Html.Partial("_Dialogs")
+
+<script>
+    var existingHaul, blendTest, scheduleValidations, thirdParty;
+
+    $(function () {
+        existingHaul = new ExistingHaul();
+        thirdParty = new ThirdParty();
+
+        var initSchedule = new InitSchedule(function () {
+
+            defaultOnBlendTestClick(true);
+            existingHaul.setExistingHaul();
+            loadRigBins();
+            loadBulkPlants();
+            thirdParty.getThirdParty();
+            $('#IsGoWithCrew').prop("disabled", true);
+            $('#IsBlendTest').prop("disabled", true);
+            InitializeDialogs();
+        });
+
+
+        //#region validation
+        var val0 = new ValidationsChain(true, validateRequiredBlend);
+        var val1 = new ValidationsChain(true, validateRequiredAmount);
+        var val2 = new ValidationsChain(true, validateBulkPlant);
+        var val3 = new ValidationsChain(true, validateBin, function () { return !$("#IsGoWithCrew").prop("checked") });
+        var val4 = new ValidationsChain(true, validateExistingHaul, function () { return !$("#IsBlendTest").prop("checked") && $("#IsExistingHaul").prop("checked") });
+        var val5 = new ValidationsChain(true, validateCrew, function () { return !$("#IsBlendTest").prop("checked") });
+        var val6 = new ValidationsChain(true, validateExpectedLocationTime, function () { return !$("#IsBlendTest").prop("checked") && !$("#IsGoWithCrew").prop("checked") });
+        var val7 = new ValidationsChain(true, validateJobDuration, function () { return !$("#IsBlendTest").prop("checked") && !$("#IsGoWithCrew").prop("checked") && !$("#IsExistingHaul").prop("checked") });
+
+        scheduleChainValidation = new ValidationsChain(true, validateSchedule, function (stateObj) { return !$("#IsBlendTest").prop("checked") && !$("#IsExistingHaul").prop("checked"); }, null, dataScheduleValidation);
+        qualityOfTheBinChainValidation = new ValidationsChain(true, VerifyQualityOfTheBin, undefined, undefined, dataQualityOfTheBin);
+        amountAndMixWaterChainValidation = new ValidationsChain(true, verifyAmountAndMixWater, undefined, undefined, dataAmountAndMixWater);
+
+        val0.setNextFuncOrValidation(val1);
+        val1.setNextFuncOrValidation(val2);
+        val2.setNextFuncOrValidation(val3);
+        val3.setNextFuncOrValidation(val4);
+        val4.setNextFuncOrValidation(val5);
+        val5.setNextFuncOrValidation(val6);
+        val6.setNextFuncOrValidation(val7);
+        val7.setNextFuncOrValidation(scheduleChainValidation);
+        scheduleChainValidation.setNextFuncOrValidation(qualityOfTheBinChainValidation);
+        qualityOfTheBinChainValidation.setNextFuncOrValidation(amountAndMixWaterChainValidation);
+
+        scheduleValidations = new ValidationsBuilder(val0);
+        //#endregion
+
+        initSchedule.Initialize();
+    });
+</script>

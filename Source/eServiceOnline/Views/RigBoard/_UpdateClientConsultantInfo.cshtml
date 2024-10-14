@@ -1,0 +1,61 @@
+﻿@using eServiceOnline.Models.RigBoard
+@model eServiceOnline.Models.RigBoard.ConsultantViewModel
+
+    @using (Html.BeginForm("UpdateClientConsultant", "RigBoard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.HiddenFor(m => m.ConsultantId)
+        @Html.HiddenFor(m => m.WorkShiftTypeName)
+
+        <div class="sj_dialog_body sj_lsd_ud">
+            <div class="det_list">
+                <label class="det_label">Name</label>
+                <div class="det_text">
+                    @Html.TextBoxFor(model => model.Name, new {@required = "required", @onblur = "CheckNameRepeat()", @class = "sj_text" })
+                    <span id="nametip" style="color: firebrick;"></span>
+                </div>
+            </div>
+            <div class="det_list">
+                <label class="det_label">Cell</label>
+                <div class="det_text">@Html.TextBoxFor(model => model.Cell, new { @class = "sj_text" })</div>
+            </div>
+            <div class="det_list">
+                <label class="det_label">Phone</label>
+                <div class="det_text">@Html.TextBoxFor(model => model.Phone2, new { @class = "sj_text" })</div>
+            </div>
+            <div class="det_list">
+                <label class="det_label">Email</label>
+                <div class="det_text">@Html.TextBoxFor(model => model.Email, new { @class = "sj_text" })</div>
+            </div>
+            <div class="det_list">
+                <label class="det_label">Client</label>
+                <div class="det_text">@Html.DropDownListFor(m => m.ClientId, ViewData["clientCompany"] as List<SelectListItem>, "None",new{ @class = "sj_select" })</div>
+            </div>
+            <div class="det_list">
+                <label class="det_label">WorkShiftType</label>
+                <div class="det_text">@Html.DropDownListFor(m => m.WorkShiftTypeId, ViewData["shiftList"] as List<SelectListItem>, "None", new { onchange = "getShift(this)", @class = "sj_select" })</div>
+            </div>
+
+        </div>
+
+        <div class="sj_dialog_foot">
+            <input type="submit" value="Save" />
+        </div>
+    }
+
+    <script>
+
+        function getShift(obj) {
+            $("#WorkShiftTypeName").val($(obj).find("option:selected").text());
+        }
+
+        function CheckNameRepeat() {
+            var name = $("#Name").val().trim();
+            if (name == "" || name == null) {
+                $("#nametip").show();
+                $("#nametip").html("*required");
+                return;
+            }
+        }
+
+    </script>
+

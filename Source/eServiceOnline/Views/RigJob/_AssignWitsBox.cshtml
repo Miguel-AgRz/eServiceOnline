@@ -1,0 +1,38 @@
+
+@model eServiceOnline.Models.WitsBoxBoard.WitsBoxModel
+
+@using (Html.BeginForm("AssignWitsBoxToRigJob", "RigJob", FormMethod.Post, new {enctype = "multipart/form-data"}))
+{
+    @Html.HiddenFor(m => m.ServicePointId)
+    @Html.HiddenFor(m => m.RigJobId)
+    @Html.HiddenFor(m => m.CallSheetNumber)
+    <div class="sj_dialog_body sj_lsd_ud">
+        <div class="det_list">
+            <label class="det_label">Wits Box</label>
+            <div class="det_text">
+                <ej-drop-down-list id="Id" enable-filter-search="true" Width="280px" read-only="false">
+                    <e-datamanager json="@ViewBag.WitsBoxList"></e-datamanager>
+                    <e-drop-down-list-fields text="Text" value="Value"/>
+                </ej-drop-down-list>
+                <div id="WitsBoxTip" style="display:none; color:red;">* Wits Box is required</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="sj_dialog_foot">
+        <input type="submit" value="Save" onclick="return verfiy()"/>
+    </div>
+}
+
+<ej-script-manager></ej-script-manager>
+<script>
+    function verfiy() {
+        if ($("#Id").val() === 0 || $("#Id").val() === "") {
+            $("#WitsBoxTip").show();
+            return false;
+        } else {
+            $("#WitsBoxTip").hide();
+            return true;
+        }
+    }
+</script>

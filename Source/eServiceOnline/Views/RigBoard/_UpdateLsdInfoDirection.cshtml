@@ -1,0 +1,31 @@
+@using System.Threading.Tasks
+@using eServiceOnline.Models.RigBoard
+@model eServiceOnline.Models.RigBoard.WellLocationInformationViewModel
+
+@{
+    Layout = null;
+}
+@*<div class="sj_dialog_head">*@
+@*    <span>Update Direction</span>*@
+@*    <a class="sj_dialog_close" onclick="siteInstance.CloseDialog('dialog_updatedirection')">+</a>*@
+@*</div>*@
+@using (Html.BeginForm("UpdateLsdInfoDirection", "RigBoard", FormMethod.Post, new {enctype = "multipart/form-data"}))
+{
+    <div class="sj_dialog_body sj_lsd_ud">
+        <div class="det_list">
+            <label class="det_label">Direction To Location</label>
+            <div class="det_text">
+                @Html.TextAreaFor(model => model.DirectionToLocation, new { @class = "sj_textarea" })
+                @Html.HiddenFor(model => model.CallSheetNumber)
+                @Html.HiddenFor(model => model.RigJobId)
+                @Html.HiddenFor(model => model.WellLocationTypeId)
+                @Html.HiddenFor(model => model.WellLocationTypeName)
+                @Html.HiddenFor(model => model.DownHoleWellLocationTypeId)
+                @Html.HiddenFor(model => model.DownHoleWellLocationTypeName)
+            </div>
+        </div>
+    </div>
+    <div class="sj_dialog_foot">
+        <input type="submit" value="Save"/>
+    </div>
+}

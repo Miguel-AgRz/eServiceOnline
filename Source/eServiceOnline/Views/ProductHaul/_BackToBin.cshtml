@@ -1,0 +1,23 @@
+@*Dec 22, 2023 zhangyuan 195_PR_Haulback: Add HaulBack Partial Page*@
+@model eServiceOnline.Models.ProductHaul.BulkPlantBinLoadModel
+@{
+    var IsStatic = (bool)ViewData["isStatic"];
+}
+<div class="det_list">
+    <label class="det_label">Back to Bin</label>
+    <div class="det_text" id="bin_select">
+        @if (IsStatic)
+        {
+        @Html.TextBoxFor(model => model.BinInformationName, new { @class = "sj_text", @readonly = true })
+        @Html.HiddenFor(model => model.BinInformationId)
+        <div id="Bin_Different" style="display:none; color:red;"></div>
+        }
+        else
+        {
+        @(this.Html.DropDownListFor(model => model.BinInformationId, new List<SelectListItem>(), "None",
+                new {onchange = "getBulkerPlantBinType(this)", @class = "sj_select"}))
+        <div id="Bin_Required" style="display: none; color: red;">Bin is required</div>
+        <div id="Bin_Different" style="display:none; color:red;"></div>
+        }
+    </div>
+</div>

@@ -1,0 +1,119 @@
+@*@model eServiceOnline.Models.ProductHaul.ProductHaulModel*@
+<ej-dialog id="is_confirm_jump_createhaul" css-class="sj_confirmDialog" title="Confirm" width="400" show-on-init="false" enable-resize="false" close="dialogAmountAndMixWater.closeDialog">
+    <e-content-template>
+        <div id="is_confirm_jump">
+            <div style="margin-top: 20px;padding: 0 10px 0 10px">Scheduled blend amount is more than selected blend required amount.<br /><br /> Click "Yes" to continue ,Click "No" to return.</div>
+            <div style="text-align: center; margin: auto; line-height: 100px;">
+                <div style="display: inline-block;width: 50px; line-height: 25px; text-align: center;">
+                    <input class="confirmDialog_button" type="button" value="Yes" onclick="dialogAmountAndMixWater.closeDialog('Yes');"/>
+                </div>
+                <div style="display: inline-block;width: 50px; line-height: 25px; text-align: center;">
+                    <input class="confirmDialog_button " type="button" value="No" onclick="dialogAmountAndMixWater.closeDialog('No');"/>
+                </div>
+            </div>
+
+        </div>
+    </e-content-template>
+</ej-dialog>
+<ej-dialog id="verifyCrew" css-class="sj_confirmDialog" title="Confirm" width="400" show-on-init="false" enable-resize="false" close="dialogSchedule.closeDialog">
+    <e-content-template>
+        <div id="is_confirm_jump1">
+            <div style="margin-top: 20px;padding: 0 10px 0 10px" id="message"></div>
+            <div style="text-align: center; margin: auto; line-height: 100px;">
+                <div style="display: inline-block;width: 50px; line-height: 25px; text-align: center;">
+                    <input class="confirmDialog_button " type="button" value="Yes" onclick="dialogSchedule.closeDialog('Yes')"/>
+                </div>
+                <div style="display: inline-block;width: 50px; line-height: 25px; text-align: center;">
+                    <input class="confirmDialog_button " type="button" value="No" onclick="dialogSchedule.closeDialog('No')" />
+                </div>
+            </div>
+
+        </div>
+    </e-content-template>
+</ej-dialog>
+<ej-dialog id="verifyBin" css-class="sj_confirmDialog" title="Confirm" width="400" show-on-init="false" enable-resize="false" close="dialogQualityOfTheBin.closeDialog">
+    <e-content-template>
+        <div id="is_confirm_jump2">
+            <div style="margin-top: 20px;padding: 0 10px 0 10px" id="binmessage"></div>
+            <div style="text-align: center; margin: auto; line-height: 100px;">
+                <div style="display: inline-block;width: 50px; line-height: 25px; text-align: center;">
+                    <input class="confirmDialog_button" type="button" value="Yes" onclick="dialogQualityOfTheBin.closeDialog('Yes');" />
+                </div>
+                <div style="display: inline-block;width: 50px; line-height: 25px; text-align: center;">
+                    <input class="confirmDialog_button" type="button" value="No" onclick="dialogQualityOfTheBin.closeDialog('No');"/>
+                </div>
+            </div>
+
+        </div>
+    </e-content-template>
+</ej-dialog>
+
+
+<ej-dialog id="verifyHaulAmount" css-class="sj_confirmDialog" title="Confirm" width="400" show-on-init="false" enable-resize="false" close="dialogHaulAmount.closeDialog">
+    <e-content-template>
+        <div id="is_confirm_jump1">
+            <div style="margin-top: 20px;padding: 0 10px 0 10px" id="haulAmountMessage"></div>
+            <div style="text-align: center; margin: auto; line-height: 100px;">
+                <div style="display: inline-block;width: 50px; line-height: 25px; text-align: center;">
+                    <input class="confirmDialog_button " type="button" value="Yes" onclick="dialogHaulAmount.closeDialog('Yes')"/>
+                </div>
+                <div style="display: inline-block;width: 50px; line-height: 25px; text-align: center;">
+                    <input class="confirmDialog_button " type="button" value="No" onclick="dialogHaulAmount.closeDialog('No')" />
+                </div>
+            </div>
+
+        </div>
+    </e-content-template>
+</ej-dialog>
+<ej-dialog id="verifyUnLoad" css-class="sj_confirmDialog" title="Confirm" width="400" show-on-init="false" enable-resize="false" close="dialogUnLoad.closeDialog">
+    <e-content-template>
+        <div id="is_confirm_jump1">
+            <div style="margin-top: 20px;padding: 0 10px 0 10px" id="unLoadMessage"></div>
+            <div style="text-align: center; margin: auto; line-height: 100px;">
+                <div style="display: inline-block;width: 50px; line-height: 25px; text-align: center;">
+                    <input class="confirmDialog_button " type="button" value="Yes" onclick="dialogUnLoad.closeDialog('Yes')"/>
+                </div>
+                <div style="display: inline-block;width: 50px; line-height: 25px; text-align: center;">
+                    <input class="confirmDialog_button " type="button" value="No" onclick="dialogUnLoad.closeDialog('No')" />
+                </div>
+            </div>
+
+        </div>
+    </e-content-template>
+</ej-dialog>
+<ej-dialog id="verifyPodLoad" css-class="sj_confirmDialog" title="Confirm" width="400" show-on-init="false" enable-resize="false" close="dialogPodLoad.closeDialog">
+    <e-content-template>
+        <div id="is_confirm_jump1">
+            <div style="margin-top: 20px;padding: 0 10px 0 10px" id="podLoadMessage"></div>
+            <div style="text-align: center; margin: auto; line-height: 100px;">
+                <div style="display: inline-block;width: 50px; line-height: 25px; text-align: center;">
+                    <input class="confirmDialog_button " type="button" value="Yes" onclick="dialogPodLoad.closeDialog('Yes')"/>
+                </div>
+                <div style="display: inline-block;width: 50px; line-height: 25px; text-align: center;">
+                    <input class="confirmDialog_button " type="button" value="No" onclick="dialogPodLoad.closeDialog('No')" />
+                </div>
+            </div>
+
+        </div>
+    </e-content-template>
+</ej-dialog>
+<ej-dialog id="EnquireMessage" css-class="sj_confirmDialog" title="Confirm" width="400" show-on-init="false" enable-resize="false" close="window.ConfirmRemoveShippingLoadSheet('No')">
+    <e-content-template>
+        <div id="is_confirm_jump6">
+            <div style="margin-top: 20px;padding: 0 10px 0 10px" id="enquireMessageMsg">
+                
+            </div>
+            <input type="hidden" id="enquireCheckboxId"/>
+            <div style="text-align: center; margin: auto; line-height: 100px;">
+                <div style="display: inline-block;width: 50px; line-height: 25px; text-align: center;">
+                    <input class="confirmDialog_button " type="button" value="Yes" onclick="window.ConfirmRemoveShippingLoadSheet('Yes')" />
+                </div>
+                <div style="display: inline-block;width: 50px; line-height: 25px; text-align: center;">
+                    <input class="confirmDialog_button " type="button" value="No" onclick="window.ConfirmRemoveShippingLoadSheet('No')" />
+                </div>
+            </div>
+
+        </div>
+    </e-content-template>
+</ej-dialog>
+<ej-script-manager></ej-script-manager>

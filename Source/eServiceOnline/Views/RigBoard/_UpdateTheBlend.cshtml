@@ -1,0 +1,39 @@
+﻿@using eServiceOnline.Models.ProductHaul
+@model eServiceOnline.Models.ProductHaul.BlendSectionModel
+
+@{
+    Layout = null;
+}
+
+@using (Html.BeginForm("UpdateTheBlend", "ProductHaul", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(m => m.Id)
+    <div class="sj_dialog_body sj_lsd_ud">
+        <div class="det_list">
+            <label class="det_label">Blend Name</label>
+            <div class="det_text">@Html.TextBoxFor(model => model.Blend, new { @readonly = true, @class = "sj_text" })</div>
+        </div>
+        <div class="det_list">
+            <label class="det_label">Amount</label>
+            <div class="det_text">
+                @Html.TextBoxFor(model => model.Amount, new { @class = "sj_text", @required = "required", onchange = "IsRequired('Amount')" })
+                <div id="Is_Amount" style="display:none; color:red;">Amount is required</div>
+            </div>
+        </div>
+    </div>
+    <div class="sj_dialog_foot">
+        <input type="submit" id="sj_updateBlend" value="Save" />
+    </div>
+}
+
+<script>
+    function IsRequired(item) {
+        if (($("#" + item).val().trim() == "" || $("#" + item).val().trim() == 0) && $("#" + item).attr("required") == "required") {
+            $("#Is_" + item).show();
+            $("#sj_updateBlend").attr("disabled", true);
+        } else {
+            $("#Is_" + item).hide();
+            $("#sj_updateBlend").attr("disabled", false);
+        }
+    }
+</script>

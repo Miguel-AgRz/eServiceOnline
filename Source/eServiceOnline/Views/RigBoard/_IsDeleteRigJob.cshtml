@@ -1,0 +1,15 @@
+@using (Html.BeginForm("DeleteRigJobById", "RigBoard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div class="sj_dialog_body sj_lsd_ud">
+        <div class="det_list" style="text-align: center">
+            <label>Are you sure you want to delete this Job?</label>
+            <input type="hidden" name="RigJobId" id="RigJobId" value="@ViewBag.RigJobId" />
+            <input type="hidden" name="CallSheetNumber" id="CallSheetNumber" value="@ViewBag.CallSheetNumber" />
+        </div>
+    </div>
+
+    <div class="sj_dialog_foot">
+        <input type="submit" class="yes" value="Yes" /> <input type="button" value="No" class="no" onclick="eServiceOnline.Site.prototype.CloseDialog()"/>
+    </div>
+}
+

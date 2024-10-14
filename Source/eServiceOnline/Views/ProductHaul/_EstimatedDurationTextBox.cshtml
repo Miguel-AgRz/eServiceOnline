@@ -1,0 +1,19 @@
+@model eServiceOnline.Models.ProductHaul.ProductHaulInfoModel
+
+@{
+    var readonlyTxt = Convert.ToBoolean(ViewData["ReadOnly"]);
+}
+<div class="det_list" id="EstimateDuration">
+    <label class="det_label">Estimated Travel Time</label>
+    <div class="det_text">                                                                
+        @if (readonlyTxt)
+        {
+            @Html.TextBoxFor(model => model.EstimatedTravelTime, new { @class = "sj_text", @readonly = "readonly", onchange = "getEstJobDuration()" })
+        }
+        else
+        {
+            @Html.TextBoxFor(model => model.EstimatedTravelTime, new { @class = "sj_text", onchange = "getEstJobDuration()" })
+        }
+        <span id="validValue" style="color: red; position: absolute; right: 25px;"></span>
+    </div>
+</div>

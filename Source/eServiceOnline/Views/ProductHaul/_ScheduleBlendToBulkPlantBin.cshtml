@@ -1,0 +1,68 @@
+﻿@using eServiceOnline.Models.ProductHaul
+@model eServiceOnline.Models.ProductHaul.ProductHaulModel
+
+@{
+    Layout = null;
+}
+
+@using (Html.BeginForm("ScheduleBlendToBulkPlantBin", "ProductHaul", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(m => m.BulkUnitName)
+    @Html.HiddenFor(m => m.BinNumber)
+    @Html.HiddenFor(m => m.TractorUnitName)
+    @*@Html.HiddenFor(m => m.BinInformationId)*@
+    @Html.HiddenFor(m => m.SupplierCompanyName)
+    @Html.HiddenFor(m => m.ProductHaulId)
+    @Html.HiddenFor(m => m.BulkPlantName)
+    @Html.HiddenFor(m => m.BulkPlantId)
+    @Html.HiddenFor(m => m.ProductHaulLoadId)
+    @Html.HiddenFor(m => m.RigJobId)
+    @Html.HiddenFor(m => m.RigId)
+
+    <div class="sj_dialog_body sj_lsd_ud">
+        @Html.Partial("_CustomerProgramJobBaseBlendHeader", Model.ProductLoadInfoModel)
+        @Html.Partial("_TonnageAmountWaterControls", Model.ProductLoadInfoModel)
+        @Html.Partial("_BlendTestCheckNew", Model.ProductLoadInfoModel, new ViewDataDictionary(ViewData) { { "isStatic", false } })
+        @Html.Partial("_BulkPlant", Model.ProductLoadInfoModel, new ViewDataDictionary(ViewData) { { "isStatic", true } })
+        @Html.Partial("_LoadToBin", Model.ProductLoadInfoModel, new ViewDataDictionary(ViewData) { { "isStatic", true } })
+        @Html.Partial("_CommentsTexArea", Model.ProductLoadInfoModel)
+
+    </div>
+    @Html.Partial("_SubmitButton", Model)
+
+}
+
+@Html.Partial("_Dialogs")
+
+<script>
+    var existingHaul, blendTest, scheduleValidations, thirdParty;
+    $(function () {
+        existingHaul = new ExistingHaul();
+        thirdParty = new ThirdParty();
+
+        blendTest = new BlendTest({
+            OnBlendTestTrue: function () { },
+            OnBlendTestFalse: function () { }
+        });
+
+        var initSchedule = new InitSchedule(function () {
+            defaultOnBlendTestClick(false);
+            InitializeDialogs();
+            LoadBlendDescriptionAndSetBinDisplay();
+        });
+
+
+        //#region validation
+        var val3 = new ValidationsChain(true, validateRequiredAmount);
+        qualityOfTheBinChainValidation = new ValidationsChain(true, VerifyQualityOfTheBin, undefined, undefined, dataQualityOfTheBin);
+        amountAndMixWaterChainValidation = new ValidationsChain(true, verifyAmountAndMixWater, undefined, undefined, dataAmountAndMixWater);
+
+        val3.setNextFuncOrValidation(qualityOfTheBinChainValidation);
+        qualityOfTheBinChainValidation.setNextFuncOrValidation(amountAndMixWaterChainValidation);
+ 
+
+        scheduleValidations = new ValidationsBuilder(val3);
+        //#endregion
+        initSchedule.Initialize();
+    });
+</script>

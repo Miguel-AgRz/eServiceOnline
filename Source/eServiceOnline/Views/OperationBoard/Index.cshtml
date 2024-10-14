@@ -1,0 +1,46 @@
+@using eServiceOnline.Models.OperationBoard
+@model eServiceOnline.Models.OperationBoard.ScheduleBoardData
+
+@{
+    ViewData["Title"] = "Operation Board";
+}
+
+@section SampleHeading{
+    <style>
+        .container {
+            width: 90%;
+            min-width: 1800px;
+            padding: 0 !important;
+        }
+    </style>
+    <div style="padding: 30px 0">
+        <span style="font-weight: bold;">Operation Board</span>
+    </div>
+   @* <script type="text/javascript">
+            function checkFormat(args) {
+                
+                switch (args.requestType) {
+                    case "workcells":
+                        console.log(args);
+                        break;
+                    case "monthcells":
+                        
+                        break;
+                }
+            }
+    </script>*@
+}
+
+@section ControlsSection{
+    <ej-schedule id="Schedule1" width="100%" height="725px" current-date="new DateTime(2018, 1, 17)" query-cell-info="checkFormat" time-mode="TimeMode.Hour24" read-only="true" current-view="Week">
+        <e-categorize-settings enable="true" allow-multiple="true" datasource="@ViewBag.ScheduleBoardStyles" id="id" text="text" color="color" font-color="fontColor"></e-categorize-settings>
+        <e-appointment-settings id='"ProgramId"' subject='"ProgramName"' start-time='"ProgramStartTime"' end-time='"ProgramEndTime"' Query="true" description='"Comments"' all-day='"IsAllDay"'
+                                recurrence='"IsRecurrence"' recurrence-rule='"RecurrenceRule"' categorize='"Categorize"'>
+            <e-datamanager url="@Url.Action("GetRigJobData", "OperationBoard", new {})" adaptor="UrlAdaptor"></e-datamanager>
+        </e-appointment-settings>
+    </ej-schedule>
+}
+
+
+
+

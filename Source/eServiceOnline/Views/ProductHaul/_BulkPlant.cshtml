@@ -1,0 +1,21 @@
+@model eServiceOnline.Models.ProductHaul.ProductLoadInfoModel
+@{
+    var IsStatic = (bool)ViewData["isStatic"];
+}
+<div class="det_list">
+    <label class="det_label">Bulk Plant</label>
+    <div class="det_text" id="bulk_plant_select">
+        @if (IsStatic)
+        {
+            @Html.TextBoxFor(model => model.BulkPlantName, new { @class = "sj_text", @readonly = true })
+            @Html.HiddenFor(m => m.BulkPlantId)
+        }
+        else
+        {
+            @(this.Html.DropDownListFor(model => model.BulkPlantId, new List<SelectListItem>(),
+                "None", new {onchange = "LoadBinInformations()", @class = "sj_select"}))
+            @Html.HiddenFor(m => m.BulkPlantName)
+            <div id="BulkPlant_Required" style="display: none; color: red;">Bulk Plant is required</div>
+        }
+    </div>
+</div>

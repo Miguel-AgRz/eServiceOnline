@@ -1,0 +1,65 @@
+﻿<div class="sj_confirm"></div>
+
+    <ejs-dialog id="is_confirm_jump" cssClass="sj_confirmDialog1" showCloseIcon="false" header="Confirm" target=".sj_confirm" visible="false" >
+        <e-content-template>
+            <div id="is_confirm_jump">
+                <div style="margin-top: 20px; padding: 0 10px 0 10px; text-align: center;" id="message"></div>
+                <div style="text-align: center; margin: auto; line-height: 100px;">
+                    <div style="display: inline-block;width: 50px; line-height: 25px; text-align: center;">
+                        <input class="confirmDialog_button" type="button" value="Yes" onclick="CloseConfirmDialog('Yes')" />
+                    </div>
+                    <div style="display: inline-block;width: 50px; line-height: 25px; text-align: center;">
+                        <input class="confirmDialog_button" type="button" value="No" onclick="CloseConfirmDialog('No')" />
+                    </div>
+                </div>
+
+            </div>
+        </e-content-template>
+    </ejs-dialog>
+<script>
+
+    var isPass = false;
+
+    function CloseConfirmDialog(item) {
+        if (item === "Yes") {
+            isPass = true;
+            $("#submitButton").trigger("click");
+              
+        } else {
+        }
+        var dialog = document.getElementById("is_confirm_jump").ej2_instances[0];
+        dialog.hide();
+        $(".sj_confirm").hide();
+    }
+    function verifyScheduleValidation(url, data) {
+        if (isPass) return true;
+        var flag = true;
+        $.ajax({
+            url: url,
+            async: false,
+            method: "Post",
+            data: data,
+            success: function(data) {
+                if (data != "") {
+                    $("#message").html(data);
+                    flag = false;
+                    var divs = document.getElementsByTagName("div");
+                    var max = 0;
+                    for (var i = 0; i < divs.length; i++) {
+                        max = Math.max(max, divs[i].style.zIndex || 0);
+                        $(".sj_confirm").fadeIn(300,
+                            function() {
+                                var dialog = document.getElementById("is_confirm_jump").ej2_instances[0];
+                                dialog.show();
+                                $("#is_confirm_jump").removeAttr("style");
+                                $("#is_confirm_jump").css({ "width": 350 });
+                            }
+                        );
+                    }
+                }
+            }              
+        });       
+        return flag;
+    }
+
+</script>

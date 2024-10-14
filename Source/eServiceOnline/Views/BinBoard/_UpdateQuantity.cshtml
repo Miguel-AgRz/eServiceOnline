@@ -1,0 +1,50 @@
+@using eServiceOnline.Models.CrewBoard
+@model eServiceOnline.Models.BinBoard.BinInformationModel
+
+@using (Html.BeginForm("UpdateQuantity", "BinBoard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(m => m.BinId)
+    @Html.HiddenFor(m => m.PodIndex)
+    <div class="sj_dialog_body sj_lsd_ud">
+        <div class="det_list">
+            <label class="det_label">Quantity</label>
+            <div class="det_text">@Html.TextBoxFor(model => model.Quantity, new { @class = "sj_text" }) t</div>
+        </div>
+        <div class="det_list">
+            <label class="det_label">Blend</label>
+            @* Dec 27, 2023 zhangyuan 243_PR_AddBlendDropdown:Add Show blendChemical DropdownList*@
+            @if (ViewBag.isBulkPlant && Model.LastProductHaulLoadId == 0)
+            {
+                <div class="det_text">
+                    @Html.DropDownListFor(m => m.BlendId, ViewData["baseBlend"] as List<SelectListItem>, "None", new { @class = "sj_select" })
+                    <div id="Is_BlendRequired" style="display:none; color:red;">Blend is Required</div>
+                </div>
+
+            }
+            else
+            {
+                <div class="det_text">@Model.Blend</div>
+            }
+        </div>
+        <div class="det_list">
+            <label class="det_label">Notes</label>
+            @* April 03, 2024 tongtao 313_PR_AdjustNotesTextboxSize:add a new css for adjust notes textboxSize *@
+            <div class="det_text">@Html.TextAreaFor(model => model.Description, new { @class = "sj_text2" })</div>
+        </div>
+    </div>
+
+    <div class="sj_dialog_foot">
+        <input type="submit" value="Save" onclick="return blendValidations.validate()"/>
+    </div>
+}
+@* Dec 27, 2023 zhangyuan 243_PR_AddBlendDropdown:Add save check*@
+<script>
+    var  blendValidations;
+    $(function () {
+        //#region validation
+        var val1 = new ValidationsChain(true, validateBlend);
+        blendValidations = new ValidationsBuilder(val1);
+        //#endregion
+    });
+</script>
+

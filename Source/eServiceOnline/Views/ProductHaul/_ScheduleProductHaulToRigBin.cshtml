@@ -1,0 +1,112 @@
+﻿@using eServiceOnline.Models.ProductHaul
+@model eServiceOnline.Models.ProductHaul.ScheduleProductHaulToRigBinViewModel
+
+@{
+    Layout = null;
+}
+
+@using (Html.BeginForm("ScheduleProductHaulToRigBin", "ProductHaul", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+
+    @Html.HiddenFor(m => m.RigJobId)
+    @Html.HiddenFor(m => m.OrigBinInformationId)
+    @Html.HiddenFor(m=>m.OrigBinId)
+    <div class="sj_dialog_body sj_lsd_ud">
+         @Html.Partial("_CustomerProgramJobBaseBlendHeader", Model.ProductLoadInfoModel)
+        @Html.Partial("_TonnageAmountWaterControls", Model.ProductLoadInfoModel)
+        @Html.Partial("_BlendTestCheckNew", Model.ProductLoadInfoModel, new ViewDataDictionary(ViewData) { { "isStatic", false } })
+        @Html.Partial("_BulkPlantNew", Model.ProductLoadInfoModel, new ViewDataDictionary(ViewData) { { "isStatic", false } })
+        <div id="GoWithCrewPart">
+        @Html.Partial("_GoWithCrewCheck", Model.ProductHaulInfoModel, new ViewDataDictionary(ViewData) { { "isStatic", false } })
+        </div>
+        @Html.Partial("_RigUnload", Model.ShippingLoadSheetModel)
+        @Html.Partial("_NonBlendTestV2", Model.ProductHaulInfoModel)
+        @Html.Partial("_PodLoads", Model.ProductHaulInfoModel)
+        @Html.Partial("_CommentsTexArea", Model.ProductLoadInfoModel)
+    </div>
+
+    @Html.Partial("_SubmitButton", Model)
+}
+
+@Html.Partial("_Dialogs")
+
+<script>
+    var existingHaul, blendTest, scheduleValidations, thirdParty;
+
+    $(function () {
+        existingHaul = new ExistingHaul();
+        thirdParty = new ThirdParty();
+
+        existingHaul.setExistingHaul();   
+       
+
+        var initSchedule = new InitSchedule(function () {
+
+            
+            InitializeDialogs();
+
+            loadBulkPlants();
+
+            thirdParty.getThirdParty();
+
+             $("#IsExistingHaul").click(function(){
+                    GetPodLoadByProduct();
+                    //CheckExistingHaul();
+                });
+            $("#ProductHaulId").change(function(){
+                GetPodLoadByProduct();
+            });
+
+           //Jan 18, 2024 zhangyuan 266_PR_GoWithCrewMenu: Modify Bin Column creating ProductHaul,GoWithCrew Hide
+            $("#GoWithCrewPart").hide();
+
+            $("#IsGoWithCrew").click(function(){
+                var isChecked = $("#IsGoWithCrew").prop("checked");
+                if(isChecked){
+                    $("#rigUnload").hide();
+                }
+                else{
+                    $("#rigUnload").show();
+                }
+            });
+            
+        });
+
+        //#region validation
+
+        var val1 = new ValidationsChain(true, validateRequiredAmount);
+        var val2 = new ValidationsChain(true, validateBulkPlant);
+        var val3 = new ValidationsChain(true, validateBin, function () { return !$("#IsGoWithCrew").prop("checked") });
+        var val4 = new ValidationsChain(true, validateExistingHaul, function () { return  $("#IsExistingHaul").prop("checked") });
+        var val5 = new ValidationsChain(true, validateCrew);
+        var val6 = new ValidationsChain(true, validateExpectedLocationTime, function () { return  !$("#IsGoWithCrew").prop("checked") });
+        var val7 = new ValidationsChain(true, validateJobDuration, function () { return  !$("#IsGoWithCrew").prop("checked") && !$("#IsExistingHaul").prop("checked") });
+       
+        scheduleChainValidation = new ValidationsChain(true, validateSchedule, function (stateObj) {  !$("#IsExistingHaul").prop("checked"); }, null, dataScheduleValidation);
+        //qualityOfTheBinChainValidation = new ValidationsChain(true, VerifyQualityOfTheBin, function () { return $("#BinInformationId").val() !== "None"; }, undefined, dataQualityOfTheBin);
+        amountAndMixWaterChainValidation = new ValidationsChain(true, verifyAmountAndMixWater, undefined, undefined, dataAmountAndMixWater);
+
+         ValidateUnLoadChain = new ValidationsChain(true, ValidateUnLoad1, function () { return !$("#IsGoWithCrew").prop("checked") }, undefined,GetUnLoadData);
+        ValidatePodLoadChain = new ValidationsChain(true, ValidatePodLoad1,undefined, undefined,GetPodLoadData);
+
+        val1.setNextFuncOrValidation(val2);
+        val2.setNextFuncOrValidation(val3);
+        val3.setNextFuncOrValidation(val4);
+        val4.setNextFuncOrValidation(val5);
+        val5.setNextFuncOrValidation(val6);
+        val6.setNextFuncOrValidation(val7);
+        val7.setNextFuncOrValidation(scheduleChainValidation);
+        scheduleChainValidation.setNextFuncOrValidation(amountAndMixWaterChainValidation);
+        //scheduleChainValidation.setNextFuncOrValidation(qualityOfTheBinChainValidation);
+        //qualityOfTheBinChainValidation.setNextFuncOrValidation(amountAndMixWaterChainValidation);
+         amountAndMixWaterChainValidation.setNextFuncOrValidation(ValidateUnLoadChain);
+        ValidateUnLoadChain.setNextFuncOrValidation(ValidatePodLoadChain);
+
+        scheduleValidations = new ValidationsBuilder(val1);
+
+        //#endregion
+
+        initSchedule.Initialize();
+    });
+
+</script>

@@ -1,0 +1,21 @@
+@using eServiceOnline.Models.CrewBoard
+@model eServiceOnline.Models.Commons.ProfileModel
+
+@using (Html.BeginForm(@Model.PostMethodName, @Model.PostControllerName, FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(m => m.Id)
+    @Html.HiddenFor(m => m.ReturnActionName)
+    @Html.HiddenFor(m => m.ReturnControllerName)
+
+    <div class="sj_dialog_body sj_lsd_ud">
+        <div class="det_list">
+            <label class="det_label">Profile</label>
+            <div class="det_text"><textarea name="Profile" id="Profile" style="width: 200px">@Model.Profile</textarea></div>
+        </div>
+    </div>
+
+    <div class="sj_dialog_foot">
+        <input type="submit" value="Save" />
+    </div>
+}
+

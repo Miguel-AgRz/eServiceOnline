@@ -1,0 +1,30 @@
+﻿@using eServiceOnline.Models.CrewBoard
+@model eServiceOnline.Models.CrewBoard.CrewModel
+
+@using (Html.BeginForm("AddUnit", "CrewBoard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(m => m.TruckUnitNumber)
+    @Html.HiddenFor(m => m.Id)
+    <div class="sj_dialog_body sj_lsd_ud">
+        <div class="det_list">
+            <label class="det_label">Unit</label>
+            <div class="det_text">@Html.DropDownListFor(m => m.TruckUnitId, ViewData["truckUnitItems"] as List<SelectListItem>, "None", new { onchange = "getUnitNumber(this)", @class = "sj_select" })</div>
+        </div>
+    </div>
+    <input type="hidden" id="type" value="unit"/>
+    <div class="sj_dialog_foot">
+        <input type="submit" id="submitButton" value="Save" onclick="return verifyUnitSchedule()" />
+    </div>
+}
+
+    <div>
+        @Html.Partial("./_PromotMessage")
+    </div>
+<script>
+
+
+    function getUnitNumber(obj) {
+        $("#TruckUnitNumber").val($(obj).find("option:selected").text());
+    }
+
+</script>

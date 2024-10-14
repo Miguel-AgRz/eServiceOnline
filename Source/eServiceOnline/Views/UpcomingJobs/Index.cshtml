@@ -1,0 +1,106 @@
+﻿@using System.Threading.Tasks
+@using eServiceOnline.Models.UpcomingJobs
+@using Microsoft.AspNetCore.Http
+@model eServiceOnline.Models.UpcomingJobs.UpcomingJobsViewModel
+@{
+    ViewData["Title"] = "Rig Board";
+}
+
+@section SampleHeading{
+    <script src="~/js/upcomingJobs.js"></script>
+    <link href="~/css/upcomingJobs.css" rel="stylesheet" />
+    <div id="retrieval_conditions" style="line-height: 40px; font-size: 18px;font-family: Segoe UI; background: #000000; overflow: hidden;">
+        <div style="padding: 0 100px 0 20px;color: #BFBFBF; text-align: center; float: left;">
+            <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="69" onclick="selectionCriteria(this,'BR')" />BR
+            <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="85" onclick="selectionCriteria(this,'RD')" />RD
+            <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="67" onclick="selectionCriteria(this,'Edm')" />Edm
+            <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="81" onclick="selectionCriteria(this,'Eds')" />Eds
+            <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="71" onclick="selectionCriteria(this,'GP')" />GP
+            <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="66" onclick="selectionCriteria(this,'FSJ')" />FSJ
+            <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="89" onclick="selectionCriteria(this,'NW')" />NW
+            <span color="Yellow">&nbsp;|&nbsp;</span>
+            <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="72" onclick="selectionCriteria(this,'EST')" />EST
+            <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="70" onclick="selectionCriteria(this,'SC')" />SC
+            <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="88" onclick="selectionCriteria(this,'KD')" />KD
+            <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="61" onclick="selectionCriteria(this,'LLD')" />LLD
+            <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="65" onclick="selectionCriteria(this,'LLB')" />LLB
+        </div>
+    </div>
+        <div id="tipContent" style="cursor: pointer; border: 2px solid #111; position: fixed; z-index: 100; display: none; background-color: #fff;">
+        <input id="RetrievalConditions" name="RetrievalConditions" type="hidden" value='@this.Context.Session.GetString("ServicePoint")' />
+    </div>
+}
+@{
+    List<int> pageSizeList = new List<int>();
+    pageSizeList.Add(1);
+    pageSizeList.Add(2);
+    pageSizeList.Add(3);
+}
+
+
+@section ControlsSection{
+    <div style="background: #74223C; height: 15px; margin-bottom: -1px; position: relative;z-index: 90"></div>
+    <ej-grid id="FlatGrid" allow-paging="true" allow-resize-to-fit="true" allow-sorting="false" allow-cell-merging="true" merge-cell-info="siteInstance.MergeStyledCell">
+        <e-selection-settings selection-mode="@(new List<string>(){"cell"})" />
+        <e-text-wrap-settings wrap-mode="Content" />
+        <e-page-settings page-size="18"></e-page-settings>
+        <e-datamanager url="@Url.Action("GetPagedRigJobModels", "UpcomingJobs", new { } )" adaptor="UrlAdaptor" />
+
+        <e-columns>
+            <e-column field="Client" header-text="Client" text-align="Left" width="40" css-class="generalStyle"></e-column>
+            <e-column field="WellLocation" header-text="WELL LOCATION" text-align="Left" width="65" css-class="generalStyle"></e-column>
+            <e-column field="Rig" header-text="RIG" width="40" text-align="Left" css-class="generalStyle"></e-column>
+            <e-column field="Job" header-text="JOB" text-align="Left" width="50" css-class="generalStyle"></e-column>
+            <e-column field="EtaTime" header-text="ETA/TIME" text-align="Left" width="40" css-class="generalStyle"></e-column>
+            <e-column field="Crew" header-text="CREW" text-align="Left" width="80" css-class="generalStyle"></e-column>
+            <e-column field="Unit" header-text="UNIT" text-align="Left" width="50" css-class="generalStyle"></e-column>
+            <e-column field="Blends" header-text="BLENDS" text-align="Left" width="110" css-class="generalStyle"></e-column>
+            <e-column field="Notes" header-text="NOTES" text-align="Left" width="90" css-class="generalNotesStyle"></e-column>
+            <e-column field="CallSheetNumber" header-text="CS#" text-align="Left" width="35" css-class="generalStyle"></e-column>
+            <e-column field="Status" header-text="STATUS" text-align="Left" width="40" css-class="generalStyle"></e-column>
+        </e-columns>
+    </ej-grid>
+}
+
+@section ScriptSection
+{
+    <script>
+        var retrieval = { BR: 0, RD: 0, Edm: 0, Eds: 0, GP: 0, FSJ: 0, NW: 0, EST: 0, SC: 0, KD: 0 ,LLD: 0, LLB: 0};
+        window.onload = function () {
+            var retrievalStr = $("#RetrievalConditions");
+            if (retrievalStr & retrievalStr.value) {
+                    retrieval = JSON.parse(retrievalStr.value);
+                $("#retrieval_conditions input").each(function (i, ele) {
+                    var inputVal = $(ele).val();
+                    $.each(retrieval, function (name, value) {
+                        if (inputVal == value) {
+                            $("#retrieval_conditions").find("input[type='checkbox']").eq(i).prop("checked", true);
+                        }
+                    });
+                });
+            }
+        }
+
+        var siteInstance = new eServiceOnline.UpcomingJobs('@Url.Action("Index", "UpcomingJobs")');
+        var retrieurl =  '@Url.Action("UpdateSessionValue", "UpcomingJobs")';
+        function selectionCriteria(item, data) {
+            if ($(item).is(":checked")) {
+                $("#" + data).val($(item).val());
+                $(item).prop("checked", true);
+                retrieval[data] = $(item).val();
+            } else {
+                $("#" + data).val("");
+                $(item).prop("checked", false);
+                retrieval[data] = 0;
+            }
+            $.ajax({
+                url: retrieurl,
+                method: "Post",
+                data: retrieval,
+                success: function () {
+                    window.location.reload();
+                }
+            });
+        }
+    </script>
+}

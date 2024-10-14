@@ -1,0 +1,77 @@
+﻿@using eServiceOnline.Models.RigBoard
+@model eServiceOnline.Models.RigBoard.RigViewModel
+
+    @using (Html.BeginForm("ActivateARig", "RigBoard", FormMethod.Post, new { enctype = "multipart/form-data", onsubmit = "return ValidateData()" }))
+    {
+        @Html.HiddenFor(m => m.DrillingCompanyName)
+        @Html.HiddenFor(model => model.RigId)
+
+        <div class="sj_dialog_body sj_lsd_ud">
+            <div class="det_list">
+                <label class="det_label">Rig Contractor</label>
+                <div class="det_text">@Html.DropDownListFor(m => m.DrillingCompanyId, ViewData["drillingCompany"] as List<SelectListItem>, "None", new { onchange="getContractor(this)", @class = "sj_select" })<span id="drillingCompanytip" style="color: firebrick;"></span></div>
+            </div>
+            <div class="det_list">
+                <label class="det_label">Rig Number</label>
+                <div class="det_text">
+                    <select id="sel" class="sj_select">
+                        <option>None</option>
+                    </select>
+                    <span id="rigNumbertip" style="color: firebrick;"></span>
+                </div>
+            </div>
+        </div>
+        <div class="sj_dialog_foot">
+            <input type="submit" value="Activate"/>
+        </div>
+    }
+
+<ej-script-manager></ej-script-manager>
+
+<script>
+        function getContractor(obj) {
+            $("#DrillingCompanyName").val($(obj).find("option:selected").text());
+            $.ajax({
+                url: '@(this.Url.Action("GetDeactivateRigByDrillingCompanyId", "RigBoard"))',
+                type: 'POST',
+                data: {
+                    "drillingCompanyId": $(obj).find("option:selected").val()
+                },
+                dateType: "json",
+                success: function (data) {
+                    $("#sel").empty();
+                    $("#sel").append($("<option>None</option>"));
+                    for (var item in data) {
+                        var opt = $("<option></option>");
+                        opt.val(data[item].Id);
+                        opt.text(data[item].Name);
+                        $("#sel").append(opt);
+                    }
+                }
+            });
+        }
+
+    function ValidateData() {
+        $("#RigId").val($("#sel").find("option:selected").val());
+        var drillingCompany = $("#DrillingCompanyId").val();
+        var rigNumber = $("#sel").find("option:selected").text();
+        var flag = true;
+        if (drillingCompany == "" || drillingCompany == null) {
+            $("#drillingCompanytip").html("*required");
+            flag = false;
+        } else {
+            $("#drillingCompanytip").html("");
+        }
+
+        if (rigNumber == "" || rigNumber == null) {
+            $("#rigNumbertip").html("*required");
+            flag = false;
+        } else {
+            $("#rigNumbertip").html("");
+        }
+
+        return flag;
+    }
+
+</script>
+

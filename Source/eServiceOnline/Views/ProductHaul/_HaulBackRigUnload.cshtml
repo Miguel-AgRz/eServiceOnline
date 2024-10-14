@@ -1,0 +1,35 @@
+@*Dec 22, 2023 zhangyuan 195_PR_Haulback: Add HaulBack Partial Page*@
+@model eServiceOnline.Models.ProductHaul.HaulBackFromBinModel
+@{
+    bool IsStatic = false;
+    if (ViewData["isStatic"] != null)
+    {
+        IsStatic = (bool)ViewData["isStatic"];
+    }
+}
+
+<div class="det_list">
+    <label class="det_label">Base Blend</label>
+    <div class="det_text">
+        @Html.TextBoxFor(model => model.SourceBaseBlend, new { @readonly = true, @class = "sj_text" })
+    </div>
+</div>
+<div class="det_list">
+    <label class="det_label">Bin @Model.SourceBinInformationName Quantity</label>
+    <div class="det_text">
+        @if (Model.SourceBinInformationId != 0)
+        {
+        @Html.TextBoxFor(model => model.SourceAmount, new { @readonly = true, @class = "sj_text" })
+        @Html.HiddenFor(model => model.SourceBinInformationId)
+        @Html.HiddenFor(model => model.SourceBinInformationName)
+        @Html.HiddenFor(model => model.SourceBaseBlend)
+        @Html.HiddenFor(model => model.SourceBlendChemicalDescription)
+        @Html.HiddenFor(model => model.sourceRigId)
+        @Html.HiddenFor(model => model.sourceRigName)
+        }
+        else
+        {
+        @Html.TextBoxFor(model => model.SourceAmount, new { @class = "sj_text" })
+        }
+    </div>
+</div>

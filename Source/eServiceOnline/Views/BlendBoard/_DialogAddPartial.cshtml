@@ -1,0 +1,56 @@
+﻿@model eServiceOnline.Models.ProductHaul.BlendChemicalModel
+@using Syncfusion.EJ2
+<div class="form-row">
+    <div class="form-group col-md-6">
+        <div class="e-float-input e-control-wrapper">
+            <input asp-for="Name" type='text' />
+            <span class="e-float-line"></span>
+            <label asp-for="Name" class="e-float-text e-label-top">Blend Name</label>
+        </div>
+    </div>
+    <div class="form-group col-md-6">
+        <div class="e-float-input e-control-wrapper">
+            <input asp-for="IsBaseEligible" type='checkbox' />
+            <span class="e-float-line"></span>
+            <label asp-for="IsBaseEligible" class="e-float-text e-label-top">IsBaseEligible</label>
+        </div>
+    </div>
+    <div class="form-group col-md-6">
+        <div class="e-float-input e-control-wrapper">
+            <input asp-for="IsAdditiveEligible" type='checkbox' />
+            <span class="e-float-line"></span>
+            <label asp-for="IsAdditiveEligible" class="e-float-text e-label-top">IsAdditiveEligible</label>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <ejs-dropdownlist id="ShipCity" dataSource="@ViewData["categoryItems"]" placeholder="Primary Category" floatLabelType="Always" popupHeight="300px">
+                <e-dropdownlist-fields text="PrimaryCategory" value="PrimaryCategory"></e-dropdownlist-fields>
+            </ejs-dropdownlist>
+        </div>
+    </div>
+    <div class="form-group col-md-6">
+        <div class="e-float-input e-control-wrapper">
+            <input asp-for="PriceCode" type='text' />
+            <span class="e-float-line"></span>
+            <label asp-for="PriceCode" class="e-float-text e-label-top">Price Code</label>
+        </div>
+    </div>
+    <div class="form-group col-md-6">
+        <div class="e-float-input e-control-wrapper">
+            <input asp-for="Name" type='text' />
+            <span class="e-float-line"></span>
+            <label asp-for="Name" class="e-float-text e-label-top">Blend Name</label>
+        </div>
+    </div>
+    <div class="form-group col-md-6">
+        <div class="e-float-input e-control-wrapper">
+            <input asp-for="Name" type='text' />
+            <span class="e-float-line"></span>
+            <label asp-for="Name" class="e-float-text e-label-top">Blend Name</label>
+        </div>
+    </div>
+
+</div>
+
+<ejs-scripts></ejs-scripts>

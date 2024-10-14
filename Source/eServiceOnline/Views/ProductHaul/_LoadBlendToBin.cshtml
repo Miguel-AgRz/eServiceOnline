@@ -1,0 +1,81 @@
+﻿@using eServiceOnline.Models.ProductHaul
+@using System.Net.Configuration
+@model eServiceOnline.Models.ProductHaul.LoadBlendToBinViewModel
+
+@using (Html.BeginForm("LoadBlendToBin", "ProductHaul", FormMethod.Post, new { enctype = "multipart/form-data", onsubmit = "return ValidateData()" }))
+{
+    @Html.HiddenFor(m => m.ProductHaulLoadId)
+    <div class="sj_dialog_body">
+        <div class="det_list">
+            <label class="det_label">Bulk Plant</label>
+            <div class="det_text">
+                @Html.TextBoxFor(model => model.BulkPlantName, new { @class = "sj_text", @readonly = true })
+            </div>
+        </div>
+        <div class="det_list">
+            <label class="det_label">Storage</label>
+            <div class="det_text" id="bin_select">
+                @Html.TextBoxFor(model => model.BinInformationName, new { @class = "sj_text", @readonly = true })
+            </div>
+        </div>
+        @if (!Model.IsBinEmpty)
+        {
+            <div class="det_list">
+                <label class="det_label">Blend in Bin</label>
+                <div class="det_text">@Model.BlendInBinDescription</div>
+            </div>
+        }
+        <div class="det_list">
+            <label class="det_label">Blend to Load</label>
+            <div class="det_text">@Model.BlendChemicalDescription</div>
+        </div>
+        <div class="det_list">
+            <label class="det_label">Blend Quantity</label>
+            <div class="det_text" id="bin_select">
+                @Html.TextBoxFor(model => model.BlendQuantity, new { @class = "sj_text", @readonly = true })
+            </div>
+        </div>
+
+        @if (!Model.IsSameBlendInBin)
+        {
+            if (!Model.IsBinEmpty)
+            {
+                <div style="margin-top: 20px; padding: 0 10px 0 10px; text-align: center; color: red; font-size:large">
+                    THERE IS DIFFERENT BLEND IN THE BIN, PLEASE EMPTY THE BIN BEFORE YOU LOAD A NEW BLEND.
+                </div>
+                <div style="text-align: center; margin: auto; line-height: 100px;">
+                    <div class="sj_dialog_foot">
+                        <input type="button" value="OK" class="no" onclick="eServiceOnline.Site.prototype.CloseDialog()" />
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div style="margin-top: 20px; padding: 0 10px 0 10px; text-align: center;">
+                    <label>Are you sure to load it?</label>
+                </div>
+                <div style="text-align: center; margin: auto; line-height: 100px;">
+                    <div class="sj_dialog_foot">
+                        <input type="submit" class="yes" value="Yes" /> <input type="button" value="No" class="no" onclick="eServiceOnline.Site.prototype.CloseDialog()" />
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div style="margin-top: 20px; padding: 0 10px 0 10px; text-align: center;">
+                <label>Are you sure you to load it ?</label>
+            </div>
+            <div style="text-align: center; margin: auto; line-height: 100px;">
+                <div class="sj_dialog_foot">
+                    <input type="submit" class="yes" value="Yes" /> <input type="button" value="No" class="no" onclick="eServiceOnline.Site.prototype.CloseDialog()" />
+                </div>
+            </div>
+        }
+    </div>
+}
+<script>
+    function ValidateData() {
+        return true;
+    }
+</script>

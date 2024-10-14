@@ -1,0 +1,24 @@
+@using System.Threading.Tasks
+@using eServiceOnline.Models.RigBoard
+@model eServiceOnline.Models.RigBoard.RigJobModel
+
+@{
+    Layout = null;
+}
+@using (Html.BeginForm("UpdateCompanyShortName", "RigBoard", FormMethod.Post, new {enctype = "multipart/form-data"}))
+{
+<div class="sj_dialog_body sj_lsd_ud">
+    <div class="det_list">
+        <label class="det_label">Company Short Name</label>
+        <div class="det_text">
+            @Html.TextBoxFor(model => model.Company, new { @class = "sj_text" })
+            @Html.HiddenFor(model => model.ClientCompanyId)
+            @Html.HiddenFor(model => model.Id)
+
+        </div>
+    </div>
+</div>
+<div class="sj_dialog_foot">
+    <input type="submit" value="Save" />
+</div>
+}

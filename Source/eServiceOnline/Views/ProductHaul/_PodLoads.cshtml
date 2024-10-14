@@ -1,0 +1,29 @@
+@model eServiceOnline.Models.ProductHaul.ProductHaulInfoModel
+@{
+    bool IsStatic = false;
+    if (ViewData["IsStatic"] != null)
+    {
+        IsStatic = (bool)ViewData["IsStatic"];
+    }
+}
+<div class="det_list">
+
+    @for(var i=0;i<Model.PodLoadModels.Count;i++)
+    {
+        <div style="width:150px;display:inline-block">
+            <label class="det_label">Pod @(i+1)</label>
+            <div class="det_text">
+                @if (IsStatic)
+                {
+                    @Html.TextBoxFor(model => model.PodLoadModels[i].LoadAmount, new { @readonly = true, @class = "sj_text" })
+                }
+                else
+                {
+                    @Html.TextBoxFor(model => model.PodLoadModels[i].LoadAmount, new {  @class = "sj_text pod_load_amount" })
+                    @Html.HiddenFor(model=>model.PodLoadModels[i].PodIndex)
+                }
+            </div>
+        </div>
+    }
+     
+</div>

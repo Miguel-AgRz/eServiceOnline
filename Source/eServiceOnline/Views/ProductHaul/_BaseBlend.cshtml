@@ -1,0 +1,28 @@
+@model eServiceOnline.Models.ProductHaul.ProductLoadInfoModel
+@{
+    var IsStatic = (bool)ViewData["isStatic"];
+}
+<div class="det_list">
+    <label class="det_label">Base Blend</label>
+    <div class="det_text">
+        @if (IsStatic)
+        {
+            @*@Html.TextBoxFor(model => model.BaseBlendSectionId, new { @readonly = true, @class = "sj_text" })*@
+            @Html.TextBoxFor(model => model.BaseBlend, new { @readonly = true, @class = "sj_text" })
+            @Html.HiddenFor(model => model.BaseBlendSectionId)
+            @Html.HiddenFor(model => model.BlendChemicalDescription)
+        }
+        else
+        {
+            @if (this.ViewBag.BlendSectionList != null)
+            {
+                //Nov 28, 2023 zhangyuan 201_PR_AddingDifferrentBlend: Add different BlendDescription  onchange event
+                @(this.Html.DropDownListFor(model => model.BaseBlendSectionId,
+                    new SelectList(this.ViewBag.BlendSectionList, "Id", "Blend"),
+                    new { onchange = "LoadBlendDescriptionAndSetBinDisplay()", @class = "sj_select"}))
+                //Dec 7, 2023 zhangyuan 228_PR_AddBlendinbinAlert: Add Get BlendDescription and Display prompt information
+            }
+        }
+        <input type="hidden" id="SelectedBlendChemicalDescription" value="" />
+    </div>    
+</div>

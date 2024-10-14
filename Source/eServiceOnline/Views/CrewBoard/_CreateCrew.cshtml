@@ -1,0 +1,74 @@
+﻿@using eServiceOnline.Models.CrewBoard
+@model eServiceOnline.Models.CrewBoard.CrewModel
+
+@using (Html.BeginForm("CreateCrew", "CrewBoard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div class="sj_dialog_body sj_lsd_ud">
+        <div class="det_list">
+            <label class="det_label">Crew Type</label>
+            <div class="det_text">@Html.DropDownListFor(m => m.CrewTypeId, ViewData["crewTypeItems"] as List<SelectListItem>, new { onchange = "getCrewTypeName(this)", @class = "sj_select" })</div>
+            <span id="crew_type" style="color: red;position: absolute;right: 60px;"></span>
+        </div>
+        <div class="det_list">
+            <label class="det_label">Home District</label>
+            <div class="det_text">@Html.DropDownListFor(m => m.HomeDistrictId, ViewData["servicePointItems"] as List<SelectListItem>, new { @class = "sj_select" })</div>
+            <span id="home_district" style="color: red;position: absolute;right: 60px;"></span>
+        </div>
+        <div class="det_list">
+            <label class="det_label">Primary Unit</label>
+            <div class="det_text">@Html.DropDownListFor(m => m.PrimaryTruckUnitId, ViewData["truckUnitItems"] as List<SelectListItem>, "None", new {@class = "sj_select" })</div>
+        </div>
+        <div class="det_list">
+            <label class="det_label">Secondary Unit</label>
+            <div class="det_text">@Html.DropDownListFor(m => m.SecondaryTruckUnitId, ViewData["truckUnitItems"] as List<SelectListItem>, "None", new {@class = "sj_select" })</div>
+        </div>
+        <div class="det_list">
+            <label class="det_label" id="Supervisor_span">Supervisor</label>
+            <div class="det_text">@Html.DropDownListFor(m => m.SupervisorId, ViewData["employeeItems"] as List<SelectListItem>, "None", new { @class = "sj_select" })</div>
+        </div>
+        <div class="det_list">
+            <label class="det_label">Crew Member</label>
+            <div class="det_text">@Html.DropDownListFor(m => m.CrewMemberId, ViewData["employeeItems"] as List<SelectListItem>, "None", new { @class = "sj_select" })</div>
+        </div>
+        <div class="det_list">
+            <label class="det_label">Notes</label>
+            <div class="det_text">@Html.TextAreaFor(model => model.Notes, new { @class = "sj_textarea" })</div>
+        </div>
+
+    </div>
+
+    <div class="sj_dialog_foot">
+        <input type="submit" value="Save" onclick="return verify()" />
+    </div>
+}
+
+<script>
+
+    function verify() {
+        $("#crew_type").css('display', 'none');
+        $("#home_district").css('display', 'none');
+        if ($("#CrewTypeId").val() === "" || $("#HomeDistrictId").val() === "") {
+            if ($("#CrewTypeId").val() === "") {
+                $("#crew_type").html("*required");
+                $("#crew_type").show();
+            }
+            if ($("#HomeDistrictId").val() === "") {
+                $("#home_district").html("*required");
+                $("#home_district").show();
+            }
+            return false;
+        }
+        return true;
+    }
+
+
+    function getCrewTypeName(obj) {
+        if ($("#CrewTypeId option:selected").text() == "Spare Crew" || $("#CrewTypeId option:selected").text() == "Bulker Crew") {
+            $("#Supervisor_span").html("Crew Member");
+        } else {
+            $("#Supervisor_span").html("Supervisor");
+        }
+    }
+
+</script>
+

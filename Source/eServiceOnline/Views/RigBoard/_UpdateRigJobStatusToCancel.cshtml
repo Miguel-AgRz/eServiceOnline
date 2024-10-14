@@ -1,0 +1,17 @@
+@using System.ComponentModel
+
+@using (Html.BeginForm("UpdateRigJobStatusToCancel", "RigBoard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div class="sj_dialog_body sj_lsd_ud">
+        <div class="det_list">
+            <label class="det_label">Notes</label>
+            <div class="det_text" style="width: 85%;"><textarea name="notes" id="notes" style="min-width: 600px;height: 160px">@ViewBag.notes</textarea></div>
+            <input type="hidden" name="id" id="rigJobId" value="@ViewBag.rigJobId" />
+        </div>
+    </div>
+
+    <div class="sj_dialog_foot">
+        <input type="submit" value="Save" />
+    </div>
+}
+

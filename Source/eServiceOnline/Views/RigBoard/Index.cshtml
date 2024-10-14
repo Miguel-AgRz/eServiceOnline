@@ -1,0 +1,280 @@
+﻿@using eServiceOnline.Models.RigBoard
+@model eServiceOnline.Models.Commons.RetrievalCondition
+@{
+    ViewData["Title"] = "Rig Board";
+}
+
+@section SampleHeading{
+    <link href="~/css/baseBoard.css" rel="stylesheet" asp-append-version="true"/>
+    <link href="~/css/rigBoard.css" rel="stylesheet" asp-append-version="true"/>
+
+    <div id="retrieval_conditions" style="line-height: 40px; font-size: 18px;font-family: Segoe UI; background: #000000; overflow: hidden;">
+        @Html.Partial("./_Retrieval")
+    </div>
+    <div id="tipContent" style="cursor: pointer; border: 2px solid #111; position: fixed;z-index:100; display: none; background-color: #fff;">
+    </div>
+    <ej-grid id="FlatGrid1" allow-cell-merging="true" merge-cell-info="siteInstance.MergeStyledCell">
+        <e-datamanager url="@Url.Action("GetDistrictRigJobViewModels", "RigBoard", new {})" adaptor="UrlAdaptor" />
+        <e-columns>
+            <e-column field="DistrictNotes" header-text="" text-align="Center" css-class="e-rowcell generalStyle e-cellselectionbackground e-activecell" width="100"></e-column>
+        </e-columns>
+    </ej-grid>
+}
+
+
+@section ControlsSection{
+
+    @* <div style="background: #74223C; height: 15px; margin-bottom: -1px; position: relative; z-index: 90"></div> *@
+    <ej-grid id="FlatGrid" allow-paging="true" action-complete="onComplete" allow-resize-to-fit="true" allow-text-wrap="true" allow-sorting="true" allow-cell-merging="true" merge-cell-info="siteInstance.MergeStyledCell">
+        <e-selection-settings selection-mode="@(new List<string>() {"cell"})" />
+        <e-text-wrap-settings wrap-mode="Content" />
+        <e-page-settings page-size="18"></e-page-settings>
+        <e-datamanager url="@Url.Action("GetPagedRigJobViewModels", "RigBoard", new {})" adaptor="UrlAdaptor" />
+
+        <e-columns>
+            <e-column field="SequenceNumber" header-text=" " text-align="Center" css-class="generalStyle" width="20"></e-column>
+            <e-column field="Company" header-text="COMPANY" text-align="Left" width="40" css-class="generalStyle" tooltip="#colTipCompany" allow-sorting="true"></e-column>
+            <e-column field="Lsd" header-text="LSD" width="65" css-class="generalStyle" tooltip="#colTipLsd" allow-sorting="false"></e-column>
+            <e-column field="Rig" header-text="RIG" width="45" css-class="generalStyle" tooltip="#colTipRig"></e-column>
+            <e-column field="Job" header-text="JOB" width="50" css-class="generalStyle" tooltip="#colTip" allow-sorting="false"></e-column>
+            <e-column field="Date" header-text="DATE" width="45" css-class="generalStyle" tooltip="#colTipDate" allow-sorting="true"></e-column>
+            <e-column field="Bl1" header-text="PREFL" width="25" css-class="generalStyle" tooltip="#colTipBL1" allow-sorting="false"></e-column>
+            <e-column field="Bl2" header-text="BLEND" width="25" css-class="generalStyle" tooltip="#colTipBL2" allow-sorting="false"></e-column>
+            <e-column field="Bl3" header-text="DISPL" width="25" css-class="generalStyle" tooltip="#colTipBL3" allow-sorting="false"></e-column>
+            <e-column field="Crew" header-text="CREW" width="25" css-class="generalStyle" tooltip="#colTipCrew" allow-sorting="false"></e-column>
+            <e-column field="Notes" header-text="NOTES" width="130" css-class="generalNotesStyle" tooltip="#colTip" allow-sorting="false"></e-column>
+            <e-column field="Bin" header-text="BIN" width="30" css-class="generalStyle" tooltip="#colTipBin" allow-sorting="false"></e-column>
+            <e-column field="ConsultantContacts" header-text="OSR" width="120" css-class="generalStyle" tooltip="#colTipConsultant" allow-sorting="false"></e-column>
+        </e-columns>
+    </ej-grid>
+
+    <ej-dialog id="basicDialog" css-class="sj_dialog" title="Dialog" width="800" z-index="2100" show-on-init="false" enable-resize="false" close="eServiceOnline.Site.prototype.CloseDialog">
+        <e-content-template>
+        </e-content-template>
+    </ej-dialog>
+
+    <div class="sj_confirm"></div>
+
+    <ej-dialog id="confirmDialog" css-class="sj_confirmDialog" title="Confirm" width="400" show-on-init="false" enable-resize="false" close="CloseConfirmjumpDialog">
+        <e-content-template>
+            <div id="is_confirm_jump">
+                <div style="margin-top: 20px; padding: 0 10px 0 10px">Directions is not changed with location change, are you sure to save?</div>
+                <div style="text-align: center; margin: auto; line-height: 100px;">
+                    <div style="display: inline-block; width: 50px; line-height: 25px; text-align: center;">
+                        <input class="confirmDialog_button" type="button" value="Yes" onclick="CloseConfirmjumpDialog('Yes')" />
+                    </div>
+                    <div style="display: inline-block; width: 50px; line-height: 25px; text-align: center;">
+                        <input class="confirmDialog_button" type="button" value="No" onclick="CloseConfirmjumpDialog('No')" />
+                    </div>
+                </div>
+            </div>
+        </e-content-template>
+    </ej-dialog>
+    <script>
+
+
+
+
+
+        @*window.onbeforeunload = function () {
+            var url = '@Url.Action("UpdateAccessRecord", "RigBoard")';
+            EServiceExpress.Common.prototype.LogOut(url);
+        }*@
+        $(".confirmDialog_button").hide();
+        $("#is_confirm_jump").hide();
+
+        var confirmjump = false;
+
+        function verifyLsdIsChange() {
+            var obj = {
+                CallSheetNumber: $("#CallSheetNumber").val(),
+                DirectionToLocation: $("#DirectionToLocation").val()
+            }
+            var itemurl = '@Url.Action("VerifyLsdIsChange", "RigBoard")';
+            if (!confirmjump) {
+                $.ajax({
+                    url: itemurl,
+                    async: false,
+                    method: "Post",
+                    data: obj,
+                    success: function(data) {
+                        if (!data) {
+                            var divs = document.getElementsByTagName("div");
+                            var max = 0;
+                            for (var i = 0; i < divs.length; i++) {
+                                max = Math.max(max, divs[i].style.zIndex || 0);
+                            }
+                            console.log(max);
+                            $(".sj_confirm").css({ "z-index": max + 1 });
+                            $(".sj_confirm").fadeIn(300,
+                                function() {
+                                    $("#confirmDialog").ejDialog("open");
+                                }
+                            );
+                            $("#is_confirm_jump").show();
+                            $(".confirmDialog_button").show();
+                            //                        $(".sj_confirm_jump").show();
+                            confirmjump = false;
+                        } else {
+                            confirmjump = true;
+                        }
+                    }
+                });
+            }
+            return confirmjump;
+        }
+
+        function CloseConfirmjumpDialog(item) {
+            if (item === "Yes") {
+                confirmjump = true;
+                $("#sj_updatelsdinfowelllocation").trigger("click");
+            } else {
+                confirmjump = false;
+            }
+            $("#is_confirm_jump").hide();
+            $(".sj_confirm").fadeOut(300,
+                function() {
+                    $("#confirmDialog").ejDialog("close");
+                }
+            );
+        }
+
+        function submitJobDateInfo() {
+            $("#ExpectedTimeOnLocation").val($("#sj_expected_time_on_location").val());
+
+            return true;
+        }
+
+        function onComplete(args) {
+
+            processTopPager(this); // Perform clone pager functionalities    
+
+        }
+        //Apr 29, 2024 Tongtao 186_PR_RigBoardPageSelection: create another paginator and move it to the top of the page.
+        function processTopPager(gridObj) {
+            // Create a clone pager
+            var pagerClone = gridObj.getPager().clone(true);
+            // Replace the id to numeric container element in the clone pager
+            pagerClone.find(".e-numericcontainer").prop("id", "NumericContainer1");
+
+            pagerClone.find(".e-parentmsgbar").remove();
+
+            // Prepend the clone element in the Grid control
+            if (gridObj.element.find("#clonePager").length) {
+                gridObj.element.find("#clonePager").html(pagerClone.html());
+                $("#clonePager").fadeIn(1000);
+            }
+            else {
+                gridObj.element.prepend(pagerClone.prop("id", "clonePager"));
+            }
+
+            $('#clonePager').css({
+                transform: 'translateY(-110px)',
+                position: 'absolute',
+                right: '0',
+                width: '365px'
+            });
+
+            // Perform Paging operation while clicking clone pager
+            gridObj.element.find("#NumericContainer1 a").click(function (e) {
+                $("#FlatGrid").ejGrid("gotoPage", $(this).html());
+            });
+        }
+
+
+    </script>
+
+}
+
+@section ScriptSection
+    {
+    <script>
+        var siteInstance = new eServiceOnline.Site('@Url.Action("Index", "RigBoard")',
+            '@Url.Action("processContextMenu", "RigBoard")',
+            '@Url.Action("GetContextMenu", "Calendar")');
+
+        siteInstance.setControllersActions({
+            productHaul: {
+//                getProductHaulInfoById: "@this.Url.Action("GetProductHaulInfoById", "ProductHaul")",
+                verifyAmountAndMixWater: "@this.Url.Action("VerifyAmountAndMixWater", "ProductHaul")",
+                verifyQualityOfTheBin: "@this.Url.Action("VerifyQualityOfTheBin", "ProductHaul")",
+                getExistingProductHauls: "@this.Url.Action("GetExistingProductHauls", "ProductHaul")",
+                verifyCrewSchedule:"@this.Url.Action("VerifyCrewSchedule", "ProductHaul")",
+                getSanjelCrews:"@this.Url.Action("GetSanjelCrews", "ProductHaul")",
+                setSanjelCrews:"@this.Url.Action("SetSanjelCrews", "ProductHaul")",
+                getThirdPartyCrews:"@this.Url.Action("GetThirdPartyBulkerCrewList", "ProductHaul")",
+                getSanjelBulkerCrews:"@this.Url.Action("GetSanjelBulkerCrewList", "ProductHaul")",
+                getBulkPlants:"@this.Url.Action("GetBulkPlants", "ProductHaul")",
+                 getPodLoadByProductHual:"@this.Url.Action("GetPodLoadsByProductHaul","ProductHaul")",
+                 getShippingLoadSheetByCallSheetNumber:"@this.Url.Action("GetShippingLoadSheetByCallSheetNumber","ProductHaul")",
+                 getCallSheetNumberByProgramId:"@this.Url.Action("GetCallSheetNumberByProgramId","ProductHaul")",
+                getShippingLoadSheetByRig: "@this.Url.Action("GetShippingLoadSheetByRig","ProductHaul")",
+                //Nov 28, 2023 zhangyuan 201_PR_AddingDifferrentBlend: Add Get BlendDescription details
+                getOriginBlendSectionDescription:"@this.Url.Action("GetOriginBlendSectionDescription", "ProductHaul")",
+            },
+            calendar: {
+                verifySanjelCrewSchedule: "@(this.Url.Action("VerifySanjelCrewSchedule", "Calendar"))",
+                verifyThirdPartyCrewSchedule: "@(this.Url.Action("VerifyThirdPartyCrewSchedule", "Calendar"))"
+            },
+            binBoard: {
+                getBinsByBulkPlantId: "@Url.Action("GetBinsByBulkPlantId", "BinBoard")",
+                getBinsByRigJobId: "@Url.Action("GetBinsByRigJobId", "BinBoard")",
+                getBinsByRigId: "@Url.Action("GetBinsByRigId", "BinBoard")",
+                getBinInformationsByRigId: "@Url.Action("GetBinInformationsByRigId", "BinBoard")",
+                getBinInformationsByBulkPlantId: "@Url.Action("GetBinInformationsByBulkPlantId", "BinBoard")",
+                //Nov 13, 2023 zhangyuan P63_Q4_174: add TransferBlend
+                getBinInformationById: "@Url.Action("GetBinInformationById", "BinBoard")",
+            },
+            rigBoard: {
+                getPrograms: "@Url.Action("GetPrograms", "RigBoard")",
+                GetProgramInfo: "@Url.Action("GetProgramInfo", "RigBoard")",
+                getBlends: "@Url.Action("GetBlends", "RigBoard")",
+                VerifyBinInformation: "@Url.Action("VerifyBinInformation", "RigBoard")"
+            }
+        });
+        siteInstance.RefeshPage();
+    </script>
+    <script src="~/js/ProductHaul.js" asp-append-version="true" async></script>
+    <script src="~/js/ValidationChain.js" asp-append-version="true" async></script>
+    <script src="~/js/ManageDialog.js" asp-append-version="true" async></script>
+    <script type="text/template" id="colTip">
+        {{:Notes.Notice}}
+    </script>
+
+    <script type="text/x-jsrender" id="colTipLsd">
+        {{:Lsd.Notice}}
+    </script>
+
+    <script type="text/template" id="colTipCompany">
+        {{:Company.Notice}}
+    </script>
+    <script type="text/template" id="colTipRig">
+        {{:Rig.Notice}}
+    </script>
+
+    <script type="text/template" id="colTipBL1">
+        {{:Bl1.Notice}}
+    </script>
+
+    <script type="text/template" id="colTipBL2">
+        {{:Bl2.Notice}}
+    </script>
+
+    <script type="text/template" id="colTipBL3">
+        {{:Bl3.Notice}}
+    </script>
+
+    <script type="text/template" id="colTipCrew">
+        {{:Crew.Notice}}
+    </script>
+
+    <script type="text/template" id="colTipBin">
+        {{:Bin.Notice}}
+    </script>
+    <script type="text/template" id="colTipDate">
+        {{:Date.Notice}}
+    </script>
+    <script type="text/template" id="colTipConsultant">
+        {{:ConsultantContacts.Notice}}
+    </script>
+}

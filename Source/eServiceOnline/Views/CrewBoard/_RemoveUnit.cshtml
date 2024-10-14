@@ -1,0 +1,22 @@
+@using eServiceOnline.Models.CrewBoard
+@model eServiceOnline.Models.CrewBoard.CrewModel
+
+@using (Html.BeginForm("RemoveUnit", "CrewBoard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(m => m.Id)
+    @Html.HiddenFor(m => m.TruckUnitId)
+    <input type="hidden" id="operate" value="remove"/>
+    <div>
+        <div style="margin-top: 20px; text-align: center;" id="div_display_notes">
+            <lable>Do you want to remove this unit?</lable>
+        </div>
+        <div style="text-align: center; margin: auto; line-height: 100px;">
+            <div class="sj_dialog_foot">
+                <input type="submit" id="submitButton" class="yes" value="Yes" onclick="return verifyUnitSchedule()"/> <input type="button" value="No" class="no" onclick="siteInstance.CloseConfirmDialog()" />
+            </div>
+        </div>
+    </div>
+}
+<div>
+    @Html.Partial("./_PromotMessage")
+</div>

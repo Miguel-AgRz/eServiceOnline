@@ -1,0 +1,160 @@
+﻿@using eServiceOnline.Models.RigBoard
+@model eServiceOnline.Models.RigBoard.RigJobModel
+
+    @using (Html.BeginForm("CreateJobAlert", "RigBoard", FormMethod.Post, new { enctype = "multipart/form-data", onsubmit = "" }))
+    {
+        @Html.HiddenFor(model => model.ClientCompanyId)
+        @Html.HiddenFor(model => model.RigCompany)
+        @Html.HiddenFor(model => model.ServicePointId)
+        @Html.HiddenFor(model => model.ServicePoint)
+        @Html.HiddenFor(model => model.RigId)
+        @Html.HiddenFor(model => model.RigName)
+        @Html.HiddenFor(model => model.ConsultantId)
+        @Html.HiddenFor(model => model.ConsultantName)
+        @Html.HiddenFor(model => model.Id)
+        <div class="sj_dialog_body sj_lsd_ud" id="create_job_alert">
+            <div class="det_list">
+                <label class="det_label">Client Company</label>
+                <div class="det_text select_lable" id="div_DrillingCompanyId">
+                    <ej-drop-down-list id="DrillingCompany_Name" enable-filter-search="true" Width="280px">
+                        <e-datamanager json="@ViewData["clientCompany"]"></e-datamanager>
+                        <e-drop-down-list-fields text="Text" value="Value" /> 
+                    </ej-drop-down-list>
+                    <span class="verify_required" style="display: none; color: red;"> * required </span>
+                </div>
+            </div>
+            <div class="det_list">
+                <label class="det_label">Service Point</label>
+                <div class="det_text select_lable" id="div_ServicePoint" style="position: relative;">
+                    <ej-drop-down-list id="ServicePoint_Name" enable-filter-search="true" Width="280px">
+                        <e-datamanager json="@ViewData["jobAlert_ServicePoint"]"></e-datamanager>
+                        <e-drop-down-list-fields text="Text" value="Value" />
+                    </ej-drop-down-list>
+                    <span class="verify_required"> * required </span>
+                </div>
+            </div>
+            <div class="det_list">
+                <label class="det_label">Rig Name</label>
+                <div class="det_text select_lable" id="div_RigName">
+                    <ej-drop-down-list id="Rig_Name" enable-filter-search="true" Width="280px">
+                        <e-datamanager json="@ViewData["jobAlert_Rig"]"></e-datamanager>
+                        <e-drop-down-list-fields text="Text" value="Value" />
+                    </ej-drop-down-list>
+                </div>
+            </div>
+            <div class="det_list">
+                <label class="det_label">Date</label>
+                <div class="det_text" id="div_Date" style="position: relative;">
+                    <ej-date-time-picker id="ejDate" width="282px" Value="@ViewBag.Date" date-time-format="M/d/yyyy" interval="1440"></ej-date-time-picker>
+                    <span class="verify_required"> * required </span>
+                    @Html.HiddenFor(model => model.Date)
+                </div>
+            </div>
+            <div class="det_list">
+                <label class="det_label">Notes</label>
+                <div class="det_text" id="div_Notes" style="position: relative;">
+                    @Html.TextAreaFor(model => model.Notes, new { @style = "width: 280px;" })
+                    <span class="verify_required"> * required </span>
+                </div>
+            </div>
+            <div class="det_list">
+                <label class="det_label">Is Project Rig</label>
+                <div class="det_text">
+                    <label class="sj_cont_lab">
+                        @Html.CheckBoxFor(model => model.IsProjectRig, new { @class = "hide" })
+                        <i class="check"></i>
+                    </label>
+                </div>
+            </div>
+            <div class="det_list">
+                <label class="det_label">Is Service Rig</label>
+                <div class="det_text">
+                    <label class="sj_cont_lab">
+                        @Html.CheckBoxFor(model => model.IsServiceRig, new { @class = "hide" })
+                        <i class="check"></i>
+                    </label>
+                </div>
+            </div>
+            <div class="det_list">
+                <label class="det_label">LSD</label>
+                <div class="det_text">
+                    @Html.TextBoxFor(model => model.LSD, new { @class = "sj_text" })
+                </div>
+            </div>
+
+            <div class="det_list">
+                <label class="det_label">Client Contact</label>
+                <div class="det_text select_lable" id="div_ConsultantName">
+                    <ej-drop-down-list id="Consultant_Name" enable-filter-search="true" Width="280px">
+                        <e-datamanager json="@ViewData["jobAlert_Consultant"]"></e-datamanager>
+                        <e-drop-down-list-fields text="Text" value="Value" />
+                    </ej-drop-down-list>
+                </div>
+            </div>
+        </div>
+
+        <div class="sj_dialog_foot">
+            <input type="submit" value="Save" onclick="return clickSubmit();" />
+        </div>
+    }
+
+<ej-script-manager></ej-script-manager>
+
+<script>
+    function clickSubmit() {
+        $("#Date").val($("#ejDate").val());
+        SetAttributeValue("DrillingCompany_Name", "RigCompany","ClientCompanyId");
+        SetAttributeValue("Rig_Name", "RigName","RigId");
+        SetAttributeValue("ServicePoint_Name", "ServicePoint","ServicePointId");
+        SetAttributeValue("Consultant_Name", "ConsultantName","ConsultantId");
+
+        var flog = true;
+        var regu = "^[ ]+$";
+        var re = new RegExp(regu);
+        var name = $("#ServicePoint").val();
+        console.log(name);
+        console.log(name == "" || re.test(name));
+        if (name == "" || re.test(name)) {
+            $("#div_ServicePoint >span.verify_required").show();
+            flog = false;
+        } else {
+            $("#div_ServicePoint >span.verify_required").hide();
+            flog = true;
+        }
+        name = $("#Date").val();
+        if (name == "" || re.test(name)) {
+            $("#div_Date >span.verify_required").show();
+            flog = false;
+        }
+        name = $("#Notes").val();
+        if (name == "" || re.test(name)) {
+            $("#div_Notes >span.verify_required").show();
+            flog = false;
+        }
+
+        return flog;
+    }
+
+    function SetAttributeValue(itemId,name,id) {
+        if ($("#" + itemId + "_popup .e-ul>li.e-active").length > 0) {
+            $("#" + id).val($("#" + itemId + "_popup .e-ul>li.e-active").attr("data-value"));
+            $("#" + name).val($("#" + itemId + "_popup .e-ul>li.e-active").text());
+            console.log($("#" + id).val());
+            console.log($("#" + name).val());
+        }
+    }
+
+    $(function () {
+        $("#ejDate,#div_Notes textarea")
+            .unbind("blur")
+            .on("blur",
+                function() {
+                    if ($(this).val() != "") {
+                        $(this).parents(".det_text").find("span.verify_required").hide();
+                    } else {
+                        $(this).parents(".det_text").find("span.verify_required").show();
+                    }
+            });
+    });
+
+</script>

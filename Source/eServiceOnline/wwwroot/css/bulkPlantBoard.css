@@ -1,0 +1,56 @@
+﻿/*rig*/
+.rig-topdrive:after {
+    content: "*";
+    color: red;
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-left: 6px;
+}
+
+.rig-topdrive-down:after {
+    content: "*";
+    color: red;
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-left: 6px;
+}
+
+.rig-topdrive-down {
+    background-color: #b44c6b !important;
+}
+
+
+
+/*bin*/
+
+.bin-assignedandconfirmed {
+    color: #00FF00 !important;
+}
+
+.bin-assignednotconfirmed {
+    color: #FFBF00 !important;
+}
+
+.bin-assignednotconfirmed-down {
+    color: #FFBF00 !important;
+    background-color: #b44c6b !important;
+}
+
+.bin-assignedandconfirmed-down {
+    color: #00FF00 !important;
+    background-color: #b44c6b !important;
+}
+
+.bin-notassigned {
+    color: red !important;
+}
+
+.bin-notassigned-down {
+    color: red !important;
+    background-color: #b44c6b !important;
+}
+
+
+

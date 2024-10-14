@@ -1,0 +1,37 @@
+﻿@model eServiceOnline.Models.Calendar.ScheduleModel
+
+@using (Html.BeginForm("AddCrewSchedule", "Calendar", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div class="sj_dialog_body sj_lsd_ud">
+        <div class="det_list">
+            <label class="det_label">Subject</label>
+            <div class="det_text">@Html.DisplayFor(model=>model.Subject, new  { @class = "sj_text" })</div>
+        </div>
+        <div class="det_list">
+            <label class="det_label">StartTime</label>
+            <div class="det_text">@Html.DisplayFor(model=>model.StartTime, new { @class = "sj_text" })</div>
+            <span id="crew_type" style="color: red;position: absolute;right: 60px;"></span>
+        </div>
+        <div class="det_list">
+            <label class="det_label">EndTime</label>
+            <div class="det_text">@Html.DisplayFor(model => model.EndTime, new { @class = "sj_text" })</div>
+        </div>
+        <div class="det_list">
+            <label class="det_label">Crew</label>
+            <div class="det_text">@Html.DisplayFor(model=>model.ScheduleTypeName, new { @class = "sj_text" })</div>
+        </div>
+        <div class="det_list">
+            <label class="det_label">Comments</label>
+            <div class="det_text">@Html.DisplayFor(model => model.Comment, new { @class = "sj_textarea" })</div>
+        </div>
+    </div>
+    <ejs-scripts></ejs-scripts>
+    <div class="sj_dialog_foot">
+    </div>
+    <script>
+        function checkTime() {
+            $("#StartTime").val();
+
+        }
+    </script>
+}

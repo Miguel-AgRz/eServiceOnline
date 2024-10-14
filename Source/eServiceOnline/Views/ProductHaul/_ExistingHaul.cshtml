@@ -1,0 +1,26 @@
+﻿@model eServiceOnline.Models.ProductHaul.ProductHaulInfoModel
+@{
+    var IsStatic = (bool)ViewData["isStatic"];
+    var label = Html.Label("", "Existing Haul", new { @class = "det_label" });
+}
+<div class="det_list" style="position: relative;" id="haulList_wrapper">
+
+    @if (IsStatic)
+    {
+            @label
+            <div class="det_text" id="existingHaul_select">
+                @Html.DropDownListFor(m => m.ProductHaulId, new List<SelectListItem>(),
+                    "None", new {  @class = "sj_select", disabled = "true" })
+            </div>
+    }
+    else
+    {
+            @label
+            <div class="det_text" id="existingHaul_select">
+                @Html.DropDownListFor(m => m.ProductHaulId, new List<SelectListItem>(),
+                    "None", new { @class = "sj_select" })
+                <div id="selectProductHaul_tip" style="display:none; color:red;">Select an existing haul is required</div>
+            </div>
+    }
+</div>
+

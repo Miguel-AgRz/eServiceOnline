@@ -1,0 +1,31 @@
+@model eServiceOnline.Models.ProductHaul.ProductLoadInfoModel
+<div style="text-align: center; padding: 10px;">
+        <label class="sj_cont_lab">
+            @Html.RadioButtonFor(m=>m.IsTotalBlendTonnage, false ,new { @class = "hide" })
+            <i class="redio"></i>
+            <span>Base Blend Tonnage</span>
+        </label>
+        <label class="sj_cont_lab">
+            @Html.RadioButtonFor(m => m.IsTotalBlendTonnage, true, new { @class = "hide"})
+            <i class="redio"></i>
+            <span>Total Blend Tonnage</span>
+        </label>
+</div>
+<div class="det_list">
+    <label class="det_label">Amount</label>
+    <div class="det_text">
+        @*April 25, 2024 tongtaop 183-offload-all-selection-on-product-haul: add onblur function  for changeAmount*@
+        @Html.TextBoxFor(model => model.Amount, new { @class = "sj_text", @required = "required",onblur="changeAmount(1)", onchange = "IsRequired('Amount')" })
+        <div id="Is_Amount" style="display:none; color:red;">Amount is required</div>
+        @Html.HiddenFor(model=>model.RemainsAmount)
+    </div>
+
+</div>
+<div class="det_list">
+    <label class="det_label">Mix Water</label>
+    <div class="det_text">
+        @Html.TextBoxFor(model => model.MixWater, new { @class = "sj_text", onchange = "IsRequired('MixWater')" })
+        <div id="Is_MixWater" style="display:none; color:red;">Mix Water is required</div>
+        
+    </div>
+</div>

@@ -1,0 +1,127 @@
+﻿@using eServiceOnline.Models.RigBoard
+@model eServiceOnline.Models.BulkPlantBoard.BulkPlantJobViewModel
+@{
+    ViewData["Title"] = "Bulk Plant";
+}
+
+@section SampleHeading{
+    <link href="~/css/baseBoard.css" rel="stylesheet" />
+    <link href="~/css/bulkPlantBoard.css" rel="stylesheet" />
+
+    <div id="retrieval_conditions" style="line-height: 40px; font-size: 18px;font-family: Segoe UI; background: #000000; overflow: hidden;">
+        @Html.Partial("./_Retrieval")
+    </div>
+    <div id="tipContent" style="cursor: pointer; border: 2px solid #111; position: fixed;z-index:100; display: none; background-color: #fff;">
+    </div>
+    <ej-grid id="FlatGrid1" allow-cell-merging="true" merge-cell-info="siteInstance.MergeStyledCell">
+        <e-datamanager url="@Url.Action("GetDistrictRigJobViewModels", "RigBoard", new {})" adaptor="UrlAdaptor" />
+        <e-columns>
+            <e-column field="DistrictNotes" header-text="" text-align="Center" css-class="e-rowcell generalStyle e-cellselectionbackground e-activecell" width="100"></e-column>
+        </e-columns>
+    </ej-grid>
+}
+
+
+@section ControlsSection{
+
+    @*Nov 6, 2023 Tongtao P45_Q4_105: change "Scheduled Blend" to  "Scheduled Blend Request"*@
+    @*Nov 8, 2023 Tongtao P45_Q4_161: adjust title width *@
+     @*Dec 11, 2023 Tongtao 143_PR_AddBlendRequestToBulkPlantBoard: Add BlendRequest id and  Bin Last BlendRequest id On the BulkPlantBoard *@
+    <ej-grid id="FlatGrid" allow-paging="false" allow-resize-to-fit="true" allow-text-wrap="true" allow-sorting="true" allow-cell-merging="true" merge-cell-info="siteInstance.MergeStyledCell">
+        <e-selection-settings selection-mode="@(new List<string>() {"cell"})" />
+        <e-text-wrap-settings wrap-mode="Content" />
+        <e-page-settings page-size="18"></e-page-settings>
+        <e-datamanager url="@Url.Action("GetPagedRigJobViewModels", "BulkPlant", new {})" adaptor="UrlAdaptor" />
+
+        <e-columns>
+            <e-column field="SequenceNumber" header-text=" " text-align="Center" css-class="generalStyle" width="5"></e-column>
+            <e-column field="Rig" header-text="BULK PLANT" width="23" css-class="generalStyle" tooltip="#colTipRig" allow-sorting="false"></e-column>
+            <e-column field="Bin" header-text="BIN" width="15" css-class="generalStyle" tooltip="#colTipBin" allow-sorting="false"></e-column>
+            <e-column field="BinReqNum" header-text="Req #" width="13" css-class="generalStyle" tooltip="#colTipBin" allow-sorting="false"></e-column>
+            <e-column field="BlendInBin" header-text="Blend in the Bin" width="28" css-class="generalStyle" tooltip="#colTipBlendInBin" allow-sorting="false" allow-resizing="true"></e-column>
+            <e-column field="Quantity" header-text="Quantity" width="17" css-class="generalStyle" allow-sorting="false"></e-column>
+            <e-column field="TestingStatus" header-text="Testing?" width="15" css-class="generalStyle" allow-sorting="false"></e-column>
+            <e-column field="RigName" header-text="Rig" width="20" css-class="generalStyle" allow-sorting="false"></e-column>
+            <e-column field="ClientName" header-text="ClientName" width="40" css-class="generalStyle" allow-sorting="false"></e-column>
+            <e-column field="CSNum" header-text="CS#/PRG#" width="22" css-class="generalStyle" allow-sorting="false"></e-column>
+            <e-column field="BlendScheduled" header-text="Scheduled Blend" width="40" css-class="generalNotesStyle" tooltip="#colTipBlendScheduled" allow-sorting="false"></e-column>
+            <e-column field="BlendReqNum" header-text="Req #" width="13" css-class="generalStyle" tooltip="#colTipBin" allow-sorting="false"></e-column>
+            <e-column field="ScheduledQuantity" header-text="QTY" width="15" css-class="generalNotesStyle" allow-sorting="false"></e-column>
+            <e-column field="BlendingStatus" header-text="Blending Status" width="28" css-class="generalStyle" allow-sorting="false"></e-column>
+        </e-columns>
+    </ej-grid>
+    <ej-dialog id="basicDialog" css-class="sj_dialog" title="Dialog" width="800" z-index="2100" show-on-init="false" enable-resize="false" close="eServiceOnline.Site.prototype.CloseDialog">
+
+    </ej-dialog>
+    <div class="sj_confirm"></div>
+    <script type="text/template" id="colTip">
+        {{:Notes.Notice}}
+    </script>
+    <script type="text/template" id="colTipRig">
+        {{:Rig.Notice}}
+    </script>
+    <script type="text/template" id="colTipBin">
+        {{:Bin.Notice}}
+    </script>
+    <script type="text/template" id="colTipBlendInBin">
+        {{:BlendInBin.Notice}}
+    </script>
+    <script type="text/template" id="colTipBlendScheduled">
+        {{:BlendScheduled.Notice}}
+    </script>
+
+}
+
+@section ScriptSection
+    {
+    <script>
+        var siteInstance = new eServiceOnline.Site('@Url.Action("Index", "RigBoard")',
+            '@Url.Action("processContextMenu", "RigBoard")',
+            '@Url.Action("GetContextMenu", "Calendar")');
+
+        siteInstance.setControllersActions({
+            productHaul: {
+//                getProductHaulInfoById: "@this.Url.Action("GetProductHaulInfoById", "ProductHaul")",
+                verifyAmountAndMixWater: "@this.Url.Action("VerifyAmountAndMixWater", "ProductHaul")",
+                verifyQualityOfTheBin: "@this.Url.Action("VerifyQualityOfTheBin", "ProductHaul")",
+                getExistingProductHauls: "@this.Url.Action("GetExistingProductHauls", "ProductHaul")",
+                getSanjelBulkerCrews:"@this.Url.Action("GetSanjelBulkerCrewList", "ProductHaul")",
+                getBulkPlants:"@this.Url.Action("GetBulkPlants", "ProductHaul")",
+                getPodLoadByProductHual:"@this.Url.Action("GetPodLoadsByProductHaul","ProductHaul")",
+                getShippingLoadSheetByCallSheetNumber:"@this.Url.Action("GetShippingLoadSheetByCallSheetNumber","ProductHaul")",
+                 getCallSheetNumberByProgramId:"@this.Url.Action("GetCallSheetNumberByProgramId","ProductHaul")",
+                getCallSheetNumberByProgramIdAndJobType:"@this.Url.Action("GetCallSheetNumberByProgramIdAndJobType", "ProductHaul")",
+                getCallSheetNumberByBaseBlend:"@this.Url.Action("GetCallSheetNumberByBaseBlend", "ProductHaul")",
+                 getShippingLoadSheetByRig:"@this.Url.Action("GetShippingLoadSheetByRig","ProductHaul")",
+                 setSanjelCrews:"@this.Url.Action("SetSanjelCrews", "ProductHaul")",
+                getThirdPartyCrews: "@this.Url.Action("GetThirdPartyBulkerCrewList", "ProductHaul")",
+                 //Nov 28, 2023 zhangyuan 201_PR_AddingDifferrentBlend: Add Get BlendDescription details
+                getOriginBlendSectionDescription:"@this.Url.Action("GetOriginBlendSectionDescription", "ProductHaul")",
+            },
+            calendar: {
+                verifySanjelCrewSchedule: "@(this.Url.Action("VerifySanjelCrewSchedule", "Calendar"))",
+                verifyThirdPartyCrewSchedule: "@(this.Url.Action("VerifyThirdPartyCrewSchedule", "Calendar"))"
+            },
+            binBoard: {
+                getBinsByBulkPlantId: "@Url.Action("GetBinsByBulkPlantId", "BinBoard")",
+                getBinsByRigJobId: "@Url.Action("GetBinsByRigJobId", "BinBoard")",
+                getBinsByRigId: "@Url.Action("GetBinsByRigId", "BinBoard")",
+                getBinInformationsByRigId: "@Url.Action("GetBinInformationsByRigId", "BinBoard")",
+                getBinInformationsByBulkPlantId: "@Url.Action("GetBinsByBulkPlantId", "BinBoard")",
+                  //Nov 13, 2023 zhangyuan P63_Q4_174: add TransferBlend
+                getBinInformationById: "@Url.Action("GetBinInformationById", "BinBoard")",
+
+            },
+            rigBoard: {
+                getPrograms: "@Url.Action("GetPrograms", "RigBoard")",
+                GetProgramInfo: "@Url.Action("GetProgramInfo", "RigBoard")",
+                getBlends: "@Url.Action("GetBlends", "RigBoard")",
+                VerifyBinInformation: "@Url.Action("VerifyBinInformation", "RigBoard")"
+            }
+        });
+        siteInstance.RefeshPage();
+    </script>
+    <script src="~/js/ProductHaul.js" asp-append-version="true" async></script>
+    <script src="~/js/ValidationChain.js" asp-append-version="true" async></script>
+    <script src="~/js/ManageDialog.js" asp-append-version="true" async></script>
+}

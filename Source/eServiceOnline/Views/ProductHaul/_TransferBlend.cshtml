@@ -1,0 +1,122 @@
+﻿@using eServiceOnline.Models.ProductHaul
+@model eServiceOnline.Models.ProductHaul.ProductHaulModel
+
+@{
+    Layout = null;
+}
+
+@using (Html.BeginForm("TransferBlend", "ProductHaul", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(m => m.BulkUnitName)
+    @Html.HiddenFor(m => m.BinNumber)
+    @Html.HiddenFor(m => m.TractorUnitName)
+    @Html.HiddenFor(m => m.SupplierCompanyName)
+    @Html.HiddenFor(m => m.IsThirdParty)
+    @Html.HiddenFor(m => m.ProductHaulId)
+    @Html.HiddenFor(m => m.IsExistingHaul)
+    @Html.HiddenFor(m => m.IsGoWithCrew)
+    @Html.HiddenFor(m => m.BulkPlantName)
+    @Html.HiddenFor(m => m.IsBlendTest)
+    @Html.HiddenFor(m => m.ExpectedOnLocationTime)
+    @Html.HiddenFor(m => m.ProductHaulLoadId)
+    @Html.HiddenFor(m => m.RigJobId)
+    @Html.HiddenFor(m => m.CustomerId)
+    @Html.HiddenFor(m => m.CustomerName)
+
+    <div class="sj_dialog_body sj_lsd_ud">
+        @Html.Partial("_BulkPlant", Model, new ViewDataDictionary(ViewData) { { "isStatic", true } })
+        <div class="det_list">
+            <label class="det_label">From Storage</label>
+            <div class="det_text" id="bin_select">
+                @Html.TextBoxFor(model => model.BinNumber, new { @class = "sj_text", @readonly = true })
+            </div>
+        </div>
+        <div class="det_list">
+            <label class="det_label">Customer</label>
+            <div class="det_text">
+                @Html.TextBoxFor(model => model.CustomerName, new { @class = "sj_text", @readonly = true })
+            </div>
+        </div>
+        <div class="det_list">
+            <label class="det_label">Program</label>
+            <div class="det_text">
+                @Html.TextBoxFor(model => model.ProgramNumber, new { @class = "sj_text", @readonly = true })
+            </div>
+        </div>
+        <div class="det_list">
+            <label class="det_label">Job Type</label>
+            <div class="det_text">
+                @Html.TextBoxFor(model => model.JobTypeName, new { @class = "sj_text", @readonly = true })
+            </div>
+        </div>
+        <div class="det_list">
+            <label class="det_label">Blend</label>
+            <div class="det_text">
+                @Html.TextBoxFor(model => model.BlendChemicalDescription, new { @class = "sj_text", @readonly = true })
+            </div>
+        </div>
+        <div class="det_list">
+            <label class="det_label">Blend Amount</label>
+            <div class="det_text">
+                @Html.TextBoxFor(model => model.BlendAmount, new { @class = "sj_text", @readonly = true })
+            </div>
+        </div>
+        <div class="det_list">
+            <label class="det_label">Destination Storage</label>
+            <div class="det_text" id="bin_select">
+                @(this.Html.DropDownListFor(model => model.BinId, ViewData["binSelectList"] as List<SelectListItem>, "None", new { onchange = "getBinType(this)", @class = "sj_select" }))
+            </div>
+        </div>
+        <div class="det_list">
+            <label class="det_label">TransferAmount</label>
+            <div class="det_text">
+                @Html.TextBoxFor(model => model.TransferAmount, new { @class = "sj_text", @required = "required", onchange = "IsRequired('Amount')" })
+                <div id="Is_Amount" style="display:none; color:red;">Transfer Amount is required</div>
+            </div>
+        </div>
+        @Html.Partial("_CommentsTexArea", Model)
+
+    </div>
+    @Html.Partial("_SubmitButton", Model)
+}
+
+@Html.Partial("_Dialogs")
+
+<script>
+
+    var existingHaul, blendTest, scheduleValidations;
+    $(function () {
+        existingHaul = new ExistingHaul();
+
+        var initSchedule = new InitSchedule(function () {
+            isPass = false;
+            defaultOnBlendTestClick(false);
+            existingHaul.setExistingHaul();
+        });
+        initSchedule.Initialize();
+
+        blendTest = new BlendTest({
+            OnBlendTestTrue: function () {
+                $("#IsBlendTest").val(true);
+                defaultOnBlendTestClick(false);
+                LoadBins();
+            },
+            OnBlendTestFalse: function () {
+                $("#IsBlendTest").val(false);
+                defaultOnBlendTestClick(true);
+                LoadBins();
+            }
+        });
+
+
+        //#region validation
+        var val1 = new ValidationsChain(true, function() { alert("validation 1"); return true; });
+        var val2 = new ValidationsChain(true, function() { alert("validation 2"); return false; });
+
+        val1.setNextFuncOrValidation(val2);
+
+        scheduleValidations = new ValidationsBuilder(val1);
+        //#endregion
+    });
+
+</script>

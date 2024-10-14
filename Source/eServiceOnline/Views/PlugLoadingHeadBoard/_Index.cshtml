@@ -1,0 +1,23 @@
+﻿<ejs-grid id="FlatGrid5" allowTextWrap="true" created="siteInstance.Created" enableHover="false" allowPaging="true" allowResizing="false" allowSorting="false" allowSelection="true" queryCellInfo="siteInstance.QueryCellInfo" gridLines="Both">
+    <e-grid-selectionSettings mode="Cell" type="Single" />
+    <e-grid-textWrapSettings wrapMode="Content" />
+    <e-grid-pagesettings pageSize="8"></e-grid-pagesettings>
+    <e-data-manager url="@Url.Action("GetPagePlugLoadingModels", "PlugLoadingHeadBoard", new {})" adaptor="UrlAdaptor" />
+
+    <e-grid-columns>      
+        <e-grid-column field="Size" headerText="SIZE" textAlign="Justify" width="18" customAttributes=@(new {@class = "generalStyle"})></e-grid-column>
+        <e-grid-column field="ThreadType" headerText="THREAD TYPE" textAlign="Justify" width="30" customAttributes=@(new {@class = "generalStyle"})></e-grid-column>
+        <e-grid-column field="Type" headerText="TYPE" textAlign="Justify" width="20" customAttributes=@(new {@class = "generalStyle"})></e-grid-column>
+        <e-grid-column field="Location" headerText="LOCATION" textAlign="Justify" width="30" customAttributes=@(new {@class = "generalStyle"})></e-grid-column>
+        <e-grid-column field="Manifold" headerText="MANIFOLD" textAlign="Justify" width="28" customAttributes=@(new {@class = "generalStyle"})></e-grid-column>
+        <e-grid-column field="TDCap" headerText="TD CAP" textAlign="Justify" width="22" customAttributes=@(new {@class = "generalStyle"})></e-grid-column>
+        <e-grid-column field="PLHSub" headerText="PLH SUB" textAlign="Justify" width="25" customAttributes=@(new {@class = "generalStyle"})></e-grid-column>
+        <e-grid-column field="Notes" headerText="NOTES" textAlign="Justify" width="20" customAttributes=@(new {@class = "generalStyle"})></e-grid-column>
+    </e-grid-columns>
+</ejs-grid>
+
+<style>
+    .e-grid.e-responsive .e-rowcell, .e-grid.e-responsive .e-headercelldiv {
+         text-overflow: unset;
+    }
+</style>

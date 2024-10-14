@@ -1,0 +1,53 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <ApplicationIcon />
+    <OutputType>Exe</OutputType>
+    <StartupObject />
+    <UserSecretsId>741cb90d-d168-4605-b9bb-4a5d5210abdf</UserSecretsId>
+    <Version>6.8.3.5</Version>
+    <AssemblyVersion>6.8.3.5</AssemblyVersion>
+    <FileVersion>6.8.3.5</FileVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BlendLibrary" Version="1.0.4" />
+    <PackageReference Include="MapperService" Version="2.1.0" />
+    <PackageReference Include="MetaShare.Common.Core.Extensions" Version="1.*" />
+    <PackageReference Include="MetaShare.Common.Core.ng" Version="1.*" />
+    <PackageReference Include="SanjelData.Services" Version="1.7.1" />
+    <PackageReference Include="MetaShare.Common.Core" Version="1.1.0" />
+    <PackageReference Include="MetaShare.Common.Foundation" Version="1.1.0" />
+    <PackageReference Include="MetaShare.Common.ServiceModel" Version="1.1.0" />
+    <PackageReference Include="MetaShare.Common.Utilities" Version="1.1.0" />
+    <PackageReference Include="Sanjel.BusinessEntities.Standard" Version="1.1.0" />
+    <PackageReference Include="Sanjel.Common.ApiServices" Version="1.1.2" />
+    <PackageReference Include="Sanjel.Common.BusinessEntities.Standard" Version="1.1.0" />
+    <PackageReference Include="Sanjel.Common.BusinessEntities.Mdd" Version="1.1.2" />
+
+    <PackageReference Include="FreeSpire.PDF" Version="8.6.0" />
+    <PackageReference Include="Microsoft.Exchange.WebServices" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.33.0" />
+    <PackageReference Include="Microsoft.SharePointOnline.CSOM" Version="16.1.21116.12000" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.3" />
+    <PackageReference Include="MimeTypeMapOfficial" Version="1.0.17" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="PnP.Framework" Version="1.4.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
+    <PackageReference Include="System.Net.Http.Formatting.Extension" Version="5.2.3" />
+    <PackageReference Include="System.ServiceModel.Primitives" Version="4.5.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\eServiceOnline.BusinessProcess.Interface\eServiceOnline.BusinessProcess.Interface.csproj" />
+    <ProjectReference Include="..\eServiceOnline.BusinessProcess\eServiceOnline.BusinessProcess.csproj" />
+    <ProjectReference Include="..\eServiceOnline.Gateway\eServiceOnline.Gateway.csproj" />
+  </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
+
+
+</Project>

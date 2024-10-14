@@ -1,0 +1,26 @@
+@model eServiceOnline.Models.ProductHaul.ProductHaulInfoModel
+@{
+    var dateTimeValue = (DateTime)ViewData["dateTimeValue"];
+    var IsStatic = Convert.ToBoolean(ViewData["isStatic"]);
+    var label = Html.Label("", "Estimated Load Time", new { @class = "det_label" });
+}
+@if (IsStatic)
+{
+    <div class="det_list" id="oldEstimateLoadTimeDiv">
+        @label
+        <div class="det_text">
+            @Html.TextBoxFor(model => model.EstimatedLoadTime, new { @readonly = true, @class = "sj_text" })
+            @*<input type="text" id="oldEstimateLoadTime" name="existing_olTime" class="sj_text" readonly="readonly" value="@dateTimeValue" />*@
+        </div>
+    </div>
+}
+else
+{
+    <div class="det_list" id="EstimateLoadTimeDiv">
+        @label
+        <div class="det_text">
+            <ej-date-time-picker   id="exp_load_time"   width="282px" ej-for="@Model.EstimatedLoadTime" time-display-format="H:mm" date-time-format="M/d/yyyy H:mm">
+            </ej-date-time-picker>
+        </div>
+    </div>
+}

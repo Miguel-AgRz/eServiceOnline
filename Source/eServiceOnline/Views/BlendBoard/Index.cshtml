@@ -1,0 +1,324 @@
+﻿@using System.Threading.Tasks
+@using eServiceOnline.Data
+@using eServiceOnline.Models.ProductHaul
+@using eServiceOnline.SecurityControl
+@using MetaShare.Common.Foundation.EntityBases
+@using MetaShare.Common.Foundation.Permissions
+@using Syncfusion.JavaScript
+@model eServiceOnline.Models.BlendBoard.BlendViewModel
+
+@{
+    ViewData["Title"] = "Blend Chemical";
+    List<SelectListItem> categoryItems = this.ViewData["categoryItems"] as List<SelectListItem>;
+
+    List<SelectListItem> statusItems = this.ViewData["statusItems"] as List<SelectListItem>;
+    List<SelectListItem> unitItems = this.ViewData["unitItems"] as List<SelectListItem>;
+}
+@section SampleHeading{
+
+    <script src="~/js/EServiceExpress.js" asp-append-version="true"></script>
+    <script src="~/js/verifyDailog.js"></script>
+    <style>
+        .container {
+            width: 1400px !important;
+        }
+    </style>
+
+    <style>
+        #EditDialog_FlatGrid_Save, #EditDialog_FlatGrid_Cancel {
+            display: none;
+        }
+    </style>
+}
+
+@section ControlsSection{
+    <ej-grid id="FlatGrid" allow-paging="true" allow-resize-to-fit="true" allow-sorting="true" action-complete="complete" enable-query-string="true">
+        <e-page-settings page-size="12"> </e-page-settings>
+        <e-datamanager url="@Url.Action("GetPagedBlendChemicals", "BlendBoard")" adaptor="UrlAdaptor" insert-url="@Url.Action("Insert", "BlendBoard")", update-url="@Url.Action("Update", "BlendBoard")"/>
+        <e-sort-settings>
+            <e-sorted-columns>
+                <e-sorted-column field="Id" direction="Descending"></e-sorted-column>
+            </e-sorted-columns>
+        </e-sort-settings>
+        <e-edit-settings allow-adding="true" allow-editing="true" allow-deleting="true" dialog-editor-template-id="#template" edit-mode="@(EditMode.DialogTemplate)"></e-edit-settings>
+        <e-toolbar-settings show-toolbar="@ViewBag.HavePermission" toolbar-items="@(new List<string>() {"add", "edit", "delete", "update", "cancel", "printGrid"})"></e-toolbar-settings>
+        <e-columns>
+            <e-column field="Id" header-text="Id" text-align="Left" Visible="false" is-primary-key="true"></e-column>
+            <e-column field="Name" header-text="Blend Name" text-align="Left" width="160"></e-column>
+            <e-column field="IsBaseEligible" header-text="IsBaseEligible" text-align="Center" width="60"></e-column>
+            <e-column field="IsAdditiveEligible" header-text="IsAdditiveEligible" text-align="Center" width="80"></e-column>
+            <e-column field="PrimaryCategoryName" header-text="Category" text-align="Left" width="80" />
+            <e-column field="PriceCode" header-text="Price Code" text-align="Center" width="60" />
+            <e-column field="InventoryNumber" header-text="IIN" text-align="Center" width="60" />
+            <e-column field="BulkDensity" header-text="BulkDensity" text-align="Right" width="60"></e-column>
+            <e-column field="Yield" header-text="Yield" text-align="Right" width="40"></e-column>
+            <e-column field="SpecificGravity" header-text="SG" text-align="Right" width="60"></e-column>
+            <e-column field="MixWater" header-text="Mix Water" text-align="Right" width="60"></e-column>
+            <e-column field="Density" header-text="Density" text-align="Right" width="40"></e-column>
+            <e-column field="StatusName" header-text="Status" text-align="Center" width="60"></e-column>
+        </e-columns>
+    </ej-grid>
+}
+
+
+@section ScriptSection{
+    <script type="text/template" id="template">
+
+        <table cellspacing="10" style="width: 500px;">
+            <tr>
+                <td style="text-align: left;width: 128px;">
+                    Blend Name
+                </td>
+                <td style="text-align: left">
+                    <span style="display:inline-block;width:90%;">
+                        <input id="Name" name="Name" value="{{: Name}}" class="e-ejinputtext" />
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: left;height: 34px;" colspan="2">
+                    <label>
+                        <span style="display:inline-block;margin: auto 10px;width:13px;">
+                            <input type="checkbox" id="IsBaseEligible" name="IsBaseEligible" value="{{: IsBaseEligible}}" />
+                        </span>Is Base Eligible?
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: left;height: 34px;" colspan="2">
+                    <label>
+                        <span style="display:inline-block;margin: auto 10px;width:13px;">
+                            <input type="checkbox" id="IsAdditiveEligible" name="IsAdditiveEligible" value="{{: IsAdditiveEligible}}" />
+                        </span>Is Additive Eligible?
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: left;">
+                    Primary Category
+                </td>
+                <td style="text-align: left;">
+                    <select id="PrimaryCategoryId" name="PrimaryCategoryId" style="width: 90%; height: 32px;">
+                        @if (categoryItems != null)
+                        {
+                            foreach (SelectListItem item in categoryItems)
+                            {
+                        <option value="@item.Value">@item.Text</option>
+                            }
+                        }
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: left;width: 128px;">
+                    Price Code
+                </td>
+                <td style="text-align: left">
+                    <span style="display:inline-block;width:90%;">
+                        <input id="PriceCode" name="PriceCode" value="{{: PriceCode}}" class="e-ejinputtext" />
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: left;width: 128px;">
+                    Plus Additives Price Code
+                </td>
+                <td style="text-align: left">
+                    <span style="display:inline-block;width:90%;">
+                        <input id="AddsPriceCode" name="AddsPriceCode" value="{{: AddsPriceCode}}" class="e-ejinputtext" />
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: right;width: 128px;">
+                    Inventory Number
+                </td>
+                <td style="text-align: left">
+                    <span style="display:inline-block;width:90%;">
+                        <input id="InventoryNumber" name="InventoryNumber" value="{{: InventoryNumber}}" class="e-ejinputtext" />
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: right;width: 128px;">
+                    Stanard Density
+                </td>
+                <td style="text-align: left">
+                    <span style="display:inline-block;width:90%;">
+                        <input id="Density" name="Density" value="{{: Density}}" class="e-ejinputtext" />
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: right;width: 128px;">
+                    Mix Water
+                </td>
+                <td style="text-align: left">
+                    <span style="display:inline-block;width:90%;">
+                        <input id="MixWater" name="MixWater" value="{{: MixWater}}" class="e-ejinputtext" />
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: right;width: 128px;">
+                    Yield
+                </td>
+                <td style="text-align: left">
+                    <span style="display:inline-block;width:90%;">
+                        <input id="Yield" name="Yield" value="{{: Yield}}" class="e-ejinputtext" />
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: right;width: 128px;">
+                    Specific Gravity
+                </td>
+                <td style="text-align: left">
+                    <span style="display:inline-block;width:90%;">
+                        <input id="SpecificGravity" name="SpecificGravity" value="{{: SpecificGravity}}" class="e-ejinputtext" />
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: right;width: 128px;">
+                    Bulk Density
+                </td>
+                <td style="text-align: left">
+                    <span style="display:inline-block;width:90%;">
+                        <input id="BulkDensity" name="BulkDensity" value="{{: BulkDensity}}" class="e-ejinputtext" />
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: right;width: 128px;">
+                    AER Code
+                </td>
+                <td style="text-align: left">
+                    <span style="display:inline-block;width:90%;">
+                        <input id="AERCode" name="AERCode" value="{{: AERCode}}" class="e-ejinputtext" />
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: left;height: 34px;" colspan="2">
+                    <label>
+                        <span style="display:inline-block;margin: auto 10px;width:13px;">
+                            <input type="checkbox" id="HasRecipe" name="HasRecipe" value="{{: HasRecipe}}" />
+                        </span>Has Recipe?
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: left;">
+                    Recipe Unit
+                </td>
+                <td style="text-align: left;">
+                    <select id="UnitId" name="UnitId" style="width: 90%; height: 32px;">
+                        @if (unitItems != null)
+                        {
+                            foreach (SelectListItem item in unitItems)
+                            {
+                        <option value="@item.Value">@item.Text</option>
+                            }
+                        }
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: left;">
+                    Status
+                </td>
+                <td style="text-align: left;">
+                    <select id="StatusId" name="StatusId" style="width: 90%; height: 32px;">
+                        @if (statusItems != null)
+                        {
+                            foreach (SelectListItem item in statusItems)
+                            {
+                        <option value="@item.Value">@item.Text</option>
+                            }
+                        }
+                    </select>
+                </td>
+            </tr>
+        </table>
+        <div style="text-align: center;">
+            <input class="e-save e-button e-btnsub e-flat e-js e-ntouch e-btn e-select e-widget e-txt e-btn-normal" style="width: 100px; height: 35px;" id="EditDialog_Flat_Save" tabindex="" role="button" value="Save" aria-describedby="Save" aria-disabled="false" type="button">
+            <input class="e-cancel e-button e-btncan e-flat e-js e-ntouch e-btn e-select e-widget e-txt e-btn-normal" style="margin-left: 20px; width: 100px; height: 35px;" id="EditDialog_Flat_Cancel" tabindex="" role="button" value="Cancel" aria-describedby="Cancel" aria-disabled="false" type="button">
+        </div>
+    </script>
+    <script type="text/javascript">
+        function complete(args) {
+            if ((args.requestType == "beginedit" || args.requestType == "add") && args.model.editSettings.editMode == "dialogtemplate") {
+                $("#Grid_dialogEdit").ejDialog({
+                    open: ej.proxy(function (args) {
+                        if (args.requestType == "beginedit") {
+                            var top = $('#Grid td.e-active').first().parent().offset().top - 200;
+                            if (top < 50) top = 100;
+                            $('#Grid_dialogEdit_wrapper').css('top', top);
+                            $('html, body').animate({ scrollTop: top }, 0);
+                        }
+                    }, this, args)
+                });
+
+            }
+        }
+        $(document)
+            .on("click",
+                "#EditDialog_Flat_Save",
+                function() {
+                    var StatusName = $("#StatusId").find("option:selected").text();
+                    var PrimaryCategoryName = $("#PrimaryCategoryId").find("option:selected").text();
+                    var UnitName = $("#UnitId").find("option:selected").text();
+
+                    var prama = {
+                        Id: $("#FlatGrid table tr[aria-selected='true'] td").eq(1).text(),
+                        Name: $('input[name=Name]').val(),
+                        IsBaseEligible: $('#IsBaseEligible').is(":checked"),
+                        IsAdditiveEligible: $('#IsAdditiveEligible').is(":checked"),
+                        PrimaryCategoryId: $('#PrimaryCategoryId').val(),
+                        PrimaryCategoryName: PrimaryCategoryName,
+                        PriceCode: $('input[name=PriceCode]').val(),
+                        AddsPriceCode: $('input[name=AddsPriceCode]').val(),
+                        InventoryNumber: $('input[name=InventoryNumber]').val(),
+                        BulkDensity: $('input[name=BulkDensity]').val(),
+                        Yield: $('input[name=Yield]').val(),
+                        SpecificGravity: $('input[name=SpecificGravity]').val(),
+                        MixWater: $('input[name=MixWater]').val(),
+                        Density: $('input[name=Density]').val(),
+                        AERCode: $('input[name=AERCode]').val(),
+                        HasRecipe: $('#HasRecipe').is(":checked"),
+                        UniId: $('#UnitId').val(),
+                        UnitName: UnitName,
+                        StatusId: $("#StatusId").val(),
+                        StatusName: StatusName,
+                        Submit: 'save'
+                    }
+
+                    if ($('input[name=Amount]').val() === "") {
+                        $('input[name=Amount]').parent().next().show();
+                        return false;
+                    }
+                    $("#EditDialog_Flat_Save").attr("disabled", "disabled");
+
+                    saveBlendChemical(prama, '@(this.Url.Action("Insert", "BlendBoard"))');
+
+                    return false;
+                });
+
+    </script>
+    <script type="text/javascript">
+        function saveBlendChemical(info,firstUrl) {
+    
+            $.ajax({
+                type: 'post',
+                url: window.location.protocol + "//" + window.location.host + firstUrl,
+                data: info,
+                async: false, 
+                success: function (data) {
+                    history.go(0);
+                }
+            });
+        }
+
+    </script>
+}

@@ -1,0 +1,12 @@
+@model eServiceOnline.Models.ProductHaul.ProductHaulInfoModel
+@{
+
+    var label = Html.Label("", "Will Go With Crew", new { @class = "det_label" });
+}
+
+    <div class="det_list" id="existing_go_with_crew">
+        @label
+        <div class="det_text" id="existing_goWithCrew">
+            @Html.CheckBoxFor(m => m.IsGoWithCrew, new {@onClick="return false;"})
+        </div>
+    </div>

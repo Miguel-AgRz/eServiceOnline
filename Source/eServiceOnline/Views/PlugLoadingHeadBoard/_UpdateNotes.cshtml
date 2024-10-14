@@ -1,0 +1,19 @@
+@using eServiceOnline.Models.CrewBoard
+@model eServiceOnline.Models.PlugLoadingHeadBoard.PlugLoadingHeadModel
+
+@using (Html.BeginForm("UpdateNotes", "PlugLoadingHeadBoard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(m => m.Id)
+
+    <div class="sj_dialog_body sj_lsd_ud">
+        <div class="det_list">
+            <label class="det_label" style="width: 10%;">Notes</label>
+            <div class="det_text" style="width: 85%;"><textarea name="notes" id="notes"  style="min-width: 600px;height: 160px">@Model.Notes</textarea></div>
+        </div>
+    </div>
+
+    <div class="sj_dialog_foot">
+        <input type="submit" value="Save" />
+    </div>
+}
+

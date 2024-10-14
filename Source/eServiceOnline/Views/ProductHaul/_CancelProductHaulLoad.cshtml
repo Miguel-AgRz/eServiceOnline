@@ -1,0 +1,23 @@
+@using eServiceOnline.Models.ProductHaul
+@model eServiceOnline.Models.ProductHaul.CancelProductHualLoadViewModel
+
+@using (Html.BeginForm("CancelProductHaulLoad", "ProductHaul", FormMethod.Post, new { enctype = "multipart/form-data", onsubmit = "return ValidateData()" }))
+{
+    @Html.HiddenFor(m => m.ProductHaulLoadId)
+
+    <div id="is_confirm_jump">
+        <div style="margin-top: 20px; padding: 0 10px 0 10px; text-align: center;">
+            <label>Are you sure you want to cancel the blend request ?</label>
+        </div>
+        <div style="text-align: center; margin: auto; line-height: 100px;">
+            <div class="sj_dialog_foot">
+                <input type="submit" class="yes" value="Yes" /> <input type="button" value="No" class="no" onclick="eServiceOnline.Site.prototype.CloseDialog()" />
+            </div>
+        </div>
+    </div>
+}
+<script>
+    function ValidateData() {
+        return true;
+    }
+</script>

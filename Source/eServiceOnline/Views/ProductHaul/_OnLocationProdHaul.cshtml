@@ -1,0 +1,62 @@
+@using eServiceOnline.Models.ProductHaul
+@model eServiceOnline.Models.ProductHaul.OnLocationProductHaulViewModel
+
+@{
+    Layout = null;
+}
+
+@using (Html.BeginForm("OnLocationProductHaul", "ProductHaul", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(Model=>Model.ProductHaulId)
+<div class="sj_dialog_body sj_lsd_ud">
+        <div class="det_list" id="div_display_notes" style="margin-top: -10px; padding: 0 20px 0 150px; text-align: left;">
+            <label>The product haul has following shipping load(s): </label>
+                <ul>
+                @foreach(var shippingLoadSheet in Model.ShippingLoadSheetModels)
+                {
+                    <li>@shippingLoadSheet.Description</li>
+                }
+            </ul>
+            
+        </div>
+        <div class="det_list">
+            @if (Model.IsSameLocation)
+            {
+                <label class="det_label">On Location Time</label>
+                <div class="det_text">
+                    <ej-date-time-picker id="sj_om_location_time" width="250px"  ej-for="@Model.OnLocationTime"  time-display-format="H:mm" date-time-format="M/d/yyyy H:mm"></ej-date-time-picker>
+                </div>
+            }
+            else
+            {
+                <label class="det_list" style="margin-left: 150px;">
+                    You can't on location a product haul which has loads to different locations.<br/>
+                    But you can on location each load individually.
+                </label>
+            }
+           
+        </div>
+        <div class="sj_dialog_foot" style="margin-top: 20px;">
+            @if (Model.IsSameLocation)
+            {
+                <input type="submit" value="Save"  />
+            }
+            else
+            {
+                <input type="button" value="OK" class="OK" onclick="eServiceOnline.Site.prototype.CloseDialog()" />
+            }
+
+        </div>
+</div>
+    }
+
+    <ej-script-manager></ej-script-manager>
+<script>
+    function submitBlInfo() {
+        console.log($("#sj_om_location_time").val());
+        $("#OnLocationTime").val($("#sj_om_location_time").val());
+        console.log($("#OnLocationTime").val());
+
+        return true;
+    }
+</script>

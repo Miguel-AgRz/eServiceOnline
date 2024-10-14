@@ -1,0 +1,30 @@
+
+@using (Html.BeginForm("UpdateRigStatus", "RigBoard", FormMethod.Post, new { enctype = "multipart/form-data", onsubmit = "return ValidateData()" }))
+{
+
+    <div id="is_confirm_jump">
+        <div class="button_container">
+            @if (ViewBag.HaveBinAssigned.Equals("true"))
+            {
+                <div style="margin-top: 20px; padding: 0 10px 0 10px; text-align: center;">There are bins still assigned to the rig</div>
+                <div style="display: inline-block; width: 50px; line-height: 25px; text-align: center;">
+                    <input class="confirmDialog_button" type="button" value="Close" onclick="eServiceOnline.Site.prototype.CloseDialog()" />
+                </div>
+            }
+            else
+            {
+                <div style="margin-top: 20px; padding: 0 10px 0 10px; text-align: center;">Are you sure you want to deactivate the rig?</div>
+                <div style="text-align: center; margin: auto; line-height: 100px;">
+                    <div style="display: inline-block; width: 50px; line-height: 25px; text-align: center;">
+                        <input class="confirmDialog_button" type="submit" value="Yes" />
+                    </div>
+                    <div style="display: inline-block; width: 50px; line-height: 25px; text-align: center;">
+                        <input class="confirmDialog_button" type="button" value="No" onclick="eServiceOnline.Site.prototype.CloseDialog()" />
+                    </div>
+                </div>
+            }
+        </div>
+        <input type="hidden" name="rigId" value="@ViewBag.RigId"/>
+
+    </div>
+}

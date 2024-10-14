@@ -1,0 +1,61 @@
+﻿.header {
+    border: 2px solid #000;
+    overflow: hidden;
+    padding: 5px;
+    margin: 15px 0;
+}
+
+.header .h_col {
+    float: left;
+    padding-left: 12px;
+    width: 33.333%;
+}
+
+/* Dialog */
+
+.htmljssamplebrowser.material .control {
+    height: 700px;
+}
+
+.control {
+    height: 450px;
+    position: relative;
+}
+
+.ejinputtext {
+    height: 25px;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.row .cols-sample-area {
+    padding: 20px;
+    margin-bottom: 50px;
+    position: relative;
+}
+
+.acc {
+    font-size: 12px;
+    padding-top: 8px;
+}
+
+.top {
+    margin-top: 5px;
+}
+
+.reqired {
+    margin: 0 0 3px 0;
+    color: red;
+    display: inline-block;
+}
+
+.e-btn.e-button.e-js {
+    border: none;
+}
+
+/* Dialog */
+
+.e-gridcontent {
+    overflow: inherit !important;
+}
+

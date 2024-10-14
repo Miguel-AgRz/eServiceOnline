@@ -1,0 +1,97 @@
+@using eServiceOnline.Models.ProductHaul
+@model eServiceOnline.Models.ProductHaul.OnLocationProductHaulLoadViewModel
+
+@{
+    Layout = null;
+}
+
+@using (Html.BeginForm("OnLocationProdHaulLoad", "ProductHaul", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+
+<div class="sj_dialog_body sj_lsd_ud">
+    @if (Model.ProductHaulLoadModel.CallSheetNumber == 0)
+    {
+        <div class="det_list">
+            <label class="det_label">Program Id</label>
+            <div class="det_text" id="program_id">
+                @Model.ProductHaulLoadModel.ProgramId
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="det_list">
+            <label class="det_label">Call Sheet Number</label>
+            <div class="det_text" id="call_sheet_number">
+                @Model.ProductHaulLoadModel.CallSheetNumber
+            </div>
+        </div>
+    }
+    <div class="det_list">
+        <label class="det_label">Well Location</label>
+        <div class="det_text" id="well_location">
+            @Model.ProductHaulLoadModel.WellLocation
+        </div>
+    </div>
+
+    <div class="det_list">
+        <label class="det_label">Base Blend Name</label>
+        <div class="det_text">
+
+            @if (this.ViewBag.BlendSection != null)
+            {
+                @this.ViewBag.BlendSection.BlendFluidType.Name
+            }
+        </div>
+    </div>
+
+    <div class="det_list">
+        <label class="det_label">Total Blend Weight</label>
+        <div class="det_text" id="total_blend_weight">
+            @(Model.ProductHaulLoadModel.TotalBlendWeight/1000) T
+        </div>
+    </div>
+
+    <div class="det_list">
+        <label class="det_label">Base Blend Weight</label>
+        <div class="det_text" id="base_blend_weight">
+            @(Model.ProductHaulLoadModel.BaseBlendWeight/1000) T
+        </div>
+    </div>
+    <div class="det_list">
+        <label class="det_label">On Location Time</label>
+        <div class="det_text">
+            <ej-date-time-picker id="sj_om_location_time" width="250px"  ej-for="@Model.OnLocationTime"  time-display-format="H:mm" date-time-format="M/d/yyyy H:mm"></ej-date-time-picker>
+            
+        </div>
+
+        @Html.HiddenFor(model => model.ProductHaulLoadId)
+        @Html.HiddenFor(model => model.ShippingLoadSheetId)
+    </div>
+    <div class="sj_dialog_foot">
+        <input type="submit" value="Save" />
+    </div>
+</div>
+}
+
+<ej-script-manager></ej-script-manager>
+<script>
+    //$(function () {
+    //    var base = $("#BaseBlendWeight").val() / 1000;
+    //    var total = $("#TotalBlendWeight").val() / 1000;
+    //    var showtime = $("#is_show_localTime").val();
+    //    if (showtime.indexOf("01/01/0001") < 0) {
+    //        $("#sj_om_location_time").val(showtime);
+    //    }
+    //    $("#base_blend_weight").text(base + ' t');
+    //    $("#total_blend_weight").text(total + ' t');
+    //});
+
+    function submitBlInfo() {
+        console.log($("#sj_om_location_time").val());
+        $("#OnLocationTime").val($("#sj_om_location_time").val());
+        console.log($("#OnLocationTime").val());
+
+        return true;
+    }
+</script>

@@ -1,0 +1,263 @@
+﻿@using System.Threading.Tasks
+@using eServiceOnline.Models.ProductHaul
+@using Syncfusion.JavaScript
+@model eServiceOnline.Models.ProductHaul.LoadViewModel
+
+
+@{
+    ViewData["Title"] = "Job Page";
+}
+@section SampleHeading{
+
+    <link href="@Url.Content("~/css/common.css")" rel="stylesheet" type="text/css" />
+    <script src="~/js/EServiceExpress.js" asp-append-version="true"></script>
+    <script src="~/js/verifyDailog.js"></script>
+
+    <style>
+        #EditDialog_FlatGrid_Save, #EditDialog_FlatGrid_Cancel {
+            display: none;
+        }
+    </style>
+    <div class="header">
+        <div class="h_col">
+            <label>Job Number:</label>
+            @Html.DisplayFor(model => model.RigJob.CallSheetNumber)
+        </div>
+        <div class="h_col">
+            <label>Job Date:</label>
+            @Html.DisplayFor(model => model.RigJob.JobDate)
+        </div>
+        <div class="h_col">
+            <label>Client:</label>
+            @Html.DisplayFor(model => model.RigJob.Company)
+        </div>
+        <div class="h_col">
+            <label>Job Type:</label>
+            @Html.DisplayFor(model => model.RigJob.JobType)
+        </div>
+        <div class="h_col">
+            <label>Sureface Location:</label>
+            @Html.DisplayFor(model => model.RigJob.WellLocation)
+        </div>
+        <div class="h_col">
+            <label>DownHole Location:</label>
+            @Html.DisplayFor(model => model.RigJob.DownHoleLocation)
+        </div>
+    </div>
+
+    <span class="sampleName" style="display: inline-block; padding: 20px 0 0 0;">Product Requirements</span>
+
+    <div>
+        <ej-grid id="FlatGridPro" allow-paging="true" allow-resize-to-fit="true" allow-sorting="true"  datasource="@Model.ProductList">
+            <e-sort-settings>
+                <e-sorted-columns>
+                    <e-sorted-column field="Id" direction="Ascending"></e-sorted-column>
+                </e-sorted-columns>
+            </e-sort-settings>
+            <e-columns>
+                <e-column field="Id" header-text="Id"  Visible="false"  is-primary-key="true" ></e-column>
+                <e-column field="Blend" header-text="Blend" text-align="Left" width="110"></e-column>
+                <e-column field="Category" header-text="Category" text-align="Left" width="80"></e-column>
+                <e-column field="Amount" header-text="Amount" text-align="Left" width="110"></e-column>
+                <e-column field="Sent" header-text="Sent" text-align="Left" width="110"></e-column>
+                <e-column field="Remains" header-text="Remains" text-align="Left" width="110"></e-column>
+            </e-columns>
+        </ej-grid>
+    </div>
+
+    <span class="sampleName" style="display: inline-block; padding:25px 0 10px  0;">Load List</span>
+}
+
+@*<ej-Button ID="refresh" Type="Button" Text="Refresh4" click="refresh" />*@
+
+
+@*<e-datamanager url="@Url.Action("GetProductHaulModels",new { callSheetNumber = @Model.RigJob.CallSheetNumber})" BatchURL="@Url.Action("GetProductHaulModels",new { callSheetNumber = @Model.RigJob.CallSheetNumber})" adaptor="remoteSaveAdaptor"></e-datamanager>*@
+
+@section ControlsSection{
+    <ej-grid id="FlatGrid" allow-paging="true" allow-resize-to-fit="true" allow-sorting="true"  action-complete="loadActionComplete" >
+        <e-datamanager json="@Model.LoadList" update-url="Update"  remove-url="Delete" adaptor="remoteSaveAdaptor"  />
+        <e-sort-settings>
+            <e-sorted-columns>
+                <e-sorted-column field="ProductHaulId" direction="Descending"></e-sorted-column>
+            </e-sorted-columns>
+        </e-sort-settings>
+        <e-edit-settings allow-adding="true" allow-editing="true" allow-deleting="true" dialog-editor-template-id="#template" edit-mode="@(EditMode.DialogTemplate)"></e-edit-settings>
+        <e-toolbar-settings show-toolbar="true" toolbar-items="@(new List<string>() {"add","edit","delete","update","cancel","printGrid"})"></e-toolbar-settings>
+        <e-columns>
+            <e-column field="ProductHaulId" header-text="Id" text-align="Left" Visible="false" is-primary-key="true"></e-column>
+            <e-column field="BaseBlend" header-text="Base Blend" text-align="Left" width="110"></e-column>
+            <e-column field="Amount" header-text="Amount" text-align="Left"  width="110"></e-column>
+            <e-column field="MixWater" header-text="MixWater" text-align="Left" width="0"></e-column>
+            <e-column field="Status" header-text="Status" text-align="Left" width="110"></e-column>
+            <e-column field="Comments" header-text="Comments" text-align="Left" width="110"></e-column>
+            <e-column field="BaseBlendSectionId" width="20" header-text="BaseBlendSectionId" Visible="false" ></e-column>
+            <e-column field="IsTotalBlendTonnage" Visible="false"></e-column>
+        </e-columns>
+
+        <ej-grid query-string="ProductHaulId" width="300" allow-selection="false">
+
+            <e-datamanager json="@Model.ProductLoadSections"></e-datamanager>
+            <e-columns>
+                <e-column field="BlendChemicalModel.Name" header-text="Material" width="75"></e-column>
+                <e-column field="RequiredAmount" format="{0:N1}" header-text="Required(kg)" width="100"></e-column>
+            </e-columns>
+
+        </ej-grid>
+    </ej-grid>
+}
+
+@section ScriptSection{
+    <script type="text/template" id="template">
+
+        <table cellspacing="10">
+            <tr>
+                <td style="text-align: right;">
+                    Base Blend
+                    <input type="hidden" id="CallSheetNumber" name="CallSheetNumber" value="@Model.RigJob.CallSheetNumber" />
+                </td>
+                <td style="text-align: left">
+                    <span style="display:inline-block;width:90%;">
+                        <select id="BaseBlendSectionId" name="BaseBlendSectionId">
+                            @foreach (BlendSectionModel entityModel in this.Model.ProductList)
+                            {
+                                <option value="@entityModel.Id">@entityModel.Blend</option>
+                            }
+                        </select>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: right;height: 34px;" colspan ="2">
+                    <label>
+                        <span style="display:inline-block;margin: auto 10px;width:13px;">
+                            <input type="radio" name="IsTotalBlendTonnage" value="true" onclick="javascript: $('#IsTotalBlendTonnage').val(this.value)" />
+                        </span>Total Blend Tonnage
+                    </label>
+                    <label>
+                        <span style="display:inline-block;margin: auto 10px;width:13px;">
+                            <input type="radio" name="IsTotalBlendTonnage" value="false" checked="checked" onclick="javascript: $('#IsTotalBlendTonnage').val(this.value)" />
+                        </span>Base Blend Tonnage
+                    </label>
+                    <input type="hidden" id="IsTotalBlendTonnage"  value="false" />
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: right;">
+                    Amount
+                </td>
+                <td style="text-align: left">
+                    <span style="display:inline-block;width:90%;margin-right: 6px;">
+                        <input id="Amount" name="Amount" value="{{: Amount}}" onblur="Verify.VerifyDailog.prototype.verifyEmpty(this);" class="e-ejinputtext"/>
+                    </span>t
+                    <div style="display:none;color:red;">Amount is required</div>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: right;">
+                    Mix Water
+                </td>
+                <td style="text-align: left">
+                    <span style="display:inline-block;width:90%;">
+                        <input id="MixWater" name="MixWater" onblur="Verify.VerifyDailog.prototype.verifyEmpty(this);" value="{{: MixWater}}" class="e-ejinputtext"/>
+                    </span>
+                    <div style="display:none;color:red;">Mix Water is required</div>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: right;">
+                    Comments
+                </td>
+                <td style="text-align: left">
+                    <span style="display:inline-block;width:90%;">
+                        <textarea id="Comments" name="Comments" style="width: 100%; height: 64px" class="e-ejinputtext">{{: Comments}}</textarea>
+                    </span>
+                </td>
+            </tr>
+        </table>
+        <div style="text-align: center;">
+            <input class="e-save e-button e-btnsub e-flat e-js e-ntouch e-btn e-select e-widget e-txt e-btn-normal" style="width: 100px; height: 35px;" id="EditDialog_Flat_Save" tabindex="" role="button" value="Save" aria-describedby="Save" aria-disabled="false" type="button">
+            <input class="e-cancel e-button e-btncan e-flat e-js e-ntouch e-btn e-select e-widget e-txt e-btn-normal" style="margin-left: 20px; width: 100px; height: 35px;" id="EditDialog_Flat_Cancel" tabindex="" role="button" value="Cancel" aria-describedby="Cancel" aria-disabled="false" type="button">
+        </div>
+    </script>
+
+    <script>
+
+        function loadActionComplete() {
+            var baseBlendSectionId;
+            if ($("#FlatGrid table tr[aria-selected='true']")
+                .length >
+                0) {
+                baseBlendSectionId = $("#FlatGrid table tr[aria-selected='true'] td").eq(7).text();
+                $("#BaseBlendSectionId").val(baseBlendSectionId);
+                $("#BaseBlendSectionId").attr("disabled", "disabled");
+            }
+        }
+
+        window.onload = function () {
+            $("#FlatGrid_printGrid").unbind();
+            $("#FlatGrid_delete").unbind();
+            Verify.VerifyDailog.prototype.printGrid('@(this.Url.Action("LoadSheet", "Load"))');
+            Verify.VerifyDailog.prototype.delete('@(this.Url.Action("Delete", "ProductHaul"))');
+
+            $(document)
+                .on('dblclick',
+                "#FlatGrid .e-gridcontent table tr",
+                function () {
+                    $("#FlatGrid_edit").trigger("click");
+                    var isTotalBlendTonnage = $("#FlatGrid table tr[aria-selected='true'] td").eq(8).find("input").is(':checked');
+                    if (isTotalBlendTonnage === true) {
+                        $("input[name='IsTotalBlendTonnage']:first").trigger("click");
+                    }
+                });
+
+            $("#FlatGrid_add,#FlatGrid_edit")
+                .on("click",
+                function () {
+                    $("input[name='IsTotalBlendTonnage']").css({ "height": "13px" });
+                    var isTotalBlendTonnage = $("#FlatGrid table tr[aria-selected='true'] td").eq(8).find("input").is(':checked');
+                    if (isTotalBlendTonnage === true) {
+                        $("input[name='IsTotalBlendTonnage']:first").trigger("click");
+                    }
+                });
+        }
+
+        $(document)
+            .on("click",
+                "#EditDialog_Flat_Cancel",
+                function() {
+                    $("#EditDialog_FlatGrid_Cancel").trigger("click");
+                });
+
+        $(document)
+            .on("click",
+                "#EditDialog_Flat_Save",
+                function () {
+                    var prama = {
+                        ProductHaulId: $("#FlatGrid table tr[aria-selected='true'] td").eq(1).text(),
+                        CallSheetNumber: $('input[name=CallSheetNumber]').val(),
+                        BaseBlendSectionId: $('select[name=BaseBlendSectionId]').val(),
+                        IsTotalBlendTonnage: $('input[name=IsTotalBlendTonnage]:checked').val(),
+                        Amount: $('input[name=Amount]').val(),
+                        MixWater: $('input[name=MixWater]').val(),
+                        Comments: $('textarea[name=Comments]').val(),
+                        DriverId: '',
+                        BulkUnitId: "",
+                        BulkUnitName: "",
+                        PreferedName: "",
+                        ExpectedOnLocationTime: "",
+                        Submit: 'save'
+                    }
+
+                    if ($('input[name=Amount]').val() === "") {
+                        $('input[name=Amount]').parent().next().show();
+                        return false;
+                    }
+                    $("#EditDialog_Flat_Save").attr("disabled", "disabled");
+
+                    Verify.VerifyDailog.prototype.save(prama,'@(this.Url.Action("Insert", "Load"))','@(this.Url.Action("LoadSheet", "Load"))');
+
+                    return false;
+                });
+
+    </script>
+}

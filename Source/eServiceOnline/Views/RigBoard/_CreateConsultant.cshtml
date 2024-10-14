@@ -1,0 +1,72 @@
+﻿@using eServiceOnline.Models.RigBoard
+@model eServiceOnline.Models.RigBoard.ConsultantViewModel
+
+@*<div class="sj_dialog_head">*@
+@*    <span>Create Consultant</span>*@
+@*    <a class="sj_dialog_close" onclick="siteInstance.CloseDialog('dialog_addnewconsultant')">+</a>*@
+@*</div>*@
+    @using (Html.BeginForm("CreateConsultant", "RigBoard", FormMethod.Post, new { enctype = "multipart/form-data", onsubmit = "return ValidateData()" }))
+    {
+@*        @Html.HiddenFor(m => m.ClientName)*@
+        @Html.HiddenFor(m => m.WorkShiftTypeName)
+
+        <div class="sj_dialog_body sj_lsd_ud">
+            <div class="det_list">
+                <label class="det_label">Client</label>
+                <div class="det_text">@Html.DropDownListFor(m => m.ClientId, ViewData["clientCompany"] as List<SelectListItem>, "None", new { @class = "sj_select" })</div>
+            </div>
+            <div class="det_list">
+                <label class="det_label">Name</label>
+                <div class="det_text">
+                    @Html.TextBoxFor(model => model.Name, new {@class = "sj_text"})
+                    <span id="nametip" style="color: firebrick;"></span>
+                </div>
+            </div>
+            <div class="det_list">
+                <label class="det_label">Cell</label>
+                <div class="det_text">@Html.TextBoxFor(model => model.Cell, new {@class = "sj_text"})</div>
+            </div>
+            <div class="det_list">
+                <label class="det_label">Phone</label>
+                <div class="det_text">@Html.TextBoxFor(model => model.Phone2, new {@class = "sj_text"})</div>
+            </div>
+            <div class="det_list">
+                <label class="det_label">Email</label>
+                <div class="det_text">@Html.TextBoxFor(model => model.Email, new {@class = "sj_text"})</div>
+            </div>
+            <div class="det_list">
+                <label class="det_label">WorkShiftType</label>
+                <div class="det_text">@Html.DropDownListFor(m => m.WorkShiftTypeId, ViewData["shiftList"] as List<SelectListItem>, new {onchange = "getShift(this)", @class = "sj_select"})
+                    <span id="workShiftTypetip" style="color: firebrick;"></span>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="sj_dialog_foot">
+            <input type="submit" value="Save" />
+        </div>
+    }
+
+    <script>
+
+        function getShift(obj) {
+            $("#WorkShiftTypeName").val($(obj).find("option:selected").text());
+        }
+
+        function ValidateData() {
+            var name = $("#Name").val();
+            var flag = true;
+
+            if (name == "" || name == null) {
+                $("#nametip").html("*required");
+                flag = false;
+            } else {
+                $("#nametip").html("");
+            }
+
+            return flag;
+        }
+
+    </script>
+

@@ -1,0 +1,17 @@
+@model eServiceOnline.Models.ThirdPartyCrewBoard.ThirdPartyCrewModel
+
+@using (Html.BeginForm("UpdateThirdPartyCrewNotes", "ThirdPartyCrewBoard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(m => m.Id)
+    <div class="sj_dialog_body sj_lsd_ud">
+        <div class="det_list">
+            <label class="det_label">Notes</label>
+            <div class="det_text"><textarea name="notes" id="notes" style="width: 200px">@Model.Notes</textarea></div>
+        </div>
+    </div>
+
+    <div class="sj_dialog_foot">
+        <input type="submit" value="Save" />
+    </div>
+}
+

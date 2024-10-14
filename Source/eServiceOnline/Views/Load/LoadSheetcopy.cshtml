@@ -1,0 +1,258 @@
+﻿@model eServiceOnline.Models.ProductHaul.PrintLoadSheetViewModel
+@{
+    ViewData["Title"] = "Load Sheet";
+    Layout = "~/Views/Shared/_LoadLayout.cshtml";
+}
+
+
+@section SampleHeading{
+
+
+    <link href="~/css/loadSheet.css" rel="stylesheet" />
+
+
+    <div id="page1" class="content" style="page-break-after:always">
+
+        <div class="det_up">
+            <span class="til_name">Blend Breakdown</span>
+
+            <div class="">
+                <label>MTS #:</label>
+                <span></span>
+            </div>
+            <div class="">
+                <label>Date:</label>
+                <span>@DateTime.Now.ToShortDateString()</span>
+            </div>
+
+            <div class="">
+                <label>Unit #:</label>
+                <span></span>
+            </div>
+            <div class="">
+                <label>Client:</label>
+                <span>@Html.DisplayFor(model => model.RigJob.Company)</span>
+            </div>
+
+            <div class="">
+                <label>Driver:</label>
+                <span>@Html.DisplayFor(model => model.ProductHaulModel.Driver)</span>
+            </div>
+            <div class="">
+                <label>Starting Location:</label>
+                <span></span>
+            </div>
+
+            <div class="">
+                <label>Journal Movement #:</label>
+                <span></span>
+            </div>
+            <div class="">
+                <label>Destination Location:</label>
+                <span>@Html.DisplayFor(model => model.RigJob.WellLocation)</span>
+            </div>
+
+            <div class="">
+                <label>Blend Temp:</label>
+                <span></span>
+            </div>
+        </div>
+
+        <div class="det_center" style="width: 80%;margin-left: 10%;">
+            <span class="til_name" style="margin-bottom: 20px;">@Html.DisplayFor(model => model.ProductHaulModel.BlendChemicalDescription)</span>
+            <div class="">
+                <label>Mix Water (m³/t):</label>
+                <span>@Html.DisplayFor(model => model.ProductHaulModel.MixWater)</span>
+            </div>
+            <div class="">
+                <label>Base Blend (t):</label>
+                <span>@Html.DisplayFor(model => model.ProductHaulModel.BaseBlendWeight)</span>
+            </div>
+            <div class="">
+                <label>Yield (m³/t):</label>
+                <span>@Html.DisplayFor(model => model.ProductHaulModel.Yield)</span>
+            </div>
+            <div class="">
+                <label>Total Weight (t):</label>
+                <span>@Html.DisplayFor(model => model.ProductHaulModel.TotalBlendWeight)</span>
+            </div>
+            <div class="">
+                <label>Density (kg/m³):</label>
+                <span>@Html.DisplayFor(model => model.ProductHaulModel.Density)</span>
+            </div>
+            <div class="">
+                <label>Bulk Volume (m³):</label>
+                <span>@Html.DisplayFor(model => model.ProductHaulModel.BulkVolume)</span>
+            </div>
+            <div class="">
+                <label>Sack Weight (kg/t):</label>
+                <span> @Html.DisplayFor(model => model.ProductHaulModel.SackWeight)</span>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 20px">
+            <div style="margin: 0 auto; width: 502px">
+                <span class="til_name">BASE BLEND</span>
+                <ej-grid id="FlatGrid" datasource="@Model.ProductHaulModel.BaseProductLoadSections" width="500">
+                    <e-columns>
+                        <e-column field="BlendChemicalModel.Name" header-text="Material" text-align="Center" width="110"></e-column>
+                        <e-column field="RequiredAmount" format="{0:N1}" header-text="Required (kg)" text-align="Right" width="110"></e-column>
+                        <e-column field="BagSize" header-text="Bag Size (kg)" text-align="Center" width="110" is-primary-key="true"></e-column>
+                        <e-column field="NumberOfBags" header-text="# of Bags" text-align="Center" width="110"></e-column>
+
+                    </e-columns>
+                </ej-grid>
+            </div>
+
+            <div style="margin: 0 auto; width: 502px">
+                <span class="til_name">ADDITIVES</span>
+                <ej-grid id="FlatGridPro" datasource="@Model.ProductHaulModel.AdditiveProductLoadSections" width="500">
+                    <e-columns>
+                        <e-column field="BlendChemicalModel.Name" header-text="Additive Name" text-align="Center" width="110"></e-column>
+                        <e-column field="RequiredAmount" format="{0:N1}" header-text="Required (kg)" text-align="Right" width="110"></e-column>
+                        <e-column field="BagSize" header-text="Bag Size" width="110" text-align="Center" is-primary-key="true"></e-column>
+                        <e-column field="NumberOfBags" header-text="# of Bags" text-align="Center" width="110"></e-column>
+
+                    </e-columns>
+                </ej-grid>
+            </div>
+
+        </div>
+
+        <div class="det_down">
+            <div class="">
+                <label>BP Op #1:</label>
+                <span></span>
+            </div>
+            <div class="">
+                <label>Disp:</label>
+                <span></span>
+            </div>
+            <div class="">
+                <label>BP Op #2:</label>
+                <span></span>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="page2" class="content">
+
+        <div class="det_up">
+            <span class="til_name">Load Sheet</span>
+            <div class="">
+                <label>MTS #:</label>
+                <span></span>
+            </div>
+            <div class="">
+                <label>Date:</label>
+                <span>@DateTime.Now.ToShortDateString()</span>
+            </div>
+
+            <div class="">
+                <label>Unit #:</label>
+                <span></span>
+            </div>
+            <div class="">
+                <label>Client:</label>
+                <span>@Html.DisplayFor(model => model.RigJob.Company)</span>
+            </div>
+
+            <div class="">
+                <label>Driver:</label>
+                <span></span>
+            </div>
+            <div class="">
+                <label>Starting Location:</label>
+                <span></span>
+            </div>
+
+            <div class="">
+                <label>Journal Movement #:</label>
+                <span></span>
+            </div>
+            <div class="">
+                <label>Destination Location:</label>
+                <span>@Html.DisplayFor(model => model.RigJob.DownHoleLocation)</span>
+            </div>
+
+            <div class="">
+                <label>Blend Temp:</label>
+                <span></span>
+            </div>
+        </div>
+
+        <div class="det_center" style="width: 80%;margin-left: 10%;">
+            <span class="til_name" style="margin-bottom: 20px;">@Html.DisplayFor(model => model.ProductHaulModel.BlendChemicalDescription)</span>
+            <div class="">
+                <label>Mix Water (m³/t):</label>
+                <span>@Html.DisplayFor(model => model.ProductHaulModel.MixWater)</span>
+            </div>
+            <div class="">
+                <label>Base Blend (t):</label>
+                <span>@Html.DisplayFor(model => model.ProductHaulModel.BaseBlendWeight)</span>
+            </div>
+            <div class="">
+                <label>Yield (m³/t):</label>
+                <span>@Html.DisplayFor(model => model.ProductHaulModel.Yield) </span>
+            </div>
+            <div class="">
+                <label>Total Weight (t):</label>
+                <span>@Html.DisplayFor(model => model.ProductHaulModel.TotalBlendWeight)</span>
+            </div>
+            <div class="">
+                <label>Density (kg/m³):</label>
+                <span>@Html.DisplayFor(model => model.ProductHaulModel.Density)</span>
+            </div>
+            <div class="">
+                <label>Bulk Volume (m³):</label>
+                <span>@Html.DisplayFor(model => model.ProductHaulModel.BulkVolume)</span>
+            </div>
+            <div class="">
+                <label>Sack Weight (kg/t):</label>
+                <span>@Html.DisplayFor(model => model.ProductHaulModel.SackWeight) </span>
+            </div>
+        </div>
+
+
+        <div style="margin-bottom: 20px">
+            <div style="margin: 0 auto; width: 702px;">
+                <span class="til_name">Material Totals</span>
+                <ej-grid id="FlatGridcall" datasource="@Model.ProductHaulModel.ProductLoadSections" width="700">
+                    <e-columns>
+                        <e-column field="BlendChemicalModel.Name" header-text="Material" text-align="Center" width="90"></e-column>
+                        <e-column field="RequiredAmount" format="{0:N1}" header-text="Required (kg)" text-align="Right" width="90"></e-column>
+                        <e-column field="LoadedAmount" header-text="Loaded (kg)" text-align="Center" width="90" is-primary-key="true"></e-column>
+                        <e-column field="" header-text="Lot #" text-align="Center" width="90"></e-column>
+                        <e-column field="BagSize" header-text="Bag Size (kg)" text-align="Center" width="90"></e-column>
+                        <e-column field="NumberOfBags" header-text="# of Bags" text-align="Center" width="90"></e-column>
+
+                    </e-columns>
+                </ej-grid>
+            </div>
+
+        </div>
+
+        <div class="det_down">
+            <div class="">
+                <label>BP Op #1:</label>
+                <span></span>
+            </div>
+            <div class="">
+                <label>Disp:</label>
+                <span></span>
+            </div>
+            <div class="">
+                <label>BP Op #2:</label>
+                <span></span>
+            </div>
+        </div>
+    </div>
+}
+@section ControlsSection{
+
+}
+@section ScriptSection{
+
+}
+

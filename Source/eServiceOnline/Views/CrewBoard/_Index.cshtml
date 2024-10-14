@@ -1,0 +1,19 @@
+﻿<ejs-grid id="FlatGrid" allowTextWrap="true" created="siteInstance.Created" enableHover="false" allowPaging="true" allowResizing="false" allowSorting="false" allowSelection="true" allowGrouping="true" queryCellInfo="siteInstance.QueryCellInfo" gridLines="Both">
+    <e-grid-groupsettings columns="@(new string[] {"CrewType"})" showGroupedColumn="false" showDropArea="false"></e-grid-groupsettings>
+    <e-grid-selectionSettings mode="Cell" type="Single" />
+    <e-grid-textWrapSettings wrapMode="Content" />
+    <e-grid-pagesettings pageSize="60"></e-grid-pagesettings>
+    <e-data-manager url="@Url.Action("GetPagedCrewModels", "CrewBoard", new {})" adaptor="UrlAdaptor" />
+
+    <e-grid-columns>
+        <e-grid-column field="Units" headerText="UNIT" textAlign="Justify" width="40" customAttributes=@(new {@class = "generalStyle"})></e-grid-column>
+        <e-grid-column field="Workers" headerText="WORKER" textAlign="Justify" width="50" customAttributes=@(new {@class = "generalStyle"})></e-grid-column>
+        <e-grid-column field="JobInformation" headerText="JOB INFO" textAlign="Justify" width="60" customAttributes=@(new {@class = "generalStyle"})></e-grid-column>
+        <e-grid-column field="Rotation" headerText="RT" textAlign="Justify" width="15" customAttributes=@(new {@class = "generalStyle"})></e-grid-column>
+        <e-grid-column field="Notes" headerText="NOTES" textAlign="Justify" width="40" customAttributes=@(new {@class = "generalStyle"})></e-grid-column>
+        <e-grid-column field="CrewType" headerText="TYPE" textAlign="Justify" width="40" customAttributes=@(new {@class = "generalStyle"})></e-grid-column>
+    </e-grid-columns>
+</ejs-grid>
+
+
+

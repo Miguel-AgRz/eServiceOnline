@@ -1,0 +1,232 @@
+﻿@using eServiceOnline.Models.Commons
+@using Microsoft.AspNetCore.Http
+@model eServiceOnline.Models.Commons.RetrievalCondition
+@*Nov 20, 2023 Tongtao P45_Q4_189: add Area Filter for BulkPlant *@
+<div style="padding: 0 60px 0 20px; color: #BFBFBF; display: flex; justify-content: space-between;">
+    <div style="display: flex;position: relative;" id="retrieval_conditionsArea">
+        <div>
+            <div>
+                <input type="checkbox" name="CENT" class="checkboxstyle" onclick="changeCriteria(this)" />CENT
+            </div>
+            <div>
+                <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="69" onclick="selectionCriteria(this,'BR')" />BR
+                <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="85" onclick="selectionCriteria(this,'RD')" />RD
+                <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="67" onclick="selectionCriteria(this,'Edm')" />Edm
+                <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="81" onclick="selectionCriteria(this,'Eds')" />Eds
+                <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="89" onclick="selectionCriteria(this,'NW')" />NW
+            </div>
+        </div>
+        <div style="color: #FFFF00; padding-top: 40px;">&nbsp;&nbsp;|&nbsp;&nbsp;</div>
+        <div>
+            <div>
+                <input type="checkbox" name="NWest" class="checkboxstyle" onclick="changeCriteria(this)" />N.West
+            </div>
+            <div>
+                <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="71" onclick="selectionCriteria(this,'GP')" />GP
+                <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="66" onclick="selectionCriteria(this,'FSJ')" />FSJ
+            </div>
+        </div>
+        <div style="color: #FFFF00; padding-top: 40px; ">&nbsp;&nbsp;|&nbsp;&nbsp;</div>
+        <div>
+            <div>
+                <input type="checkbox" name="SEast" class="checkboxstyle" onclick="changeCriteria(this)" />S.East
+            </div>
+            <div>
+                <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="72" onclick="selectionCriteria(this,'EST')" />EST
+                <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="70" onclick="selectionCriteria(this,'SC')" />SC
+                <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="88" onclick="selectionCriteria(this,'KD')" />KD
+            </div>
+        </div>
+        <div style="color: #FFFF00; padding-top: 40px;">&nbsp;&nbsp;|&nbsp;&nbsp;</div>
+        <div>
+            <div>
+                <input type="checkbox" name="NEast" class="checkboxstyle" onclick="changeCriteria(this)" />N.East
+            </div>
+            <div>
+                <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="61" onclick="selectionCriteria(this,'LLD')" />LLD
+                <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="65" onclick="selectionCriteria(this,'LLB')" />LLB
+            </div>
+        </div>
+        @*Dec 05, 2023 Tongtao P45_Q4_135: Clear All Button on Rig Board and Bulk Plant*@
+        <div>
+            <div>
+                <input type="button" class="clearButton" onclick="clearAllCriteria()" />
+            </div>
+        </div>
+    </div>
+    <input id="RetrievalConditions" name="RetrievalConditions" type="hidden" value='@this.Context.Session.GetString("ServicePoint")' />
+</div>
+<div id="sj_retrieval_conditions">
+    <input data-val="true" data-val-required="The BR field is required." id="BR" name="BR" type="hidden" value="" />
+    <input data-val="true" data-val-required="The RD field is required." id="RD" name="RD" type="hidden" value="" />
+    <input data-val="true" data-val-required="The Edm field is required." id="Edm" name="Edm" type="hidden" value="" />
+    <input data-val="true" data-val-required="The Eds field is required." id="Eds" name="Eds" type="hidden" value="" />
+    <input data-val="true" data-val-required="The NW field is required." id="NW" name="NW" type="hidden" value="" />
+    <input data-val="true" data-val-required="The GP field is required." id="GP" name="GP" type="hidden" value="" />
+    <input data-val="true" data-val-required="The FSJ field is required." id="FSJ" name="FSJ" type="hidden" value="" />
+    <input data-val="true" data-val-required="The EST field is required." id="EST" name="EST" type="hidden" value="" />
+    <input data-val="true" data-val-required="The SC field is required." id="SC" name="SC" type="hidden" value="" />
+    <input data-val="true" data-val-required="The KD field is required." id="KD" name="KD" type="hidden" value="" />
+    <input data-val="true" data-val-required="The LLD field is required." id="LLD" name="LLD" type="hidden" value="" />
+    <input data-val="true" data-val-required="The LLB field is required." id="LLB" name="LLB" type="hidden" value="" />
+</div>
+<script>
+    var retrieval = {};
+    var CENTValue = 0;
+    var NWestValue = 0;
+    var SEastValue = 0;
+    var NEastValue = 0;
+    window.onload = function () {
+        var retrievalStr = $("#RetrievalConditions").val();
+        if (typeof (retrievalStr) !== 'undefined' && retrievalStr.length > 0) {
+            retrieval = JSON.parse(retrievalStr);
+            $("#sj_retrieval_conditions input").each(function (i, ele) {
+                var key = $(ele).attr("id");
+                if (retrieval[key] !== 0) {
+                    if (SetAreaSelection(key)) {
+                        $("#retrieval_conditions").find("input[type='checkbox'][name='ServicePoint']").eq(i).prop("checked", true);
+                    }
+                }
+            });
+        }
+        $("#FlatGrid1 .e-gridheader").hide();
+    }
+
+    function SetAreaSelection(key) {
+        var isAreaSelection = false;
+        if (key === 'BR' || key === 'RD' || key === 'Edm' || key === 'Eds' || key === 'NW') {
+            CENTValue++;
+            isAreaSelection = true;
+        }
+
+        if (key === 'GP' || key === 'FSJ') {
+            NWestValue++;
+            isAreaSelection = true;
+        }
+
+        if (key === 'EST' || key === 'SC' || key === 'KD') {
+            SEastValue++;
+            isAreaSelection = true;
+        }
+
+        if (key === 'LLD' || key === 'LLB') {
+            NEastValue++;
+            isAreaSelection = true;
+        }
+
+        if (CENTValue == 5) {
+
+            $('input[name="CENT"]').prop('checked', true);
+        }
+
+        if (NWestValue == 2) {
+
+            $('input[name="NWest"]').prop('checked', true);
+        }
+
+        if (SEastValue == 3) {
+
+            $('input[name="SEast"]').prop('checked', true);
+        }
+
+        if (NEastValue == 2) {
+
+            $('input[name="NEast"]').prop('checked', true);
+        }
+
+        if (key == 'IsProjectRig') {
+            $('input[name="IsProjectRig"]').prop('checked', true);
+        }
+
+        if (key == 'DrillingRig') {
+            $('input[name="DrillingRig"]').prop('checked', true);
+        }
+
+        if (key == 'ServiceRig') {
+            $('input[name="ServiceRig"]').prop('checked', true);
+        }
+        return isAreaSelection;
+    }
+
+    var retrieurl =  '@Url.Action("UpdateSessionValue", "RigBoard")';
+    function changeCriteria(obj) {
+        var prevDivCheckboxes = $(obj).parent().next().find("input[type='checkbox']");
+        if ($(obj).prop("checked")) {
+
+            var allChecked = prevDivCheckboxes.length === prevDivCheckboxes.filter(":checked").length;
+
+            if (!allChecked) {
+
+                prevDivCheckboxes.each(function () {
+
+                    var data = $(this)[0].nextSibling.textContent.trim();
+                    retrieval[data] = $(this).val();
+                });
+            }
+
+        } else {
+            prevDivCheckboxes.each(function () {
+
+                var data = $(this)[0].nextSibling.textContent.trim();
+                retrieval[data] ="";
+            });
+        }
+
+        retrieval["IsChange"] = true;
+        retrieval["PageNumber"] = 1;
+        $.ajax({
+            url: retrieurl,
+            method: "Post",
+            async: false,
+            data: retrieval,
+            success: function () {
+                window.location.href = window.location.origin + window.location.pathname;
+            }
+        });
+    }
+
+        var cleanurl =  '@Url.Action("CleanAllSessionValue", "RigBoard")';
+    function clearAllCriteria() {
+            $.ajax({
+                url: cleanurl,
+                method: "Post",
+                async: false,
+                success: function () {
+                    window.location.href = window.location.origin + window.location.pathname;
+                }
+            });
+    }
+
+
+    function selectionCriteria(obj, data) {
+        if ($(obj).prop("checked")) {
+            var isAll = true;
+            $.each($(obj).parent().find("input"),
+                function (i, item) {
+                    if (!$(item).prop("checked")) {
+                        isAll = false;
+                    }
+                });
+            $(obj).parent().parent().find("input").prop("checked", isAll);
+
+            $("#" + data).val($(obj).val());
+        } else {
+
+            $("#" + data).val("");
+            $(obj).parent().parent().find("input").prop("checked", false);
+        }
+
+        retrieval[data] = $("#" + data).val();
+        retrieval["IsChange"] = true;
+        retrieval["PageNumber"] = 1;
+        $.ajax({
+            url: retrieurl,
+            method: "Post",
+            async: false,
+            data: retrieval,
+            success: function () {
+                window.location.href = window.location.origin + window.location.pathname;
+            }
+        });
+    }
+</script>

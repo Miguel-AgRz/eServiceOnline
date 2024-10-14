@@ -1,0 +1,111 @@
+@model eServiceOnline.Models.ProductHaul.ProductLoadInfoModel
+@{
+    bool IsStatic = false;
+    if (ViewData["isReadOnly"] != null)
+    {
+        IsStatic = (bool)ViewData["isReadOnly"];
+    }
+}
+
+        @Html.HiddenFor(m=>m.CategoryId)
+        @Html.HiddenFor(m=>m.BaseBlendSectionId)
+        @Html.HiddenFor(m=>m.RemainsAmount)
+        @Html.HiddenFor(m=>m.BinInformationId)
+        @Html.HiddenFor(m=>m.JobTypeId)
+        <div class="det_list">
+            <label class="det_label">Bulk Plant</label>
+            <div class="det_text">
+                @Html.TextBoxFor(model => model.BulkPlantName, new { @class = "sj_text", @readonly = true })
+                @Html.HiddenFor(m => m.BulkPlantId)
+            </div>
+        </div>
+            
+            
+        <div class="det_list">
+            <label class="det_label">From Storage</label>
+            <div class="det_text">
+                @Html.TextBoxFor(model => model.BinInformationName, new { @class = "sj_text", @readonly = true })
+            </div>
+        </div>
+        <div class="det_list">
+            <label class="det_label">Customer</label>
+            <div class="det_text">
+        
+            @Html.TextBoxFor(model => model.ClientName, new { @class = "sj_text", @readonly = true })
+       
+            </div>
+        </div>
+
+        <div class="det_list">
+            <label class="det_label">Program</label>
+            <div class="det_text">
+                @Html.TextBoxFor(model => model.ProgramNumber, new { @class = "sj_text",@readonly = true })
+            </div>
+        </div>
+        <div class="det_list">
+            <label class="det_label">Job Type</label>
+            <div class="det_text">
+                @if(IsStatic==false)
+                {
+                    @Html.TextBoxFor(model => model.JobTypeName, new { @class = "sj_text",@readonly = true })
+                }
+                else
+                {
+                    @Html.TextBoxFor(model => model.JobTypeName, new { @class = "sj_text" })
+                }
+            </div>
+        </div>
+         <div class="det_list">
+            <label class="det_label">Category</label>
+            <div class="det_text">
+                  @Html.TextBoxFor(model => model.Category, new { @class = "sj_text", @readonly = true })
+            </div>
+        </div>
+
+   
+        @Html.Partial("_BaseBlend", Model, new ViewDataDictionary(ViewData) { { "isStatic", true } })
+       
+        <div class="det_list">
+            <label class="det_label">Call Sheet Number</label>
+            <div class="det_text">
+                @if(Model.CallSheetNumber==0)
+                {
+                    //Nov 7, 2023 AW develop: Get call sheet number list by program id
+                    @(this.Html.DropDownListFor(model => model.CallSheetNumber, new SelectList(ViewBag.CallSheetNumbers, "Value", "Text"),
+                 new {@onChange = "LoadRigAndUnLoadByCallSheetNumber()", @class = "sj_select"})) 
+                }
+                else
+                {
+                    @Html.TextBoxFor(model => model.CallSheetNumber, new { @readonly = true, @class = "sj_text" })
+                    
+                }
+            </div>
+        </div>
+        
+         <div class="det_list">
+            <label class="det_label">Load Sheet Id</label>
+            <div class="det_text">
+
+                @Html.TextBoxFor(model => model.ProductHaulLoadId, new { @class = "sj_text", @readonly = true })
+            </div>
+        </div>
+
+        <div class="det_list">
+            <label class="det_label">Total Tonnage(Adds included)</label>
+            <div class="det_text">
+       
+            @Html.TextBoxFor(model => model.Amount, new {  @readonly = true, @class = "sj_text" })
+        
+
+            </div>    
+        </div>
+        <div class="det_list">
+            <label class="det_label">Remains Amount</label>
+            <div class="det_text">
+       
+            @Html.TextBoxFor(model => model.RemainsAmount, new {  @readonly = true, @class = "sj_text" })
+        
+
+            </div>    
+        </div>
+        

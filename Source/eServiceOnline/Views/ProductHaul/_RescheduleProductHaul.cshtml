@@ -1,0 +1,300 @@
+@using System.Threading.Tasks
+@using eServiceOnline.Models.ProductHaul
+@using Syncfusion.JavaScript.Mobile
+@model eServiceOnline.Models.ProductHaul.RescheduleProductHaulViewModel
+
+@{
+    Layout = null;
+}
+
+@using (Html.BeginForm("RescheduleProductHaul1", "ProductHaul", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+
+    @Html.HiddenFor(Model => Model.RigJobId)
+    @Html.HiddenFor(Model => Model.OriginalProductHaulId)
+    <div class="sj_dialog_body sj_lsd_ud">
+        @Html.Partial("_GoWithCrewCheckReadOnly", Model.ProductHaulInfoModel)
+        @Html.Partial("_NonExistingHaul", Model.ProductHaulInfoModel)
+        @Html.Partial("_RigUnloadPodLoadCollection", Model)
+
+    </div>
+    @Html.Partial("_SubmitButton", Model)
+}
+@Html.Partial("_Dialogs")
+
+
+<script>
+    var existingHaul, blendTest, scheduleValidations, thirdParty;
+
+    $(function () {
+        existingHaul = new ExistingHaul();
+        thirdParty = new ThirdParty();
+        var initSchedule = new InitSchedule(function () {
+            
+            InitializeDialogs();
+            defaultOnBlendTestClick(true);
+            existingHaul.setExistingHaul();
+            if (!$("#IsExistingHaul").prop("checked"))
+                thirdParty.getThirdParty();
+            Init();
+            
+        });
+
+        var val1 = new ValidationsChain(true, validateRequiredAmount);
+        //var val2 = new ValidationsChain(true, validateBulkPlant);
+        //var val3 = new ValidationsChain(true, validateBin, function () { return !$("#IsGoWithCrew").prop("checked") });
+        //var val4 = new ValidationsChain(true, validateExistingHaul, function () { return  $("#IsExistingHaul").prop("checked") });
+        /*        var val5 = new ValidationsChain(true, validateCrew);*/
+        //Jan 5, 2024 tongtao 251_PR_RescheduleProductHaulVaildError: Add crew valid,if not selectd ,could not reschedule
+        var val5 = new ValidationsChain(true, validateCrew);
+
+        var val6 = new ValidationsChain(true, validateExpectedLocationTime, function () { return !$("#IsGoWithCrew").prop("checked") });
+        var val7 = new ValidationsChain(true, validateJobDuration, function () { return !$("#IsGoWithCrew").prop("checked") && !$("#IsExistingHaul").prop("checked") });
+
+        scheduleChainValidation = new ValidationsChain(true, validateSchedule, function (stateObj) { !$("#IsExistingHaul").prop("checked"); }, null, dataScheduleValidation);
+        //qualityOfTheBinChainValidation = new ValidationsChain(true, VerifyQualityOfTheBin, function () { return $("#BinInformationId").val() !== "None"; }, undefined, dataQualityOfTheBin);
+        //amountAndMixWaterChainValidation = new ValidationsChain(true, verifyAmountAndMixWater, undefined, undefined, dataAmountAndMixWater);
+
+        ValidateUnLoadChain = new ValidationsChain(true, ValidateUnLoadByReschedule, undefined, undefined, GetUnLoadData);
+        ValidatePodLoadChain = new ValidationsChain(true, ValidatePodLoadByReschedule, undefined, undefined, GetPodLoadData);
+
+        val1.setNextFuncOrValidation(val5);
+        val5.setNextFuncOrValidation(val6);
+        /*
+                val2.setNextFuncOrValidation(val3);
+                val3.setNextFuncOrValidation(val4);
+                val4.setNextFuncOrValidation(val5);
+                val5.setNextFuncOrValidation(val6);
+        */
+        val6.setNextFuncOrValidation(val7);
+        val7.setNextFuncOrValidation(scheduleChainValidation);
+        scheduleChainValidation.setNextFuncOrValidation(ValidateUnLoadChain);
+        //scheduleChainValidation.setNextFuncOrValidation(qualityOfTheBinChainValidation);
+        //qualityOfTheBinChainValidation.setNextFuncOrValidation(amountAndMixWaterChainValidation);
+        //amountAndMixWaterChainValidation.setNextFuncOrValidation(ValidateUnLoadChain);
+        ValidateUnLoadChain.setNextFuncOrValidation(ValidatePodLoadChain);
+
+        scheduleValidations = new ValidationsBuilder(val1);
+
+
+        initSchedule.Initialize();
+    });
+    function Init()
+    {
+        var hasChecked = false;
+
+        var n = 0;
+
+        $(".podLoadAndBlendLoad").each(function(){
+
+            //jan 23, 2024 tongtao 274_PR_RigCouldNotChange: set rigid is readonly when callSheet has been selected
+
+            LoadRigByCallSheetNumber(n,0);
+
+            if ($(this).find(".isGoWithCrew").prop("checked"))
+            {
+
+                hasChecked = true;
+                $(this).find(".rigUnload").hide();
+                $("#ExpOlTime").hide();
+                $("#EstimateDuration").hide();
+            }
+
+            n++;
+        });
+        $("#IsGoWithCrew").prop("checked",hasChecked);
+        
+    }
+
+    function ValidateUnLoadByReschedule() {
+        var IsRight = true;
+        var count = $(".podLoadAndBlendLoad").length;
+        var message = "";
+        for (var i = 0; i < count; i++) {
+            var domEle = $(".podLoadAndBlendLoad").eq(i);
+            if(domEle.find(".ischeck_shippingloadsheet").eq(0).prop("checked")==false)
+            {
+                continue;
+            }
+            var unLoadall = 0;
+            if (domEle.find(".isGoWithCrew").eq(0).prop("checked") == false) {
+                console.log(unLoadall);
+                domEle.find(".blend_unload_amount").each(function () {
+                    unLoadall += Number($(this).val());
+                });
+                
+                if (Number(domEle.find(".LoadAmount").val()) != unLoadall) {
+                    message += 'Shipping Load ' + (i + 1) + '  All Bin LoadAmount Add Up Should Equal Offload Amount!<br/>';
+                    IsRight = false;
+                }
+            }
+        }
+        message += 'Do You Want To Continue?<br>Click "Yes" To Continue!'
+
+        if (IsRight == false) {
+            $("#unLoadMessage").html(message);
+            dialogUnLoad.openDialog();
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+    function ValidatePodLoadByReschedule() {
+        var IsRight = true;
+        var count = $(".podLoadAndBlendLoad").length;
+        var message = "";
+        for (var i = 0; i < count; i++) {
+            var domEle = $(".podLoadAndBlendLoad").eq(i);
+            if(domEle.find(".ischeck_shippingloadsheet").eq(0).prop("checked")==false)
+            {
+                continue;
+            }
+            var podLoadall = 0;
+            domEle.find(".pod_load_amount").each(function () {
+                if ($(this).prop("readOnly") != true) {
+                    podLoadall += Number($(this).val());
+                };
+            });
+            if (Number(domEle.find(".LoadAmount").val()) != podLoadall) {
+                message += 'Shipping Load ' + (i + 1) + '  All Pod LoadAmount Add Up Should Equal Offload Amount!<br/>';
+                IsRight = false;
+            }
+        }
+        message += 'Do You Want To Continue?<br>Click "Yes" To Continue!'
+
+        if (IsRight==false) {
+            $("#podLoadMessage").html(message);
+            dialogPodLoad.openDialog();
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+    function removeShippingLoadSheet(obj,index) {
+        if (obj.prop("checked") == false) {
+            obj.prop("checked", true);
+            if (!validateShippingLoadSheet(index))
+            {
+                return;
+            }
+            $("#EnquireMessage").ejDialog("open");
+            $("#enquireCheckboxId").val(obj.prop("id"));
+            $("#enquireMessageMsg").html('You are going to remove Shipping Load '+(index+1)+' from this product haul, are you sure to continue?');
+            $("#EnquireMessage").find(".confirmDialog_button").show();
+
+        }
+    }
+    function ConfirmRemoveShippingLoadSheet(message) {
+        if (message.toLowerCase() == "yes") {
+            var chekboxId = $("#enquireCheckboxId").val();
+            $("#" + chekboxId).prop("checked", false);
+            //Jan 8, 2024 zhangyuan 247_PR_DelSheepLoadSheet: Add Clear pod when deleting Shipping Load Sheet
+            clearRemovedPod($("#" + chekboxId));
+        }
+        $("#EnquireMessage").ejDialog("close");
+    }
+    //Jan 8, 2024 zhangyuan 247_PR_DelSheepLoadSheet: Add Clear pod when deleting Shipping Load Sheet
+    function clearRemovedPod(obj)
+    {
+        var delId = obj.parent().siblings().first().val();
+        obj.parent().parent().parent().find('[shippingloadsheetid="' + delId + '"]').each(function (index, element) {
+            if ($(element).val() != 0) {
+                $(element).val(0);
+                ChangePodLoadAmount($(element));
+            }
+        });
+    }
+
+    @*//Feb 02, 2024 tongtao 264_PR_GoWithCrewError: set go with crew date*@
+    function checkIsGoWithCrew(obj) {
+        var isChecked = obj.prop("checked");
+        var count = $(".podLoadAndBlendLoad").length;
+        var domId = obj.prop("id");
+        for (var i = 0; i < count; i++) {
+            var dom = $(".podLoadAndBlendLoad").eq(i);
+
+            if (isChecked) {
+                dom.find(".rigUnload").html("");
+            }
+            else {
+                LoadPodLoadAndBendUnLoadByRig(i);
+            }
+        }
+        var hasGoWithCrew = false;
+        $(".isGoWithCrew").each(function () {
+            if ($(this).prop("checked")) {
+                hasGoWithCrew = true;
+            }
+        })
+
+        if (hasGoWithCrew) {
+
+            $("#ExpOlTime").hide();
+            $("#EstimateDuration").hide();
+        }
+        else {
+
+            $("#ExpOlTime").show();
+            $("#EstimateDuration").show();
+            setGoWithCrewTime();
+        }
+        $("#IsGoWithCrew").prop("checked", hasGoWithCrew);
+    }
+
+
+    function ChangePodLoadAmount(obj)
+    {
+        var podLoad=obj.val();
+        var podIndex=obj.attr("podIndex");
+        var shippingLoadSheetId=obj.attr("shippingLoadSheetId");
+        $(".pod_load_amount").each(function(){
+            if($(this).attr("podIndex")==podIndex)
+            {
+                $(this).val(podLoad);
+                if(podLoad==0)
+                {
+                    $(this).parent().find(".shipping_loadsheet_id").val("0");
+                    if($(this).attr("readOnly")){
+                        $(this).removeAttr("readOnly");
+                        $(this).attr("style","color:#000000");
+                    }
+                }
+                else{
+                    if($(this).attr("id")!=obj.attr("id")){
+                        $(this).attr("readOnly",true);
+                        $(this).attr("style","color:#ff0000");
+                        $(this).parent().find(".shipping_loadsheet_id").val("-1");
+                    }
+                }
+                
+            }
+        });
+    }
+    function validateShippingLoadSheet(index) {
+        var shippingLoadSheetCount = 0;
+        var IsRight = false;
+        var domEle = $(".podLoadAndBlendLoad");
+        domEle.find(".ischeck_shippingloadsheet").each(function () {
+            if ($(this).prop("checked") == true) {
+                shippingLoadSheetCount++;
+            }
+        });
+        if (shippingLoadSheetCount <= 1) {
+            IsRight = false;
+        } else
+        {
+            IsRight = true;
+        }
+        if (!IsRight) {
+            $("#ShippingLoadCheck_" + index).show();
+            return false;
+        }
+        else {
+            $("#ShippingLoadCheck_" + index).hide();
+            return true;
+        }
+    }
+</script>

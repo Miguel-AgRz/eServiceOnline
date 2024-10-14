@@ -1,0 +1,493 @@
+﻿@model eServiceOnline.Models.ProductHaul.PrintLoadSheetViewModel
+
+@{
+    ViewData["Title"] = "Load Sheet";
+    Layout = "~/Views/Shared/_LoadLayout.cshtml";
+}
+@section SampleHeading{
+    <link href="~/css/loadSheet.css" rel="stylesheet" />
+
+    <div class="printPage">
+        <div class="header">
+            <img src="~/images/logo_head.png" />
+            <div class="head_title">
+                <span>Blend Breakdown Sheet</span><br />
+                <span id="barcode_bbs"></span>
+            </div>
+        </div>
+        <div class="body-table">
+            <table border="0" cellspacing="0" cellpadding="0" class="table_up">
+                <tr>
+                    <td width="194">
+                        <div class="">
+                            <span>Date:</span>
+                            <label>&nbsp;@DateTime.Now.ToShortDateString()</label>
+                        </div>
+                    </td>
+                    <td width="189">
+                        <div class="">
+                            <span>Bulk Plant:</span>
+                            <label>&nbsp;@Html.DisplayFor(model => model.ProductHaulModel.BulkPlantName)</label>
+                        </div>
+                    </td>
+                    <td width="191">
+                        <div class="">
+                            <span>Destination Location:</span>
+                            <label>&nbsp;@Html.DisplayFor(model => model.ProductHaulModel.WellLocation)</label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="">
+                            <span>Client:</span>
+                            <label>&nbsp;@Html.DisplayFor(model => model.ProductHaulModel.ClientName)</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="">
+                            <span>Rig Name:</span>
+                            <label>&nbsp;@Html.DisplayFor(model => model.ProductHaulModel.RigName)</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="">
+                            <span>Call Sheet#:</span>
+                            <label>&nbsp;@Html.DisplayFor(model => model.ProductHaulModel.CallSheetNumber)</label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="">
+                            <span>Driver #:</span>
+                            <label>&nbsp;@Html.DisplayFor(model => model.ProductHaulModel.Driver)</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="">
+                            <span>Unit #:</span>
+                            <label>&nbsp;@Html.DisplayFor(model => model.ProductHaulModel.Bulker)</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="">
+                            <span>Bin #:</span>
+                            <label>&nbsp;@Html.DisplayFor(model => model.ProductHaulModel.BinInformationName)</label>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+
+            <table border="0" cellspacing="0" cellpadding="0" class="table_mid">
+                <tr>
+                    <th colspan="2">
+                        @Html.DisplayFor(model => model.ProductHaulModel.BlendChemicalDescription)
+                    </th>
+                </tr>
+                <tr>
+                    <td>
+                        <label>Mix Water (m³/t):</label>
+                        <span>@Html.DisplayFor(model => model.ProductHaulModel.MixWater)</span>
+                    </td>
+                    <td>
+                        <label>Base Blend (@Html.DisplayFor(model => model.ProductHaulModel.BaseBlendUnit)):</label>
+                        <span>@Html.DisplayFor(model => model.ProductHaulModel.BaseBlendWeight)</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label>Yield (m³/t):</label>
+                        <span> @Html.DisplayFor(model => model.ProductHaulModel.Yield)</span>
+                    </td>
+                    <td>
+                        <label>Total Weight (t):</label>
+                        <span>@Html.DisplayFor(model => model.ProductHaulModel.TotalBlendWeight)</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label>Density (kg/m³):</label>
+                        <span>@Html.DisplayFor(model => model.ProductHaulModel.Density)</span>
+                    </td>
+                    <td>
+                        <label>Bulk Volume (m³):</label>
+                        <span>@Html.DisplayFor(model => model.ProductHaulModel.BulkVolume)</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label>Sack Weight (kg/t):</label>
+                        <span> @Html.DisplayFor(model => model.ProductHaulModel.SackWeight)</span>
+                    </td>
+                    <td>
+                        <label>&nbsp;</label>
+                        <span>&nbsp;</span>
+                    </td>
+                </tr>
+            </table>
+
+            <table class="table_down" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <th colspan="5">BASE BLEND: @Html.DisplayFor(model => model.ProductHaulModel.BaseBlend)</th>
+                </tr>
+                <tr style="font-weight: bold;background-color: #ECECEA;">
+                    <td width="300">Material</td>
+                    <td width="180">Required</td>
+                    <td width="50">Unit</td>
+                    <td width="110">Bag Size (kg)</td>
+                    <td width="110"># of Bags</td>
+                </tr>
+
+                @foreach (var item in Model.ProductHaulModel.BaseProductLoadSections)
+                {
+            <tr>
+                <td>@item.BlendChemicalModel.Name</td>
+                <td>@item.RequiredAmount</td>
+                <td>@item.Unit</td>
+                        <td>
+                    @{
+                        string bagSize = item.BagSize == 0 ? string.Empty : item.BagSize.ToString();
+                        @bagSize
+                    }
+                    @*                            @item.BagSize*@
+                </td>
+                <td>
+                    @{
+                        string numberOfBags = item.NumberOfBags == 0 ? string.Empty : item.NumberOfBags.ToString();
+                        @numberOfBags
+                    }
+                    @*                            @item.NumberOfBags*@
+                </td>
+            </tr>
+                }
+            </table>
+
+            <table class="table_down" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <th colspan="6">ADDITIVES</th>
+                </tr>
+                <tr style="font-weight: bold;background-color: #ECECEA;">
+                    <td width="300">Material</td>
+                    <td width="180">Required</td>
+                    <td width="50">Unit</td>
+                    <td width="110">Bag Size (kg)</td>
+                    <td width="110"># of Bags</td>
+                </tr>
+
+                @foreach (var item in Model.ProductHaulModel.AdditiveProductLoadSections)
+                {
+            <tr>
+                <td>@item.BlendChemicalModel.Name</td>
+                <td>@item.RequiredAmount</td>
+                <td>@item.Unit</td>
+                        <td>
+                    @{
+                        string bagSize = item.BagSize == 0 ? string.Empty : item.BagSize.ToString();
+                        @bagSize
+                    }
+                </td>
+                <td>
+                    @{
+                        string numberOfBags = item.NumberOfBags == 0 ? string.Empty : item.NumberOfBags.ToString();
+                        @numberOfBags
+                    }
+                </td>
+            </tr>
+            }
+            </table>
+
+            <table class="table_down" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <th colspan="6">ADDITIONAL ADDITIVE LIST</th>
+                </tr>
+                <tr style="font-weight: normal;background-color: #ECECEA;">
+                    <td width="109">Material</td>
+                    <td width="101">Amount</td>
+                    <td width="88">Unit</td>
+                    <td width="98">Addition Method</td>
+                </tr>
+
+                @foreach (var item in Model.ProductHaulModel.AdditionalProductLoadSections)
+                {
+                    <tr>
+                        <td>@item.BlendChemicalModel.Name</td>
+                        <td>@item.RequiredAmount</td>
+                        <td>@item.Unit</td>
+                        <td>@item.AdditionMethod</td>
+                    </tr>
+                }
+            </table>
+
+
+            <table border="0" cellspacing="0" cellpadding="0" class="table_btm">
+                <tr>
+                    <td width="100">
+                        <div class="">
+                            <span>BP Op #1:</span>
+                            <label>&nbsp;</label>
+                        </div>
+                    </td>
+                    <td width="35"></td>
+                    <td width="100">
+                        <div class="">
+                            <span>BP Op #2:</span>
+                            <label>&nbsp;</label>
+                        </div>
+                    </td>
+                    <td width="35"></td>
+                    <td width="100">
+                        <div class="">
+                            <span>Disp:</span>
+                            <label>&nbsp;</label>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="footer">
+            <img src="~/images/logo_foot.png" />
+        </div>
+    </div>
+
+    <div class="printPage">
+        <div class="header">
+            <img style="width: 190px;margin: 18px;" src="~/images/logo_head.png" />
+            <div class="head_title">
+                <span>Blend Load Sheet</span><br />
+                <span id="barcode_bls"></span>
+            </div>
+        </div>
+        <div style="width: 576px;">
+            <table border="0" cellspacing="0" cellpadding="0" class="table_up">
+                <tr>
+                    <td width="194">
+                        <div class="">
+                            <span>Date:</span>
+                            <label>&nbsp;@DateTime.Now.ToShortDateString()</label>
+                        </div>
+                    </td>
+                    <td width="189">
+                        <div class="">
+                            <span>Bulk Plant:</span>
+                            <label>&nbsp;@Html.DisplayFor(model => model.ProductHaulModel.BulkPlantName)</label>
+                        </div>
+                    </td>
+                    <td width="191">
+                        <div class="">
+                            <span>Destination Location:</span>
+                            <label>&nbsp;@Html.DisplayFor(model => model.ProductHaulModel.WellLocation)</label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="">
+                            <span>Client:</span>
+                            <label>&nbsp;@Html.DisplayFor(model => model.ProductHaulModel.ClientName)</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="">
+                            <span>Rig Name:</span>
+                            <label>&nbsp;@Html.DisplayFor(model => model.ProductHaulModel.RigName)</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="">
+                            <span>Call Sheet#:</span>
+                            <label>&nbsp;@Html.DisplayFor(model => model.ProductHaulModel.CallSheetNumber)</label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="">
+                            <span>Driver #:</span>
+                            <label>&nbsp;@Html.DisplayFor(model => model.ProductHaulModel.Driver)</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="">
+                            <span>Unit #:</span>
+                            <label>&nbsp;@Html.DisplayFor(model => model.ProductHaulModel.Bulker)</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="">
+                            <span>Bin #:</span>
+                            <label>&nbsp;@Html.DisplayFor(model => model.ProductHaulModel.BinInformationName)</label>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+
+            <table border="0" cellspacing="0" cellpadding="0" class="table_mid">
+                <tr>
+                    <th colspan="2">
+                        @Html.DisplayFor(model => model.ProductHaulModel.BlendChemicalDescription)
+                    </th>
+                </tr>
+                <tr>
+                    <td>
+                        <label>Mix Water (m³/t):</label>
+                        <span>@Html.DisplayFor(model => model.ProductHaulModel.MixWater)</span>
+                    </td>
+                    <td>
+                        <label>Base Blend (@Html.DisplayFor(model => model.ProductHaulModel.BaseBlendUnit)):</label>
+                        <span>@Html.DisplayFor(model => model.ProductHaulModel.BaseBlendWeight)</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label>Yield (m³/t):</label>
+                        <span> @Html.DisplayFor(model => model.ProductHaulModel.Yield)</span>
+                    </td>
+                    <td>
+                        <label>Total Weight (t):</label>
+                        <span>@Html.DisplayFor(model => model.ProductHaulModel.TotalBlendWeight)</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label>Density (kg/m³):</label>
+                        <span>@Html.DisplayFor(model => model.ProductHaulModel.Density)</span>
+                    </td>
+                    <td>
+                        <label>Bulk Volume (m³):</label>
+                        <span>@Html.DisplayFor(model => model.ProductHaulModel.BulkVolume)</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label>Sack Weight (kg/t):</label>
+                        <span>@Html.DisplayFor(model => model.ProductHaulModel.SackWeight) </span>
+                    </td>
+                    <td>
+                        <label>&nbsp;</label>
+                        <span>&nbsp;</span>
+                    </td>
+                </tr>
+            </table>
+
+            <table class="table_down" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <th colspan="7">Material Totals</th>
+                </tr>
+                <tr style="font-weight: bold;background-color: #ECECEA;">
+                    <td width="120">Material</td>
+                    <td width="96">Required</td>
+                    <td width="24">Unit</td>
+                    <td width="82">Loaded (kg)</td>
+                    <td width="74">Lot #</td>
+                    <td width="80">Bag Size (kg)</td>
+                    <td width="82"># of Bags</td>
+                </tr>
+
+                @foreach (var item in Model.ProductHaulModel.ProductLoadSections)
+                {
+            <tr>
+                <td>@item.BlendChemicalModel.Name</td>
+                <td>@item.RequiredAmount</td>
+                <td>@item.Unit</td>
+                        <td>
+                    @{
+                        string loadedAmount = item.LoadedAmount == 0 ? string.Empty : item.LoadedAmount.ToString();
+                        @loadedAmount
+                    }
+                </td>
+                <td></td>
+                <td>
+                    @{
+                        string bagSize = item.BagSize == 0 ? string.Empty : item.BagSize.ToString();
+                        @bagSize
+                    }
+                    @*                            @item.BagSize*@
+                </td>
+                <td>
+                    @{
+                        string numberOfBags = item.NumberOfBags == 0 ? string.Empty : item.NumberOfBags.ToString();
+                        @numberOfBags
+                    }
+                    @*                            @item.NumberOfBags*@
+                </td>
+            </tr>
+            }
+            </table>
+
+            <table class="table_down" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <th colspan="6">ADDITIONAL ADDITIVE LIST</th>
+                </tr>
+                <tr style="font-weight: normal;background-color: #ECECEA;">
+                    <td width="109">Material</td>
+                    <td width="101">Amount</td>
+                    <td width="88">Unit</td>
+                    <td width="98">Addition Method</td>
+                </tr>
+
+                @foreach (var item in Model.ProductHaulModel.AdditionalProductLoadSections)
+                {
+                    <tr>
+                        <td>@item.BlendChemicalModel.Name</td>
+                        <td>@item.RequiredAmount</td>
+                        <td>@item.Unit</td>
+                        <td>@item.AdditionMethod</td>
+                    </tr>
+                }
+            </table>
+
+
+            <table border="0" cellspacing="0" cellpadding="0" class="table_btm">
+                <tr>
+                    <td width="100">
+                        <div class="">
+                            <span>BP Op #1:</span>
+                            <label>&nbsp;</label>
+                        </div>
+                    </td>
+                    <td width="35"></td>
+                    <td width="100">
+                        <div class="">
+                            <span>BP Op #2:</span>
+                            <label>&nbsp;</label>
+                        </div>
+                    </td>
+                    <td width="35"></td>
+                    <td width="100">
+                        <div class="">
+                            <span>Disp:</span>
+                            <label>&nbsp;</label>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="footer">
+            <img src="~/images/logo_foot.png" />
+        </div>
+    </div>
+}
+@section ControlsSection{
+}
+@section ScriptSection{
+    <script>
+        var BarcodeGenerator0 = new ejs.barcodegenerator.BarcodeGenerator({
+            "height": "55px",
+            "type": "Code93",
+            "value": "@Html.DisplayTextFor(model=>model.BlendBreakdownSheetSerialNumber)",
+            "width": "354px"
+        });
+        BarcodeGenerator0.appendTo("#barcode_bbs");
+    </script>
+    <script>
+        var BarcodeGenerator1 = new ejs.barcodegenerator.BarcodeGenerator({
+            "height": "55px",
+            "type": "Code93",
+            "value": "@Html.DisplayTextFor(model=>model.BlendLoadSheetSerialNumber)",
+            "width": "354px"
+        });
+        BarcodeGenerator1.appendTo("#barcode_bls");
+    </script>
+
+}

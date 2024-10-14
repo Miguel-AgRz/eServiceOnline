@@ -1,0 +1,79 @@
+@using eServiceOnline.Models.RigBoard
+@model List<eServiceOnline.Models.RigBoard.ReturnEquipentsModel>
+
+@using (Html.BeginForm("ReturnEquipments", "RigBoard", FormMethod.Post, new {enctype = "multipart/form-data"}))
+{
+    <input name="RigJobId" value="@ViewData["RigJobId"]" type="hidden"/>
+    if(Model.Count == 0)
+     {
+         <div class="sj_dialog_body sj_lsd_ud">
+             <div class="det_list" style="text-align: center">
+                 <label>No equipment needs to be returned and  click "OK" to confirm job completion</label>               
+             </div>
+         </div>
+     }
+     else
+     {
+         <table class="table table-striped table-bordered table-hover">
+      
+             <thead>
+             <tr>
+                 <th class="text-center"></th>
+                 <th class="text-center">Equipment</th>
+                 <th class="text-center">Return To</th>
+
+             </tr>
+             </thead>
+             <tbody>
+
+                 @foreach (var item in Model)
+                 {
+                     <tr>
+                         @if (item.EquipentType == EquipentType.Manifold)
+                         {
+                             <td class="text-center"></td>
+                             <td class="text-center">
+                                 @Html.DisplayFor(modelItem => item.EquipentName)
+                             </td>
+                             <td class="text-center"></td>
+                         }
+                         else
+                         {
+                             @Html.HiddenFor(modelItem => item.Id)
+                             @Html.HiddenFor(modelItem => item.EquipentType)
+                             <td class="text-center">
+                              <input type="checkbox" checked="checked"  onchange="GetCheckBoxValue(this)"/>
+                              <input type="hidden"  name="WhetherToReturn" value="true" />
+                             </td>
+                             <td class="text-center">
+                                 @Html.DisplayFor(modelItem => item.EquipentName)
+                             </td>
+                             <td class="text-center">
+                                 @Html.DropDownListFor(modelItem => item.ServicePointId, @ViewData["servicePoints"] as List<SelectListItem>)
+                             </td>
+                         }
+                     </tr>
+                 }
+             </tbody>
+         </table>
+         <div class="det_list" style="text-align: center">
+             <label>Please review and correct the information and click "OK" to confirm job completion</label>
+                
+         </div>
+     }
+    <div class="sj_dialog_foot">
+        <input type="submit" value="Ok"/>
+    </div>
+ 
+}
+<script>
+    function GetCheckBoxValue(obj) {
+        if ($(obj).prop("checked")) {
+            $(obj).next().val("true");
+        } else { 
+            $(obj).next().val("false");
+        }
+        
+    }
+
+</script>

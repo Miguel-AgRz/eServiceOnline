@@ -1,0 +1,142 @@
+@using eServiceOnline.Models.RigBoard
+@model eServiceOnline.Models.RigBoard.NeedBinsViewModel
+
+@{
+    Layout = null;
+}
+
+@using (Html.BeginForm("UpdateIsNeedBin", "RigBoard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(model => model.CallSheetId)
+    @Html.HiddenFor(model => model.RigJobId)
+    <div class="sj_dialog_body sj_lsd_ud">
+        <div class="det_list">
+            <label class="det_label">Need Bins</label>
+            <div class="det_text">
+                <label class="sj_cont_lab">
+                    @Html.CheckBoxFor(model => model.IsNeedBin, new { onclick = "IsChecked(this)", @class = "hide" })
+                    <i class="check"></i>
+                </label>
+            </div>
+        </div>
+        <div class="det_list">
+            <label class="det_label">Number Of Bins</label>
+            <div class="det_text"> @Html.TextBoxFor(model => model.NumberOfBin, new { @class = "sj_text" }) </div>
+        </div>
+    </div>
+    <div class="sj_dialog_foot">
+        <input id="sj_updataIsNeedBin" type="submit" value="Save" onclick="return verifyNumberOfBin();" />
+    </div>
+}
+
+
+@*<div id="is_confirm_jump_needbin" class="is_confirm_jump">
+  
+    <div style="margin-top: 20px; padding: 0 10px 0 10px">
+        The number of bins does not meet the needed number, are you sure to save?
+    </div>
+    <div style="text-align: center; margin: auto; line-height: 100px;">
+        <div style="display: inline-block;width: 50px; line-height: 25px; text-align: center;">
+            <input type="button" value="Yes" onclick="CloseConfirmjumpDialog('Yes')" />
+        </div>
+        <div style="display: inline-block;width: 50px; line-height: 25px; text-align: center;">
+            <input type="button" value="No" onclick="CloseConfirmjumpDialog('')" />
+        </div>
+    </div>
+</div>*@
+
+<ej-dialog id="is_confirm_jump_needbin" css-class="sj_confirmDialog" title="Confirm" width="400" show-on-init="false" enable-resize="false" close="CloseConfirmjumpDialog1">
+    <e-content-template>
+        <div id="is_confirm_jump">
+            <div style="margin-top: 20px;padding: 0 10px 0 10px">The number of bins does not meet the needed number, are you sure to save?</div>
+            <div style="text-align: center; margin: auto; line-height: 100px;">
+                <div style="display: inline-block;width: 50px; line-height: 25px; text-align: center;">
+                    <input class="confirmDialog_button" type="button" value="Yes" onclick="CloseConfirmjumpDialog1('Yes')" />
+                </div>
+                <div style="display: inline-block;width: 50px; line-height: 25px; text-align: center;">
+                    <input class="confirmDialog_button" type="button" value="No" onclick="CloseConfirmjumpDialog1('No')" />
+                </div>
+            </div>
+
+        </div>
+    </e-content-template>
+</ej-dialog>
+<ej-script-manager></ej-script-manager>
+<script>
+
+    $(".confirmDialog_button").hide();
+    $(function () {
+        if (!$("#IsNeedBin").is(":checked")) {
+            $("#NumberOfBin").attr("readOnly", true);
+            $("#NumberOfBin").val("");
+        }
+    });
+
+    function IsChecked(item) {
+
+        if ($(item).is(":checked")) {
+            $("#NumberOfBin").attr("readOnly", false);
+        } else {
+            $("#NumberOfBin").attr("readOnly", true);
+        }
+    }
+
+    var confirmjump_needbin = false;
+
+    function verifyNumberOfBin() {
+        if (confirmjump_needbin) { return confirmjump_needbin}
+
+        if ($("#IsNeedBin").is(":checked")) {
+            var obj = {
+                IsNeedBin: $("#IsNeedBin").val(),
+                NumberOfBin: $("#NumberOfBin").val()
+            }
+            var itemurl =  '@Url.Action("VerifyNumberOfBin", "RigBoard")';
+            console.log(obj);
+            $.ajax({
+                url: itemurl,
+                async: false,
+                method: "Post",
+                data: obj,
+                success: function (data) {
+                    if (data) {
+                        var divs = document.getElementsByTagName("div");
+                        var max = 0;
+                        for (var i = 0; i < divs.length; i++) {
+                            max = Math.max(max, divs[i].style.zIndex || 0);
+                        }
+                        console.log(max);
+                        $(".sj_confirm").css({ "z-index": max + 1 });
+                        $(".sj_confirm").fadeIn(300,
+                            function () {
+                                $("#is_confirm_jump_needbin").ejDialog("open");
+                            }
+                        );
+                        $(".confirmDialog_button").show();
+                        confirmjump_needbin = false;
+                    } else {
+                        confirmjump_needbin = true;
+                    }
+                }
+            });
+        } else {
+            $("#NumberOfBin").val("");
+            return true;
+        }
+        return confirmjump_needbin;
+    }
+
+    function CloseConfirmjumpDialog1(item) {
+        if (item === "Yes") {
+            confirmjump_needbin = true;
+            $("#sj_updataIsNeedBin").trigger("click");
+        } else {
+            confirmjump_needbin = false;
+        }
+        $("#is_confirm_jump_needbin").ejDialog("close");
+
+        $(".sj_confirm").hide();
+
+    }
+</script>
+

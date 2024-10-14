@@ -1,0 +1,61 @@
+﻿@using eServiceOnline.Models.ProductHaul
+@model eServiceOnline.Models.ProductHaul.RescheduleBlendFromBulkPlantBinModel
+
+@{
+    Layout = null;
+}
+@using (Html.BeginForm("RescheduleBlendFromBulkPlantBin", "ProductHaul", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+
+    @Html.HiddenFor(m => m.ProductHaulLoadId)
+    <div class="sj_dialog_body sj_lsd_ud">
+        @Html.Partial("_CustomerProgramJobBaseBlendHeader", Model.ProductLoadInfoModel, new ViewDataDictionary(ViewData) { { "isStatic", true } })
+        @Html.Partial("_TonnageAmountWaterControls", Model.ProductLoadInfoModel)
+        @Html.Partial("_BlendTestCheckNew", Model.ProductLoadInfoModel, new ViewDataDictionary(ViewData) { { "isStatic", false } })
+        @Html.Partial("_BulkPlant", Model.ProductLoadInfoModel, new ViewDataDictionary(ViewData) { { "isStatic", true } })
+        @Html.Partial("_LoadToBin", Model.ProductLoadInfoModel, new ViewDataDictionary(ViewData) { { "isStatic", true } })
+        @Html.Partial("_CommentsTexArea", Model.ProductLoadInfoModel)
+
+    </div>
+    @Html.Partial("_SubmitButton", Model)
+
+}
+
+@Html.Partial("_Dialogs")
+
+<script>
+    var existingHaul, blendTest, scheduleValidations, thirdParty;
+    $(function () {
+        existingHaul = new ExistingHaul();
+        thirdParty = new ThirdParty();
+
+        blendTest = new BlendTest({
+            OnBlendTestTrue: function () { },
+            OnBlendTestFalse: function () { }
+        });
+
+        var initSchedule = new InitSchedule(function () {
+            defaultOnBlendTestClick(false);
+            InitializeDialogs();
+            LoadBlendDescriptionAndSetBinDisplay();
+        });
+
+
+        //#region validation
+        var val2 = new ValidationsChain(true, validateBin);
+        var val3 = new ValidationsChain(true, validateRequiredAmount);
+       //Jan 5, 2024 tongtao 251_PR_RescheduleProductHaulVaildError: Add crew valid,if not selectd ,could not reschedule
+        var val5 = new ValidationsChain(true, validateCrew);
+        qualityOfTheBinChainValidation = new ValidationsChain(true, VerifyQualityOfTheBin, undefined, undefined, dataQualityOfTheBin);
+        amountAndMixWaterChainValidation = new ValidationsChain(true, verifyAmountAndMixWater, undefined, undefined, dataAmountAndMixWater);
+
+        val2.setNextFuncOrValidation(val5);
+        val5.setNextFuncOrValidation(val3);
+        val3.setNextFuncOrValidation(qualityOfTheBinChainValidation);
+        qualityOfTheBinChainValidation.setNextFuncOrValidation(amountAndMixWaterChainValidation);
+
+        scheduleValidations = new ValidationsBuilder(val2);
+        //#endregion
+        initSchedule.Initialize();
+    });
+</script>

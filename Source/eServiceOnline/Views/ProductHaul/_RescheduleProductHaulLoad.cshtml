@@ -1,0 +1,43 @@
+@using System.Threading.Tasks
+@using eServiceOnline.Models.ProductHaul
+@using Syncfusion.JavaScript.Mobile
+@model eServiceOnline.Models.ProductHaul.RescheduleProductHaulLoadViewModel
+@{
+    Layout = null;
+}
+@using (Html.BeginForm("RescheduleProductHaulLoad", "ProductHaul", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(m => m.OrigBulkPlantId)
+    @Html.HiddenFor(m => m.OrigBinInformationId)
+    @Html.HiddenFor(m => m.ProductHaulLoadId)
+
+    <div class="sj_dialog_body sj_lsd_ud">
+        @Html.Partial("_CallSheetNumber",Model.ProductLoadInfoModel, new ViewDataDictionary(ViewData) {{ "isStatic", true }})
+        @Html.Partial("_BaseBlend", Model.ProductLoadInfoModel, new ViewDataDictionary(ViewData) { { "isStatic", false } })
+        @Html.Partial("_TonnageAmountWaterControls", Model.ProductLoadInfoModel)
+        @Html.Partial("_BlendTestCheckNew", Model.ProductLoadInfoModel, new ViewDataDictionary(ViewData) { { "isStatic", false } })
+        @Html.Partial("_BulkPlantNew", Model.ProductLoadInfoModel, new ViewDataDictionary(ViewData) { { "isStatic", false } })
+
+        @Html.Partial("_CommentsTexArea", Model.ProductLoadInfoModel)
+    </div>
+    @Html.Partial("_SubmitButton", Model)
+}
+@Html.Partial("_Dialogs")
+
+
+<script>
+    var existingHaul, blendTest, scheduleValidations, thirdParty;
+
+    $(function () {
+        existingHaul = new ExistingHaul();
+        thirdParty = new ThirdParty();
+        var initSchedule = new InitSchedule(function () {
+            loadBulkPlants();
+            InitializeDialogs();
+        });
+         var val1 = new ValidationsChain(true, validateRequiredAmount);
+        scheduleValidations = new ValidationsBuilder(val1);
+        initSchedule.Initialize();
+    });
+
+</script>

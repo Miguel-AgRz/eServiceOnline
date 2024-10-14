@@ -1,0 +1,93 @@
+﻿@using eServiceOnline.Models.ProductHaul
+@model eServiceOnline.Models.ProductHaul.HaulBlendFromRigJobBlendViewModel
+
+@{
+    Layout = null;
+}
+
+@using (Html.BeginForm("HaulBlendFromRigJobBlend", "ProductHaul", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+
+  @Html.HiddenFor(model=>model.RigJobId)
+    <div class="sj_dialog_body sj_lsd_ud">
+        @Html.Partial("_ProductLoad", Model.ProductLoadInfoModel, new ViewDataDictionary(ViewData) { { "isReadOnly", false } })
+        @Html.Partial("_ShippingLoadAmount", Model.ShippingLoadSheetModel, new ViewDataDictionary(ViewData) { { "isStatic", false } })
+         <div id="GoWithCrewPart">
+        @Html.Partial("_GoWithCrewCheck", Model.ProductHaulInfoModel, new ViewDataDictionary(ViewData) { { "isStatic", false } })
+        </div>
+        @Html.Partial("_RigUnload", Model.ShippingLoadSheetModel)
+
+        
+        @Html.Partial("_NonBlendTestV2", Model.ProductHaulInfoModel)
+
+        @Html.Partial("_PodLoads", Model.ProductHaulInfoModel)
+    </div>
+    <div class="sj_dialog_foot">
+        <input type="submit" id="sj_createProductHual" value="Save" onclick="return scheduleValidations.validate()" />
+    </div>
+}
+
+@Html.Partial("_Dialogs")
+
+
+
+<script>
+    var existingHaul, scheduleValidations, thirdParty;
+    $(function () {
+        existingHaul = new ExistingHaul();
+
+        thirdParty = new ThirdParty();
+
+        var val1 = new ValidationsChain(true, function() { return IsRequiredAmount("LoadAmount");});
+        var val2 = new ValidationsChain(true, validateExistingHaul, function () { return  $("#IsExistingHaul").prop("checked") });
+        var val3 = new ValidationsChain(true, validateCrew);
+        var val4 = new ValidationsChain(true, validateExpectedLocationTime, function () { return !$("#IsGoWithCrew").prop("checked") });
+        var val5 = new ValidationsChain(true, validateJobDuration, function () { return  !$("#IsGoWithCrew").prop("checked") && !$("#IsExistingHaul").prop("checked") });
+        //#region validation
+        ValidateHaulAmountChain = new ValidationsChain(true, ValidateHaulAmount,undefined, undefined,GetHualAmountData);
+
+        ValidateUnLoadChain = new ValidationsChain(true, ValidateUnLoad, function () { return !$("#IsGoWithCrew").prop("checked") }, undefined,GetUnLoadData);
+
+        ValidatePodLoadChain = new ValidationsChain(true, ValidatePodLoad,undefined, undefined,GetPodLoadData);
+
+        val1.setNextFuncOrValidation(val2);
+        val2.setNextFuncOrValidation(val3);
+        val3.setNextFuncOrValidation(val4);
+        val4.setNextFuncOrValidation(val5);
+        val5.setNextFuncOrValidation(ValidateHaulAmountChain);
+        ValidateHaulAmountChain.setNextFuncOrValidation(ValidateUnLoadChain);
+        ValidateUnLoadChain.setNextFuncOrValidation(ValidatePodLoadChain);
+
+        scheduleValidations = new ValidationsBuilder(val1);
+        //#endregion
+
+        (new InitSchedule(function () {  
+             existingHaul.setExistingHaul();     
+            
+            InitializeDialogs();
+            if (!$("#IsExistingHaul").prop("checked"))
+                    thirdParty.getThirdParty();
+            loadBulkPlantBins();
+        })).Initialize();
+       
+        $("#IsExistingHaul").click(function(){
+            GetPodLoadByProduct();
+            //CheckExistingHaul();
+        });
+        $("#ProductHaulId").change(function(){
+            GetPodLoadByProduct();
+        });
+
+        $("#IsGoWithCrew").click(function(){
+            var isChecked = $("#IsGoWithCrew").prop("checked");
+            if(isChecked){
+                $("#rigUnload").hide();
+            }
+            else{
+                $("#rigUnload").show();
+            }
+        });
+    });
+
+ 
+</script>

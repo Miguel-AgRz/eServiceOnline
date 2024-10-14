@@ -1,0 +1,54 @@
+@using eServiceOnline.Models.RigBoard
+@model eServiceOnline.Models.RigBoard.CallInformationViewModel
+
+@{
+    Layout = null;
+}
+
+@using (Html.BeginForm("UpdateJobDate", "RigBoard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(m => m.CallSheetNumber)
+    @Html.HiddenFor(m => m.CalloutConsultantName)
+    @Html.HiddenFor(m => m.Operation)
+
+    <div class="sj_dialog_body sj_lsd_ud">
+        <div class="det_list">
+            <label class="det_label">Call Out By</label>
+            <div class="det_text">
+                @Html.DropDownListFor(m => m.CalloutDispatcherId, ViewData["employeeItems"] as List<SelectListItem>, "None", new { onchange = "getCalloutDispatcherName(this)", @class = "sj_select" })
+                <span id="Calloutby_span" style="color: red;" hidden="hidden">*required</span>
+            </div>
+        </div>
+        <div class="det_list">
+            <label class="det_label">Requested Date/Time</label>
+            <div class="det_text"><ej-date-time-picker id="RequestedDateTime" width="282px" value='@ViewBag.JobDateTime' time-display-format="H:mm" date-time-format="M/d/yyyy H:mm"></ej-date-time-picker>
+                @Html.HiddenFor(model => model.RequestedDateTime)  
+                <input type="hidden" name="rigJobId" id="rigJobId" value="@ViewBag.RigJobId" />
+            </div>
+        </div>      
+    </div>
+    <div class="sj_dialog_foot">
+        <input type="submit" value="Save" onclick="return submitReuestedDataTime();"/>
+    </div>
+}
+
+<ej-script-manager></ej-script-manager>
+
+<script>
+    function submitReuestedDataTime() {
+        $("#RequestedDateTime").val($("#RequestedDateTime").val());
+        if ($("#CalloutDispatcherId option:selected").text() == "None") {
+            $("#Calloutby_span").removeAttr("hidden");
+            return false;
+        }
+        return true;
+    }
+
+    function getCalloutDispatcherName(obj) {
+        if ($("#CalloutDispatcherId option:selected").text() == "None") {
+            $("#Calloutby_span").removeAttr("hidden");
+        } else {
+            $("#Calloutby_span").attr("hidden", "hidden");
+        }
+    }
+</script>

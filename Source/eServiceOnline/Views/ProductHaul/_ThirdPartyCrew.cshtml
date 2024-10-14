@@ -1,0 +1,35 @@
+@model eServiceOnline.Models.ProductHaul.ProductHaulInfoModel
+@{
+    var IsStatic = (bool)ViewData["isStatic"];
+    var label = Html.Label("", "Third Party Crew", new { @class = "det_label" });
+    @Html.HiddenFor(m => m.OrigThirdPartyBulkerCrewId)
+}
+@if (IsStatic)
+{
+    @*<div class="det_list" id="div_ThirdPartyBulkerCrew" style="position: relative;">
+            @label
+            <div class="det_text">
+                <input type="text" id="existing_ThirdPartyBulkerCrew" name="existing_ThirdPartyBulkerCrew" class="sj_text" readonly="readonly" />
+            </div>
+        </div>*@
+    <div class="det_list" id="ThridPartyCrew">
+        @label
+        <div class="det_text">
+            @Html.DropDownListFor(m => m.ThirdPartyBulkerCrewId, ViewData["thirdPartyCrewsList"] as List<SelectListItem>
+                , "None", new { @class = "sj_select", disabled = "true" })
+        </div>
+    </div>
+}
+else
+{
+    <div class="det_list" id="ThridPartyCrew">
+        @label
+        <div class="det_text" id="thridPartyCrew_select">
+            @Html.DropDownListFor(m => m.ThirdPartyBulkerCrewId, new List<SelectListItem>()
+                , "None", new { @class = "sj_select" })
+            <div id="ThirdPartyBulkerCrewId_tip" style="display:none; color:red;">Third party crew is required</div>
+        </div>
+    </div>
+}
+
+

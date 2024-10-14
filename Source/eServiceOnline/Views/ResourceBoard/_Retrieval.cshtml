@@ -1,0 +1,111 @@
+﻿@using eServiceOnline.Models.Commons
+@using Microsoft.AspNetCore.Http
+@model eServiceOnline.Models.Commons.RetrievalCondition
+
+<div style="padding: 0 100px 0 20px;color: #BFBFBF; text-align: center; float: left;">
+    <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="69" onclick="selectionCriteria(this,'BR')" />BR
+    <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="85" onclick="selectionCriteria(this,'RD')" />RD
+    <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="67" onclick="selectionCriteria(this,'Edm')" />Edm
+    <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="81" onclick="selectionCriteria(this,'Eds')" />Eds
+    <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="71" onclick="selectionCriteria(this,'GP')" />GP
+    <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="66" onclick="selectionCriteria(this,'FSJ')" />FSJ
+    <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="89" onclick="selectionCriteria(this,'NW')" />NW
+    <span style="color:#FFFF00">&nbsp;|&nbsp;</span>
+    <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="72" onclick="selectionCriteria(this,'EST')" />EST
+    <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="70" onclick="selectionCriteria(this,'SC')" />SC
+    <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="88" onclick="selectionCriteria(this,'KD')" />KD
+    <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="61" onclick="selectionCriteria(this,'LLD')" />LLD
+    <input name="ServicePoint" type="checkbox" class="checkboxstyle" value="65" onclick="selectionCriteria(this,'LLB')" />LLB
+    <input id="RetrievalConditions" name="RetrievalConditions" type="hidden" value='@this.Context.Session.GetString("ServicePoint")' />
+</div>
+
+<div id="sj_retrieval_conditions">
+    <input data-val="true" data-val-required="The BR field is required." id="BR" name="BR" type="hidden" value="" />
+    <input data-val="true" data-val-required="The RD field is required." id="RD" name="RD" type="hidden" value="" />
+    <input data-val="true" data-val-required="The Edm field is required." id="Edm" name="Edm" type="hidden" value="" />
+    <input data-val="true" data-val-required="The Eds field is required." id="Eds" name="Eds" type="hidden" value="" />
+    <input data-val="true" data-val-required="The GP field is required." id="GP" name="GP" type="hidden" value="" />
+    <input data-val="true" data-val-required="The FSJ field is required." id="FSJ" name="FSJ" type="hidden" value="" />
+    <input data-val="true" data-val-required="The NW field is required." id="NW" name="NW" type="hidden" value="" />
+    <input data-val="true" data-val-required="The EST field is required." id="EST" name="EST" type="hidden" value="" />
+    <input data-val="true" data-val-required="The SC field is required." id="SC" name="SC" type="hidden" value="" />
+    <input data-val="true" data-val-required="The KD field is required." id="KD" name="KD" type="hidden" value="" />
+    <input data-val="true" data-val-required="The LLD field is required." id="LLD" name="LLD" type="hidden" value="" />
+    <input data-val="true" data-val-required="The LLB field is required." id="LLB" name="LLB" type="hidden" value="" />
+    <input data-val="true" data-val-required="The IsChange field is required." id="IsChange" name="IsChange" type="hidden" value="" />
+</div>
+<script>
+    var retrieval = {};
+    window.onload = function () {
+        retrieval = JSON.parse($("#RetrievalConditions").val());
+        var currentPage = $("#FlatGrid .e-pager").find(".e-active").text();
+        $("#FlatGrid .e-pager").find(".e-active").attr("onclick", "subPageLink(" + currentPage + ");");
+        $("#FlatGrid .e-pager").find(".e-active").siblings().each(function (i, ele) {
+            var number = $(ele).text();
+            $(ele).attr("onclick", "subPageLink(" + number + ");");
+            if ($(ele).text() === retrieval.PageNumber) {
+                $(ele).trigger("click");
+            }
+        });
+        retrieval = JSON.parse($("#RetrievalConditions").val());
+        $("#sj_retrieval_conditions input").each(function (i, ele) {
+            var key = $(ele).attr("id");
+            if (retrieval[key] !== 0) {
+                $("#retrieval_conditions").find("input[type='checkbox']").eq(i).prop("checked", true);
+            }
+        });
+
+        var median;
+        median = currentPage - 1;
+        $("#FlatGrid .e-prevpage").click(function () { subPageLink(median); });
+        $("#FlatGrid .e-nextpage").click(function () { subPageLink(-1); });
+        $("#FlatGrid .e-firstpage").click(function () { subPageLink(0); });
+        $("#FlatGrid .e-lastpage ").click(function () { subPageLink(-1); });
+    }
+
+    var retrieurl =  '@Url.Action("UpdateSessionValue", "ResourceBoard")';
+        function selectionCriteria(item, data) {
+            if ($(item).is(":checked")) {
+                $("#" + data).val($(item).val());
+                $(item).prop("checked", true);
+                retrieval[data] = $(item).val();
+            } else {
+                $("#" + data).val("");
+                $(item).prop("checked", false);
+                retrieval[data] = 0;
+            }
+            $.ajax({
+                url: retrieurl,
+                method: "Post",
+                data: retrieval,
+                success: function () {
+                    window.location.reload();
+                }
+            });
+        }
+
+        function subPageLink(item) {
+
+            var str = $("#FlatGrid .e-pagermsg").html();
+            var currentPage = $("#FlatGrid .e-pager").find(".e-active").text();
+            var pager = str.substring(str.indexOf("f") + 1, str.indexOf("p") - 1);
+            if (item === -1) {
+                if (str > currentPage) {
+                    retrieval["PageNumber"] = parseInt(currentPage) + 1;
+                } else {
+                    retrieval["PageNumber"] = pager;
+                }
+            } else {
+                retrieval["PageNumber"] = item;
+            }
+            retrieval["IsChange"] = false;
+            $.ajax({
+                url: retrieurl,
+                method: "Post",
+                async: false,
+                data: retrieval,
+                success: function () {
+                }
+            });
+        }
+</script>

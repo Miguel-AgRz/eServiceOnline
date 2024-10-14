@@ -1,0 +1,19 @@
+@model eServiceOnline.Models.ProductHaul.ProductLoadInfoModel
+<div class="det_list">
+    @if (ViewBag.CallSheetId != 0)
+    {
+        <label class="det_label">Call Sheet Number</label>
+        <div class="det_text">
+            @Html.TextBoxFor(model => model.CallSheetNumber, new { @readonly = true, @class = "sj_text" })
+            <input type="hidden" name="callSheetId" id="callSheetId" value="@ViewBag.CallSheetId" />
+        </div>
+    }
+    else
+    {
+        <label class="det_label">Program Number</label>
+        <div class="det_text">
+            @Html.TextBoxFor(model => model.ProgramNumber, new { @readonly = true, @class = "sj_text" })
+            <input type="hidden" name="callSheetId" id="callSheetId" value="@ViewBag.CallSheetId" />
+        </div>
+    }
+</div>

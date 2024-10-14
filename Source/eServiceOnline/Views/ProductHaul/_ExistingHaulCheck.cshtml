@@ -1,0 +1,24 @@
+@model eServiceOnline.Models.ProductHaul.ProductHaulInfoModel
+@{
+    bool IsStatic = false;
+    if (ViewData["isReadOnly"] != null)
+    {
+        IsStatic = (bool)ViewData["isReadOnly"];
+    }
+}
+<div class="det_list" id="existing_haul_wrapper">
+    <label class="det_label">Load to An Existing Haul</label>
+    <div class="det_text">
+        @if (IsStatic)
+        {
+            @Html.CheckBoxFor(m => m.IsExistingHaul, new
+            { @disabled = "disabled" })
+        }
+        else
+        {
+            @Html.CheckBoxFor(m => m.IsExistingHaul, new
+       { onclick = "window.existingHaul.setExistingHaul()" })
+        }
+        @*<input type="checkbox" id="existingHaul" name="existingHaul" onclick="window.existingHaul.setExistingHaul()" />*@
+    </div>
+</div>

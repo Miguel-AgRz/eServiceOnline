@@ -1,0 +1,18 @@
+﻿@using eServiceOnline.Models.CrewBoard
+@model eServiceOnline.Models.CrewBoard.CrewModel
+
+@using (Html.BeginForm("AssignToAnotherDistrict", "CrewBoard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(m => m.Id)
+    <div class="sj_dialog_body sj_lsd_ud">
+        <div class="det_list">
+            <label class="det_label">Working District</label>
+            <div class="det_text">@Html.DropDownListFor(m => m.WorkingDistrictId, ViewData["servicePointList"] as List<SelectListItem>, "None", new { @class = "sj_select" })</div>
+        </div>
+    </div>
+
+    <div class="sj_dialog_foot">
+        <input type="submit" id="submitButton" value="Save"/>
+    </div>
+}
+

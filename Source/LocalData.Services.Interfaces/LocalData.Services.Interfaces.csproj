@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Sesi.LocalData.Services.Interfaces</RootNamespace>
+  </PropertyGroup>
+  <!--add customized code between this region-->
+  <!--add customized code between this region-->
+
+  <ItemGroup>
+
+    <ProjectReference Include="..\LocalData.Entities\LocalData.Entities.csproj" />
+
+    <!--add customized code between this region-->
+    <!--add customized code between this region-->
+  </ItemGroup>
+
+</Project>

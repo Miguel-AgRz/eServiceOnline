@@ -1,0 +1,170 @@
+﻿@using eServiceOnline.Models.CrewBoard
+@model eServiceOnline.Models.CrewBoard.CrewModel
+
+@using (Html.BeginForm("AssignACrew", "RigBoard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(m => m.Id)
+    @Html.HiddenFor(m => m.RigJobId)
+    <div class="sj_dialog_body sj_lsd_ud">
+        <div class="det_list">
+            <label class="det_label">District</label>
+            <div class="det_text">@Html.DropDownListFor(m => m.WorkingDistrictId, ViewData["servicePoints"] as List<SelectListItem>, "None", new { onchange = "getEstJobDuration(true)", @class = "sj_select" })</div>
+        </div>
+        <div class="det_list">
+            <label class="det_label">Crew</label>
+            <div class="det_text">
+                <select id="crewList" class="sj_select"></select>
+            </div>
+            <span id="availableCrew" style="color: red;position: absolute;right: 25px;"></span>
+        </div>
+        <div class="det_list">
+            <label class="det_label">Call Crew Time</label>
+            <div class="det_text">@Html.TextBoxFor(model => model.CallCrewTime, new { @class = "sj_text", @readonly = true })</div>
+        </div>
+        <div class="det_list">
+            <label class="det_label">Estimated Job Duration</label>
+            <div class="det_text">@Html.TextBoxFor(model => model.EstJobDuration, new { placeholder = 8, @class = "sj_text", onchange = "getEstJobDuration(false)" })</div>
+            <span id="validValue" style="color: red;position: absolute;right: 25px;"></span>
+        </div>
+    </div>
+
+    <div class="sj_dialog_foot">
+        <input type="submit" id="sj_assignCrew" value="Save" onclick="return verifySanjelCrewSchedule()" />
+    </div>
+}
+
+<ej-dialog id="is_confirm_jump_verifyCrewSchedule" css-class="sj_confirmDialog" title="Confirm" width="400" show-on-init="false" enable-resize="false" close="CloseVerifyCrewScheduleDialog">
+    <e-content-template>
+        <div id="is_confirm_jump">
+            <div id="msgInfo" style="margin-top: 20px;padding: 0 10px 0 10px">Scheduled blend amount is more than selected blend required amount.<br /><br /> Click "Yes" to continue ,Click "No" to return.</div>
+            <div style="text-align: center; margin: auto; line-height: 100px;">
+                <div style="display: inline-block;width: 50px; line-height: 25px; text-align: center;">
+                    <input class="confirmDialog_button" type="button" value="Yes" onclick="CloseVerifyCrewScheduleDialog('Yes')" />
+                </div>
+                <div style="display: inline-block;width: 50px; line-height: 25px; text-align: center;">
+                    <input class="confirmDialog_button" type="button" value="No" onclick="CloseVerifyCrewScheduleDialog('No')" />
+                </div>
+            </div>
+
+        </div>
+    </e-content-template>
+</ej-dialog>
+<ej-script-manager></ej-script-manager>
+
+<script>
+    $(function () {
+        getEstJobDuration(true);
+    });
+
+    var isPass = false;
+
+    function getEstJobDuration(cleanCrewList) {
+        var options = $("#crewList option:selected");
+        var district = $("#WorkingDistrictId option:selected").val();
+        var reg = /^(-?\d+)(\.\d+)?$/;
+        $("#Id").val(options.val());
+        if (cleanCrewList) {
+            $("#crewList").html("");
+        }
+        $("#validValue").html("");
+        var duration;
+        if ($("#EstJobDuration").val() === "") {
+            duration = 8;
+            $("#EstJobDuration").val(duration);
+        } else {
+            duration = $("#EstJobDuration").val();
+        }
+        if (duration < 1 || duration > 72) {
+            $("#validValue").html("*between 1 and 72");
+            isPass = false;
+            return isPass;
+        }
+        if (!reg.test(duration)) {
+            $("#validValue").html("*Input number type");
+            isPass = false;
+            return isPass;
+        }
+
+        var itemurl = '@(this.Url.Action("GetEffectiveCrews", "RigBoard"))';
+        $.ajax({
+            url: itemurl,
+            async: false,
+            method: "Post",
+            data: {
+                "startTime": $('#CallCrewTime').val(),
+                "duration": duration,
+                "workingDistrict": district,
+                "rigJobId": $('#RigJobId').val()
+            },
+            success: function (data) {
+                $("#availableCrew").html("");
+                if (data.length < 1) {
+                    $("#availableCrew").html("*no crew available");
+                    isPass = false;
+                } else {
+                    isPass = true;
+                }
+                if (cleanCrewList) {
+                    for (var i = 0; i < data.length; i++) {
+                        $("#crewList").append(" <option value='" + data[i].Id + "'>" + data[i].Description + "</option>");
+                    }
+                }
+            }
+        });
+        return isPass;
+    }
+
+    var verifySchedule = false;
+
+    function verifySanjelCrewSchedule() {
+        var crewId = $("#crewList option:selected").val();
+        if (!verifySchedule) getEstJobDuration(false);
+        if (verifySchedule || !isPass) return verifySchedule;
+        if (crewId === '') return false;
+        var itemurl = '@(this.Url.Action("VerifySanjelCrewSchedule", "RigBoard"))';
+        $.ajax({
+            url: itemurl,
+            async: false,
+            method: "Post",
+            data: {
+                "sanjelCrewId": crewId,
+                "startTime": $("#CallCrewTime").val(),
+                "duration": $("#EstJobDuration").val()
+            },
+            success: function (data) {
+                if (data === '') {
+                    verifySchedule = true;
+                } else {
+                    $("#msgInfo").html(data);
+                    var divs = document.getElementsByTagName("div");
+                    var max = 0;
+                    for (var i = 0; i < divs.length; i++) {
+                        max = Math.max(max, divs[i].style.zIndex || 0);
+                    }
+                    $(".sj_confirm").css({ "z-index": max + 1 });
+                    $(".sj_confirm").fadeIn(300,
+                        function () {
+                            $("#is_confirm_jump_verifyCrewSchedule").ejDialog("open");
+                        }
+                    );
+                    $(".confirmDialog_button").show();
+                    verifySchedule = false;
+                }
+            }
+        });
+        return verifySchedule;
+    }
+
+    function CloseVerifyCrewScheduleDialog(item) {
+        if (item === "Yes") {
+            verifySchedule = true;
+            $("#sj_assignCrew").trigger("click");
+        } else {
+            isPass = false;
+        }
+        $("#is_confirm_jump_verifyCrewSchedule").ejDialog("close");
+        $(".sj_confirm").hide();
+    }
+
+
+</script>

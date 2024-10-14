@@ -1,0 +1,64 @@
+﻿@model eServiceOnline.Models.Calendar.ScheduleModel
+@using (Html.BeginForm("AddUnitSchedule", "Calendar", FormMethod.Post, new {enctype = "multipart/form-data"}))
+{
+    <div class="sj_dialog_body sj_lsd_ud">
+        <div class="det_list">
+            <label class="det_label">Subject</label>
+            <div class="det_text">@Html.TextBoxFor(model => model.Subject, new {@class = "sj_text"})</div>
+        </div>
+        <div class="det_list">
+            <label class="det_label">StartTime</label>
+            <div class="det_text">
+                <ejs-datetimepicker id="StartTime" placeholder="Select a date and time" timeFormat="HH:mm" format="yyyy/MM/dd HH:mm" value="@Model.StartTime.ToString("yyyy/MM/dd HH:mm")" width="69%"></ejs-datetimepicker>
+            </div>
+
+        </div>
+        <div class="det_list">
+            <label class="det_label">EndTime</label>
+            <div class="det_text">
+                <ejs-datetimepicker id="EndTime" placeholder="Select a date and time" timeFormat="HH:mm" format="yyyy/MM/dd HH:mm" value="@Model.EndTime.ToString("yyyy/MM/dd HH:mm")" change="validateDate" width="69%"></ejs-datetimepicker>
+                <span id="EndTimeValidate" style="color: red"></span>
+            </div>
+        </div>
+
+        <div class="det_list">
+            <label class="det_label">Unit</label>
+            <div class="det_text">@Html.DropDownListFor(m => m.OwnerId, ViewData["truckUnits"] as List<SelectListItem>, new {@class = "sj_select"})</div>
+        </div>
+        <div class="det_list">
+            <label class="det_label">Schedule Category</label>
+            <div class="det_text">@Html.DropDownListFor(m => m.StatusId, ViewData["unitScheduleStatus"] as List<SelectListItem>, new {@class = "sj_select"})</div>
+        </div>
+        <div class="det_list">
+            <label class="det_label">Comments</label>
+            <div class="det_text">@Html.TextAreaFor(model => model.Comment, new {@class = "sj_textarea"})</div>
+        </div>
+    </div>
+    <div>
+        @Html.Partial("_Ej2PromotMessage");
+     
+    </div>
+    <script>
+        function validateDate() {
+            $("#EndTimeValidate").text("");
+            if ($("#StartTime").val() >= $("#EndTime").val()) {
+                $("#EndTime").val("");
+                $("#EndTimeValidate").text("*End time must be greater than start time");
+                $("#EndTime").attr("placeholder", "End time must be greater than start time");
+            }
+        }
+
+
+       
+        function verifyUnitSchedule() {
+            var itemurl = '@(this.Url.Action("VerifyUnitSchedule", "Calendar"))';                   
+            var data = { "truckUnitId": $("#OwnerId").val(), "startTime": $("#StartTime").val(), "endTime": $("#EndTime").val() };              
+            return  verifyScheduleValidation(itemurl, data);
+        }
+
+    </script>
+    <ejs-scripts></ejs-scripts>
+    <div class="sj_dialog_foot">
+        <input type="submit" value="Save" id="submitButton" onclick="return verifyUnitSchedule()"/>
+    </div>
+}

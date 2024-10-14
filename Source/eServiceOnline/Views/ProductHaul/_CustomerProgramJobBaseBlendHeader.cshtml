@@ -1,0 +1,64 @@
+@model eServiceOnline.Models.ProductHaul.ProductLoadInfoModel
+@{
+    var IsStatic = ViewData["isStatic"]==null?false:(bool)ViewData["isStatic"];
+}
+
+<div class="det_list">
+    <label class="det_label">Program Id.Revision</label>
+    <div class="det_text">
+        @if (IsStatic)
+        {
+            @Html.TextBoxFor(model => model.ProgramNumber, new { @readonly = true, @class = "sj_text" })
+        }
+        else
+        {
+            @Html.TextBoxFor(model => model.ProgramNumber, new { @class = "sj_text", @required = "required", onchange = "onProgramIdChange(this)" })
+        }
+        @*Nov 7, 2023 tongtao P45_Q4_167:Remove non-null validation (restore to original state), add format validation.*@
+        <div id="program_id_required" style="display:none; color:red;">Program Id is required</div>
+        <div id="Is_programNumberFormat" style="display:none; color:red;">Program Id format is: Program Id.Revision</div>
+    </div>
+</div>
+<div class="det_list">
+    <label class="det_label">Customer</label>
+    <div class="det_text">
+        @Html.TextBoxFor(model => model.ClientName, new { @class = "sj_text", @readonly = true })
+        @Html.HiddenFor(m => m.CustomerId)
+        @Html.HiddenFor(m => m.ClientRepresentative)
+        @Html.HiddenFor(m => m.ServicePointId)
+        @Html.HiddenFor(m => m.ServicePointName)
+    </div>
+
+</div>
+<div class="det_list">
+    <label class="det_label">Job Type</label>
+    <div class="det_text" id="jobtype_select">
+        @if (IsStatic)
+        {
+            @Html.TextBoxFor(model => model.JobTypeName, new { @readonly = true, @class = "sj_text" })
+            @Html.HiddenFor(model => model.JobTypeId)
+        }
+        else
+        {
+            @(this.Html.DropDownListFor(model => model.JobTypeId, new SelectList(this.ViewBag.JobTypeList, "Id", "Name"), "None", new { onchange = "loadBlends(this)", @class = "sj_select" }))
+        }
+
+    </div>
+</div>
+<div class="det_list">
+    <label class="det_label">Base Blend</label>
+    <div class="det_text" id="blend_select">
+        @if (IsStatic)
+        {
+            @Html.TextBoxFor(model => model.BaseBlend, new { @readonly = true, @class = "sj_text" })
+            @Html.HiddenFor(model => model.BaseBlendSectionId)
+        }
+        else
+        {
+            @(this.Html.DropDownListFor(model => model.BaseBlendSectionId, new SelectList(this.ViewBag.BlendSectionList, "Id", "Blend"), "None", new { onchange = "fillMixWater(this)", @class = "sj_select" }))
+        }
+        <div id="blend_need_test" style="display:none; color:red;">Blend test is needed. Please go to bulk plant bin to schedule a blend request.</div>
+        <div id="blend_required" style="display:none; color:red;">Blend is required.</div>
+        <input type="hidden" id="SelectedBlendChemicalDescription" value="" />
+    </div>
+</div>

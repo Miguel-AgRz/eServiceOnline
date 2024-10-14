@@ -1,0 +1,18 @@
+@model eServiceOnline.Models.ProductHaul.ProductHaulInfoModel
+@{ 
+    bool IsStatic = false;
+    if (ViewData["isReadOnly"] != null)
+    {
+        IsStatic = (bool)ViewData["isReadOnly"];
+    }
+}
+@Html.HiddenFor(model=>model.ProductHaulId)
+<div id="non_blend_test_wrapper">
+        @Html.Partial("_EstimatedLoadTime", Model, new ViewDataDictionary(ViewData) { { "dateTimeValue", DateTime.Now }, { "isStatic", IsStatic } })
+        @Html.Partial("_ExpectedOnLocationTime", Model, new ViewDataDictionary(ViewData) { { "ExpectedOnLocationTime", false }, { "isStatic", IsStatic } })
+        @Html.Partial("_EstimatedDurationTextBox", Model, new ViewDataDictionary(ViewData) { { "ReadOnly", IsStatic } })
+        @Html.Partial("_IsThirdPartyCheck", Model, new ViewDataDictionary(ViewData) { { "isStatic", IsStatic } })
+        <div id="sanjelCrews_PartialView"></div>
+        @Html.Partial("_SanjelCrew", Model, new ViewDataDictionary(ViewData) { { "isStatic", IsStatic } })
+        @Html.Partial("_ThirdPartyCrew", Model, new ViewDataDictionary(ViewData) { { "isStatic", IsStatic } })
+</div>

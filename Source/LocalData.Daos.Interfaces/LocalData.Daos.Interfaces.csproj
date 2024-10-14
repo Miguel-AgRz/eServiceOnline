@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Sesi.LocalData.Daos.Interfaces</RootNamespace>
+  </PropertyGroup>
+  <!--add customized code between this region-->
+  <!--add customized code between this region-->
+
+</Project>

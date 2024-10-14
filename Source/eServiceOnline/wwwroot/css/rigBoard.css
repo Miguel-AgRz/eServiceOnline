@@ -1,0 +1,458 @@
+﻿
+
+/*company*/
+.company-cod:before {
+    content: "";
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-right: 6px;
+    background: url(../images/redexclamation.png) no-repeat center center;
+    background-size: contain;
+}
+
+.company-codcleared:before {
+    content: "";
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-right: 6px;
+    background: url(../images/greencheck.png) no-repeat center center;
+    background-size: contain;
+}
+
+
+/*lsd*/
+.lsd-notentered:before {
+    content: "";
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-right: 6px;
+    background: url(../images/redexclamation.png) no-repeat center center;
+    background-size: contain;
+}
+.lsd-entered:before {
+    content: "";
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-right: 6px;
+    background: url(../images/greencheck.png) no-repeat center center;
+    background-size: contain;
+}
+
+/*rig*/
+.rig-topdrive:after {
+    content: "*";
+    color: red;
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-left: 6px;
+}
+
+.rig-topdrive-down:after {
+    content: "*";
+    color: red;
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-left: 6px;
+}
+
+.rig-topdrive-down {
+    background-color: #b44c6b !important;
+}
+
+/*.rig-regular {
+    
+}*/
+
+.jobalert-amberstate {
+    background-color: #FFBF00 !important;
+}
+/*job*/
+.job-jobtypestate {
+    background: red !important;
+}
+/*start JobBackgroundByRiskMatrix*/
+.job-RiskMatrix-059 {
+    background-color: green !important;
+}
+
+.job-RiskMatrix-6079 {
+    background-color: yellow !important;
+    color: black !important;
+}
+
+.job-RiskMatrix-80119 {
+    background-color: red !important;
+}
+
+.job-RiskMatrix-120 {
+    background-color: black !important;
+}
+/*end JobBackgroundByRiskMatrix*/
+
+/*JobAlert*/
+.jobalert-job-date {
+    color: #00FFFF !important;
+}
+
+/*date*/
+.date-alerted {
+    color: #00FFFF !important;
+}
+
+.date-pending {
+    color: #FF0000 !important;
+}
+
+.date-confirmed {
+    color: #FFFF00 !important;
+}
+
+.date-scheduled {
+    color: #00FF00 !important;
+}
+
+.date-dispatched {
+    color: #00FF00 !important;
+    background-color: #000000 !important;
+}
+
+.date-inprogress {
+    color: #00FF00 !important;
+    background-color: #000000 !important;
+}
+
+.date-completed {
+    color: white !important;
+}
+
+.date-empty-down,
+.generalStyle-down.e-rowcell
+{
+    background-color: #b44c6b;
+}
+
+/*bl1、bl2、bl3*/
+.bl-needahaul {
+    color: #FF0000 !important;
+}
+
+.bl-partialscheduled {
+    color: #FFBF00 !important;
+}
+
+.bl-haulscheduled {
+    color: yellow !important;
+}
+.bl-partialonlocation {
+    color: Green !important;
+}
+.bl-onlocation {
+    color: #00FF00 !important;
+}
+.bl-gowithcrew {
+    color: white !important;
+}
+
+/*bin*/
+
+.bin-assignedandconfirmed {
+    color: #00FF00 !important;
+}
+
+.bin-assignednotconfirmed {
+    color: #FFBF00 !important;
+}
+
+.bin-assignednotconfirmed-down {
+    color: #FFBF00 !important;
+    background-color: #b44c6b !important;
+}
+
+.bin-assignedandconfirmed-down {
+    color: #00FF00 !important;
+    background-color: #b44c6b !important;
+}
+
+.bin-notassigned {
+    color: red !important;
+}
+
+.bin-notassigned-down {
+    color: red !important;
+    background-color: #b44c6b !important;
+}
+
+
+/***checkbox****/
+.checkboxstyle {
+    vertical-align: middle;
+    width: 16px;
+    height: 16px;
+    margin: 0 !important;
+}
+
+
+.sj_dialog_body {
+    padding: 20px 15px;
+    line-height:36px;
+    font-size: 18px;
+}
+    .sj_dialog_body .det_list {
+        display: inline-block;
+        width: 100%;
+        margin: 5px 0;
+        clear: both;
+        overflow: hidden;
+    }
+.sj_dialog_body .det_label {
+    width:35%;
+    text-align:right;
+    display:inline-block;
+}
+.sj_dialog_body .det_text {
+    width: 55%;
+    float:right;
+}
+    .sj_dialog_body .det_text .sj_text {
+        width: 70% !important;
+    }
+
+    .sj_dialog_body .det_text .sj_text2 {
+        width: 70% !important;
+    }
+
+    .sj_dialog_body .det_text .sj_textarea {
+        width: 70% !important;
+    }
+    .sj_dialog_body .det_text .sj_select {
+        width: 70% !important;
+    }
+
+.sj_dialog_foot {
+    padding-bottom: 20px;
+    text-align: center;
+}
+    .sj_dialog_foot input {
+        width: 300px;
+        line-height: 40px;
+        background: #B44c6b;
+        color: #fff;
+        border: 0;
+        border-radius: 3px;
+        font-size: 20px;
+        font-weight: 600;
+    }
+        .sj_dialog_foot input.yes, .sj_dialog_foot input.no {
+            width: 100px !important;
+            margin: 0 36px;
+            line-height: 38px !important;
+            font-size: 16px !important;
+        }
+/**    new dialog start    **/
+.sj_dialog .e-header {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+    background-color: #B44c6b;
+    border: 0;
+}
+.sj_dialog .e-close {
+    border: 2px solid #fff;
+    border-radius: 20px !important;
+}
+.sj_dialog .e-dialog-icon:before {
+    color: #fff;
+    line-height: 1.6;
+}
+
+.sj_confirmDialog .e-header {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+    background-color: #B44c6b;
+    border: 0;
+}
+.sj_confirmDialog .e-widget-content {
+    font-size: 16px;
+}
+
+.confirmDialog_button {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+    background-color: #B44c6b;
+    margin: 20px;
+    padding: 5px;
+}
+.button_container {
+    text-align: center;
+}
+
+.sj_confirmDialog .e-close {
+    border: 2px solid #fff;
+    border-radius: 20px !important;
+}
+
+.sj_confirmDialog .e-dialog-icon:before {
+    color: #fff;
+    line-height: 1.6;
+}
+
+
+
+.sj_text {
+    height: 36px;
+    border: 1px solid #999;
+    padding: 6px 12px;
+    border-radius: 2px;
+    line-height: 22px;
+}
+
+.sj_text2 {
+    height: 108px;
+    border: 1px solid #999;
+    padding: 6px 12px;
+    border-radius: 2px;
+    line-height: 22px;
+}
+
+.sj_textarea {
+    height: 96px;
+    border: 1px solid #999;
+    padding: 6px 12px;
+    border-radius: 2px;
+    line-height: 22px;
+    resize: none;
+}
+.sj_select {
+    height: 36px;
+    border: 1px solid #999;
+    padding: 6px 12px;
+    border-radius: 2px;
+    line-height: 22px;
+}
+.sj_text:focus {
+    outline: none;
+    border: 1px solid #B44c6b;
+}
+.sj_text2:focus {
+    outline: none;
+    border: 1px solid #B44c6b;
+}
+
+
+.sj_textarea:focus {
+    outline: none;
+    border: 1px solid #B44c6b;
+}
+.sj_select:focus {
+    outline: none;
+    border: 1px solid #B44c6b;
+}
+.sj_cont_lab {
+    padding: 0;
+    margin: 0;
+    margin-right:20px;
+    display: inline-block;
+}
+
+    .sj_cont_lab i.check {
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        border-radius: 2px;
+        color: transparent;
+        cursor: pointer;
+        background-image: url('../images/un-select.png');
+    }
+
+    .sj_cont_lab input:checked + i.check {
+        background-image: url('../images/select.png');
+    }
+
+    .sj_cont_lab i.redio {
+        display: inline-block;
+        width: 11px;
+        height: 11px;
+        font-size: 12px;
+        border-radius: 11px;
+        border: 1px solid #999;
+        color: transparent;
+        cursor: pointer;
+    }
+
+    .sj_cont_lab input:checked + i.redio {
+        background-color: #B44c6b;
+        border: 1px solid #B44c6b;
+        color: #fff;
+    }
+
+    .sj_cont_lab span {
+        padding-left: 6px;
+        font-weight: normal;
+    }
+/**    new dialog end    **/
+
+/**    new cellmenu start    **/
+.cellmenu {
+    position: relative;
+}
+.showcellmenu {
+    position: absolute;
+    height: 36px;
+    width: 36px;
+    right: 0;
+    top: 0;
+    z-index:100;
+    text-align: center;
+    line-height: 36px;
+    color: #B44C6B;
+}
+    .showcellmenu + ul {
+        display: none;
+        position: absolute;
+        background-color: #fff;
+        line-height: 35px;
+        padding: 0;
+        z-index: 100;
+        border: 1px solid;
+    }
+        .showcellmenu + ul >li {
+            list-style-type: none;
+            position: relative;
+        }
+
+/*consultants*/
+.consultantcontacts-dayshift {
+    color: #00FF00 !important;
+}
+
+.consultantcontacts-nightshift {
+    color: #FFFF00 !important;
+}
+
+.consultantcontacts-dayshift-down {
+    background-color: #b44c6b !important;
+}
+
+.consultantcontacts-nightshift-down {
+    background-color: #b44c6b !important;
+}
+/**    new cellmenu end    **/
+.verify_required {
+    color: red;
+    position: absolute;
+    right: 55px;
+    line-height: 34px;
+    top: 0;
+    display: none;
+}

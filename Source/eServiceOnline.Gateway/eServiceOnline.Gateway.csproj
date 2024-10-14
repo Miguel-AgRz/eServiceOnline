@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SanjelData.Daos" Version="1.7.1" />
+    <PackageReference Include="SanjelData.Daos.Interfaces" Version="1.7.1" />
+    <PackageReference Include="SanjelData.Services" Version="1.7.1" />
+    <PackageReference Include="SanjelData.Services.Interfaces" Version="1.7.1" />
+    <PackageReference Include="MetaShare.Common.Core.ng" Version="1.7.0" />
+    <PackageReference Include="EService.MicroService.Interfaces" Version="1.1.2" />
+    <PackageReference Include="MetaShare.Common.Foundation" Version="1.1.0" />
+    <PackageReference Include="MetaShare.Common.Core" Version="1.1.0" />
+    <PackageReference Include="MetaShare.Common.ServiceModel" Version="1.1.0" />
+    <PackageReference Include="Sanjel.BusinessEntities" Version="1.1.2" />
+    <PackageReference Include="Sanjel.BusinessEntities.Standard" Version="1.1.0" />
+    <PackageReference Include="Sanjel.Services" Version="1.1.2" />
+    <PackageReference Include="Sanjel.Services.Interfaces" Version="1.1.0" />
+    <PackageReference Include="Sanjel.Services.Interfaces.Standard" Version="1.1.0" /> 
+  </ItemGroup>
+
+</Project>
